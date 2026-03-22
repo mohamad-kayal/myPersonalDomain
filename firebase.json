@@ -5,6 +5,10 @@
       {
         "source": "/remamotorsinvoice",
         "destination": "/Rema motors invoice/Remamotorsinvoice.html"
+      },
+      {
+        "source": "/muslimkidsvp",
+        "destination": "/Muslim Kids VP/index.html"
       }
     ]
   }
