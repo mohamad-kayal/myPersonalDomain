@@ -33,7 +33,7 @@ function fillInvoice() {
     // Format price and total
     const total = parseFloat(document.getElementById("total").value) || 0;
     const formatter = new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" });
-    
+
     document.getElementById("invoiceTotal").innerText = formatter.format(total);
 
     // Password protection
@@ -43,23 +43,99 @@ function fillInvoice() {
         return;
     }
 
-    // Show the invoice content before printing
+    // Show the invoice content so we can grab its HTML
     document.querySelector('.invoice-content').style.display = 'block';
 
-    // On mobile, temporarily adjust viewport for proper print rendering
-    var viewportMeta = document.querySelector('meta[name="viewport"]');
-    var originalViewport = viewportMeta ? viewportMeta.getAttribute('content') : '';
-    if (viewportMeta) {
-        viewportMeta.setAttribute('content', 'width=1024');
+    // Get the invoice HTML content
+    var invoiceHTML = document.querySelector('.printable-area').innerHTML;
+    var headerImgSrc = document.querySelector('header img').src;
+
+    // Open a new window at desktop width for proper print rendering
+    var printWindow = window.open('', '_blank', 'width=800,height=1100');
+
+    printWindow.document.write('<!DOCTYPE html><html><head>');
+    printWindow.document.write('<meta charset="UTF-8">');
+    printWindow.document.write('<meta name="viewport" content="width=1024">');
+    printWindow.document.write('<title>\u200B</title>');
+    printWindow.document.write('<style>');
+    printWindow.document.write('\
+        @page { size: A4; margin: 10mm; margin-top: 10mm; margin-bottom: 10mm; }\
+        * { box-sizing: border-box; }\
+        body {\
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;\
+            margin: 0; padding: 20px; color: #212529;\
+            font-size: 10pt; line-height: 1.4;\
+            width: 100%; max-width: 800px;\
+        }\
+        header {\
+            margin-bottom: 15px;\
+            border-bottom: 2px solid #dee2e6;\
+            padding-bottom: 10px;\
+            width: 100%;\
+        }\
+        header img {\
+            width: 100%; height: auto; display: block;\
+        }\
+        table {\
+            width: 100%; border-collapse: collapse;\
+            margin-bottom: 15px; table-layout: fixed;\
+        }\
+        th, td {\
+            border: 1px solid #dee2e6; text-align: left;\
+            padding: 8px 10px; vertical-align: top;\
+            word-wrap: break-word; overflow-wrap: break-word;\
+            font-size: 10pt; line-height: 1.3;\
+        }\
+        th {\
+            background-color: #f8f9fa; font-weight: 600;\
+            font-size: 10pt; text-transform: uppercase;\
+            letter-spacing: 0.5px;\
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;\
+        }\
+        .item-description td:first-child { width: 30%; }\
+        .total-row td {\
+            font-weight: bold; font-size: 12pt;\
+            background-color: #e9ecef;\
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;\
+        }\
+        .payment-details {\
+            margin-top: 20px; padding: 15px;\
+            border: 1px solid #dee2e6;\
+            background-color: #f8f9fa; border-radius: 5px;\
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;\
+        }\
+        .payment-details h2 {\
+            margin-top: 0; font-size: 13pt; font-weight: 600;\
+            border-bottom: 1px solid #dee2e6;\
+            padding-bottom: 8px; margin-bottom: 12px;\
+        }\
+        .payment-details p { margin: 6px 0; font-size: 10pt; }\
+        .payment-details strong { font-weight: 600; }\
+        .invoice-content { display: block; }\
+        @media print {\
+            body { padding: 0; margin: 0; }\
+            @page { margin: 10mm; }\
+        }\
+    ');
+    printWindow.document.write('</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(invoiceHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+
+    // Wait for content (especially the header image) to load before printing
+    var img = printWindow.document.querySelector('header img');
+    function doPrint() {
+        setTimeout(function() {
+            printWindow.focus();
+            printWindow.print();
+        }, 500);
     }
 
-    // Small delay to let the browser reflow with the new viewport before printing
-    setTimeout(function() {
-        window.print();
-
-        // Restore viewport after print dialog closes
-        if (viewportMeta && originalViewport) {
-            viewportMeta.setAttribute('content', originalViewport);
-        }
-    }, 300);
+    if (img && !img.complete) {
+        img.onload = doPrint;
+        img.onerror = doPrint;
+    } else {
+        doPrint();
+    }
 }
