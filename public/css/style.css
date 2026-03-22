@@ -618,6 +618,7 @@ strong { font-weight: 600; color: var(--text-1); }
 }
 
 .experience__wrapper { margin-top: 2rem; overflow: visible; }
+@media (max-width: 768px) { .experience__wrapper { overflow: hidden; } }
 
 .experience__track { display: flex; gap: 1.5rem; padding: 1rem 0; }
 @media (max-width: 768px) { .experience__track { flex-direction: column; } }

@@ -4,14 +4,15 @@
     "rewrites": [
       {
         "source": "/remamotorsinvoice",
-        "destination": "/Rema motors invoice/Remamotorsinvoice.html"
+        "destination": "/remamotorsinvoice/Remamotorsinvoice.html"
       },
       {
         "source": "/muslimkidsvp",
-        "destination": "/Muslim Kids VP/index.html"
-      },{
-        "source": "/autoinspectpro/",
-        "destination": "/Auto Inspect Pro/index.html"
+        "destination": "/muslimkidsvp/index.html"
+      },
+      {
+        "source": "/autoinspectpro",
+        "destination": "/autoinspectpro/index.html"
       }
     ]
   }
