@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "/remamotorsinvoice",
+        "destination": "/Rema motors invoice/Remamotorsinvoice.html"
+      }
+    ]
+  }
+}
