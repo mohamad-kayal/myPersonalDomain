@@ -1,0 +1,548 @@
+/* ============================================
+   AutoInspect Pro — Report Pages
+   ============================================ */
+
+/* --- Report View (Customer-Facing) --- */
+.report-page {
+  background: var(--color-gray-100);
+  min-height: 100vh;
+  padding: var(--space-8) var(--space-4);
+}
+
+.report-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* Report Header / Banner */
+.report-banner {
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary-dark) 100%);
+  color: white;
+  padding: var(--space-10) var(--space-8);
+  position: relative;
+  overflow: hidden;
+}
+
+.report-banner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 0%, rgba(245, 158, 11, 0.1) 100%);
+  pointer-events: none;
+}
+
+.report-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.report-brand-logo {
+  width: 48px;
+  height: 48px;
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+}
+
+.report-brand-name {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+}
+
+.report-brand-sub {
+  font-size: var(--text-xs);
+  color: var(--color-gray-400);
+}
+
+.report-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-2);
+}
+
+.report-subtitle {
+  font-size: var(--text-md);
+  color: var(--color-gray-300);
+}
+
+.report-meta-strip {
+  display: flex;
+  gap: var(--space-8);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.report-meta-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-meta-item .meta-label {
+  font-size: var(--text-xs);
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+.report-meta-item .meta-value {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+}
+
+/* Report Body */
+.report-body {
+  padding: var(--space-8);
+}
+
+/* Overall Score */
+.report-score-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-6);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-8);
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.score-circle svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-circle .score-track {
+  fill: none;
+  stroke: var(--color-gray-200);
+  stroke-width: 8;
+}
+
+.score-circle .score-fill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease;
+}
+
+.score-circle .score-fill.excellent { stroke: var(--color-success); }
+.score-circle .score-fill.good { stroke: var(--color-primary); }
+.score-circle .score-fill.fair { stroke: var(--color-accent); }
+.score-circle .score-fill.poor { stroke: var(--color-danger); }
+
+.score-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.score-max {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.score-breakdown {
+  flex: 1;
+}
+
+.score-breakdown h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-4);
+}
+
+.score-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.score-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.score-bar .bar-label {
+  width: 100px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.score-bar .bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.score-bar .bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 1s ease;
+}
+
+.score-bar .bar-value {
+  width: 40px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* Report Sections */
+.report-section {
+  margin-bottom: var(--space-8);
+}
+
+.report-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--color-gray-200);
+}
+
+.report-section-header i {
+  color: var(--color-primary);
+  font-size: var(--text-lg);
+}
+
+.report-section-header h3 {
+  font-size: var(--text-lg);
+}
+
+/* Checklist Results */
+.report-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.report-checklist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+}
+
+.report-checklist-item .item-name {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.report-checklist-item .item-status {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.report-checklist-item .item-status.pass {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.report-checklist-item .item-status.fail {
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+}
+
+.report-checklist-item .item-status.advisory {
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark);
+}
+
+/* OBD Parameters Grid */
+.obd-params-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+/* Photo Gallery in Report */
+.report-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr));
+  gap: var(--space-3);
+}
+
+.report-gallery-item {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-gray-100);
+  aspect-ratio: 4 / 3;
+  position: relative;
+}
+
+.report-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.report-gallery-item .gallery-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-2) var(--space-3);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: white;
+  font-size: var(--text-xs);
+}
+
+/* Damage Map in Report */
+.report-damage-map {
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.report-damage-diagram {
+  flex: 1;
+  max-width: 400px;
+}
+
+.report-damage-legend {
+  flex: 1;
+}
+
+.report-damage-legend h4 {
+  font-size: var(--text-md);
+  margin-bottom: var(--space-3);
+}
+
+.damage-legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.damage-legend-item:last-child {
+  border-bottom: none;
+}
+
+.damage-legend-marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: var(--font-bold);
+  color: white;
+  flex-shrink: 0;
+}
+
+.damage-legend-info .legend-type {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.damage-legend-info .legend-desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* Report Footer */
+.report-footer {
+  padding: var(--space-6) var(--space-8);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+  text-align: center;
+}
+
+.report-footer .disclaimer {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  line-height: var(--leading-relaxed);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.report-footer .report-generated {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: var(--space-3);
+}
+
+/* Report Actions Bar (not shown in print) */
+.report-actions-bar {
+  max-width: 900px;
+  margin: 0 auto var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.report-actions-bar .back-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}
+
+.report-actions-bar .back-link:hover {
+  color: var(--text-primary);
+}
+
+.report-actions-bar .action-buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .report-page {
+    padding: var(--space-4) var(--space-2);
+  }
+
+  .report-actions-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .report-actions-bar .action-buttons {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .report-actions-bar .report-type-toggle {
+    margin-right: 0 !important;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .report-actions-bar .back-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .report-banner {
+    padding: var(--space-6);
+  }
+
+  .report-title {
+    font-size: var(--text-2xl);
+  }
+
+  .report-meta-strip {
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .report-meta-strip .report-meta-item {
+    min-width: calc(50% - var(--space-4));
+  }
+
+  .report-body {
+    padding: var(--space-5);
+  }
+
+  .report-score-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .report-damage-map {
+    flex-direction: column;
+  }
+
+  .report-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .report-checklist-item {
+    padding: var(--space-3) 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-page {
+    padding: var(--space-2) 0;
+  }
+
+  .report-container {
+    border-radius: var(--radius-lg);
+  }
+
+  .report-banner {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .report-title {
+    font-size: var(--text-xl);
+  }
+
+  .report-body {
+    padding: var(--space-4);
+  }
+
+  .report-gallery {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+}
+
+@media print {
+  .report-page {
+    padding: 0;
+    background: white;
+  }
+
+  .report-container {
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .report-actions-bar {
+    display: none;
+  }
+}

@@ -1,0 +1,265 @@
+/* ============================================
+   AutoInspect Pro — Dashboard Page
+   ============================================ */
+
+/* --- Recent Inspections Table --- */
+.recent-inspections .vehicle-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.recent-inspections .vehicle-info .vehicle-name {
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.recent-inspections .vehicle-info .vehicle-vin {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.recent-inspections .inspector-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* --- Activity Feed --- */
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.activity-icon.created {
+  background: var(--color-primary-lighter);
+  color: var(--color-primary);
+}
+
+.activity-icon.completed {
+  background: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.activity-icon.reviewed {
+  background: var(--color-accent-lighter);
+  color: var(--color-accent-dark);
+}
+
+.activity-icon.flagged {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.activity-text strong {
+  color: var(--text-primary);
+  font-weight: var(--font-medium);
+}
+
+.activity-time {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* --- Quick Actions Grid --- */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.quick-action-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-action-btn i {
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+}
+
+.quick-action-btn span {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  text-align: center;
+}
+
+/* --- Performance Summary --- */
+.performance-chart-container {
+  position: relative;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.performance-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.performance-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.performance-item .perf-label {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.performance-item .perf-label .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.performance-item .perf-value {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+/* --- Dashboard Two Column Layout --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.dashboard-sidebar-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.dashboard-grid > * {
+  min-width: 0;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stat cards: horizontal scroll strip (override responsive.css grid) */
+  .page-content > .stats-grid {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+  }
+
+  .page-content > .stats-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .page-content > .stats-grid .stat-card {
+    min-width: 200px;
+    flex-shrink: 0;
+  }
+
+  /* Table: tighter padding */
+  .recent-inspections .data-table th,
+  .recent-inspections .data-table td {
+    padding: 0.5rem 0.625rem;
+    font-size: var(--text-xs);
+  }
+
+  .recent-inspections .vehicle-info .vehicle-name {
+    font-size: var(--text-sm);
+  }
+
+  .recent-inspections .vehicle-info .vehicle-vin {
+    display: none;
+  }
+
+  /* Quick actions: 2x2 compact */
+  .quick-action-btn {
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .quick-action-btn i {
+    font-size: var(--text-lg);
+  }
+
+  .quick-action-btn span {
+    font-size: var(--text-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid .stat-card {
+    min-width: 160px;
+  }
+}

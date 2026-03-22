@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 250" fill="none" id="vehicle-side-svg">
+  <style>
+    .body-fill { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 2; }
+    .window-fill { fill: #dbeafe; stroke: #94a3b8; stroke-width: 1.5; }
+    .wheel-outer { fill: #334155; stroke: #1e293b; stroke-width: 2; }
+    .wheel-inner { fill: #64748b; stroke: #475569; stroke-width: 1; }
+    .wheel-hub { fill: #94a3b8; }
+    .trim { stroke: #cbd5e1; stroke-width: 1; fill: none; }
+    .light-front { fill: #fef3c7; stroke: #94a3b8; stroke-width: 1.5; }
+    .light-rear { fill: #fee2e2; stroke: #94a3b8; stroke-width: 1.5; }
+    .detail-line { stroke: #cbd5e1; stroke-width: 0.75; }
+    .bumper { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 1.5; }
+    .side-zone { fill: transparent; cursor: crosshair; }
+    .side-zone:hover { fill: rgba(26, 86, 219, 0.08); }
+  </style>
+
+  <!-- Car Body -->
+  <path class="body-fill" d="
+    M80,170
+    L50,170
+    Q30,170 28,155
+    L30,140
+    L45,135
+    L80,130
+    L140,108
+    Q170,90 220,78
+    Q260,72 300,70
+    Q340,72 380,78
+    Q420,88 440,100
+    L500,120
+    L540,130
+    L560,135
+    L572,140
+    Q575,155 572,170
+    L550,170
+    Q548,170 545,168
+    L520,170
+    L475,170
+    Q440,170 440,170
+    L440,170
+    Q440,195 440,170
+    L160,170
+    Q160,170 160,170
+    L80,170
+    Z
+  "/>
+
+  <!-- Roofline -->
+  <path class="body-fill" d="
+    M180,108
+    Q200,80 250,68
+    Q300,63 350,68
+    Q400,78 420,100
+    L430,108
+    Q430,108 420,108
+    L180,108
+    Z
+  " fill="#e2e8f0"/>
+
+  <!-- Front Windshield -->
+  <path class="window-fill" d="M180,108 Q200,80 250,70 L260,70 L260,108 L195,108 Z"/>
+
+  <!-- Front Side Window -->
+  <path class="window-fill" d="M262,70 L340,68 L340,108 L262,108 Z"/>
+
+  <!-- Rear Side Window -->
+  <path class="window-fill" d="M342,68 Q390,78 410,100 L420,108 L342,108 Z"/>
+
+  <!-- Rear Windshield hint -->
+  <path class="window-fill" d="M422,108 Q430,100 440,108 L422,108 Z" opacity="0.5"/>
+
+  <!-- Door Line -->
+  <line class="detail-line" x1="260" y1="70" x2="260" y2="170" stroke-width="1"/>
+  <line class="detail-line" x1="340" y1="68" x2="340" y2="170" stroke-width="1"/>
+
+  <!-- Door Handles -->
+  <rect x="285" y="120" width="16" height="4" rx="2" fill="#94a3b8"/>
+  <rect x="375" y="120" width="16" height="4" rx="2" fill="#94a3b8"/>
+
+  <!-- Front Bumper -->
+  <path class="bumper" d="M30,140 L45,135 L80,130 L80,170 L50,170 Q30,170 28,155 L30,140 Z"/>
+
+  <!-- Rear Bumper -->
+  <path class="bumper" d="M540,130 L560,135 L572,140 Q575,155 572,170 L550,170 L520,170 L520,130 Z"/>
+
+  <!-- Front Headlight -->
+  <path class="light-front" d="M50,135 L80,128 L80,145 L50,148 Z"/>
+
+  <!-- Rear Taillight -->
+  <path class="light-rear" d="M540,128 L555,133 L555,152 L540,155 Z"/>
+
+  <!-- Side Trim / Beltline -->
+  <line class="trim" x1="80" y1="130" x2="520" y2="130" stroke-width="1.5"/>
+
+  <!-- Rocker Panel -->
+  <rect x="80" y="165" width="440" height="8" rx="2" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- Front Wheel -->
+  <circle class="wheel-outer" cx="155" cy="175" r="35"/>
+  <circle class="wheel-inner" cx="155" cy="175" r="25"/>
+  <circle class="wheel-hub" cx="155" cy="175" r="8"/>
+  <!-- Spokes -->
+  <line x1="155" y1="152" x2="155" y2="165" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="155" y1="185" x2="155" y2="198" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="132" y1="175" x2="145" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="165" y1="175" x2="178" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="139" y1="159" x2="148" y2="168" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="162" y1="182" x2="171" y2="191" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="139" y1="191" x2="148" y2="182" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="162" y1="168" x2="171" y2="159" stroke="#94a3b8" stroke-width="2"/>
+
+  <!-- Rear Wheel -->
+  <circle class="wheel-outer" cx="445" cy="175" r="35"/>
+  <circle class="wheel-inner" cx="445" cy="175" r="25"/>
+  <circle class="wheel-hub" cx="445" cy="175" r="8"/>
+  <line x1="445" y1="152" x2="445" y2="165" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="445" y1="185" x2="445" y2="198" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="422" y1="175" x2="435" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="455" y1="175" x2="468" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="429" y1="159" x2="438" y2="168" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="452" y1="182" x2="461" y2="191" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="429" y1="191" x2="438" y2="182" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="452" y1="168" x2="461" y2="159" stroke="#94a3b8" stroke-width="2"/>
+
+  <!-- Wheel Arches -->
+  <path d="M115,170 Q115,140 155,140 Q195,140 195,170" fill="none" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M405,170 Q405,140 445,140 Q485,140 485,170" fill="none" stroke="#94a3b8" stroke-width="2"/>
+
+  <!-- Side Mirror -->
+  <ellipse cx="170" cy="100" rx="10" ry="6" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1"/>
+
+  <!-- Clickable zones for damage placement -->
+  <rect class="side-zone" data-zone="front-door" x="195" y="68" width="65" height="100"/>
+  <rect class="side-zone" data-zone="rear-door" x="262" y="68" width="78" height="100"/>
+  <rect class="side-zone" data-zone="front-fender" x="80" y="100" width="115" height="70"/>
+  <rect class="side-zone" data-zone="rear-quarter" x="340" y="100" width="180" height="70"/>
+  <path class="side-zone" data-zone="hood-side" d="M80,100 L180,80 L195,68 L195,108 L80,130 Z"/>
+  <path class="side-zone" data-zone="roof-side" d="M195,68 Q250,63 350,68 L420,108 L195,108 Z"/>
+  <rect class="side-zone" data-zone="rocker" x="80" y="165" width="440" height="10"/>
+</svg>

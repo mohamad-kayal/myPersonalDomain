@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/admin.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Settings</h2>
+            <p>Configure your dealership profile, branding, and system preferences</p>
+          </div>
+        </div>
+
+        <div class="settings-layout">
+          <!-- Settings Nav -->
+          <nav class="settings-nav">
+            <div class="settings-nav-item active" onclick="switchSettingsTab('general', this)">
+              <i class="fas fa-building"></i> General
+            </div>
+            <div class="settings-nav-item" onclick="switchSettingsTab('branding', this)">
+              <i class="fas fa-palette"></i> Branding
+            </div>
+            <div class="settings-nav-item" onclick="switchSettingsTab('reports', this)">
+              <i class="fas fa-file-pdf"></i> Reports
+            </div>
+            <div class="settings-nav-item" onclick="switchSettingsTab('notifications', this)">
+              <i class="fas fa-bell"></i> Notifications
+            </div>
+            <div class="settings-nav-item" onclick="switchSettingsTab('security', this)">
+              <i class="fas fa-shield-halved"></i> Security
+            </div>
+          </nav>
+
+          <!-- Settings Content -->
+          <div class="settings-content">
+            <!-- General Settings -->
+            <div class="settings-tab active" id="tab-general">
+              <div class="settings-section">
+                <div class="settings-section-header">
+                  <h3>Dealership Information</h3>
+                  <p>Basic information about your dealership</p>
+                </div>
+                <div class="settings-section-body">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Dealership Name</label>
+                      <input type="text" class="form-input" value="Premium Auto Group">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Subdomain</label>
+                      <div style="display:flex;align-items:center;gap:0">
+                        <input type="text" class="form-input" value="premiumauto" style="border-radius:var(--radius-lg) 0 0 var(--radius-lg)">
+                        <span style="padding:0.5rem 0.75rem;background:var(--color-gray-100);border:1px solid var(--color-gray-300);border-left:none;border-radius:0 var(--radius-lg) var(--radius-lg) 0;font-size:var(--text-sm);color:var(--text-secondary);white-space:nowrap">.autoinspect.com</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Phone</label>
+                      <input type="tel" class="form-input" value="(02) 9876 5432">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Email</label>
+                      <input type="email" class="form-input" value="service@premiumauto.com.au">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input type="text" class="form-input" value="123 Automotive Drive, Sydney NSW 2000">
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-section">
+                <div class="settings-section-header">
+                  <h3>Inspection Defaults</h3>
+                  <p>Default settings for new inspections</p>
+                </div>
+                <div class="settings-section-body">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Default Template</h5>
+                      <p>Template used when starting a new inspection</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <select class="form-select settings-select">
+                        <option>Standard Sedan Inspection</option>
+                        <option>SUV / Crossover Inspection</option>
+                        <option>Truck / Utility Inspection</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Auto-save Interval</h5>
+                      <p>How often inspection progress is automatically saved</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <select class="form-select settings-select">
+                        <option>Every 15 seconds</option>
+                        <option selected>Every 30 seconds</option>
+                        <option>Every 60 seconds</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Require Photo for Failed Items</h5>
+                      <p>Inspectors must attach a photo when marking an item as failed</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>PPSR Check on Intake</h5>
+                      <p>Automatically run a PPSR check when a VIN is decoded</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" onclick="showToast('success','Settings Saved','Your changes have been applied')">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </div>
+
+            <!-- Branding Settings -->
+            <div class="settings-tab" id="tab-branding" style="display:none">
+              <div class="settings-section">
+                <div class="settings-section-header">
+                  <h3>Brand Identity</h3>
+                  <p>Customise how your dealership appears on reports and customer-facing pages</p>
+                </div>
+                <div class="settings-section-body">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Dealership Logo</h5>
+                      <p>Used on PDF reports and customer portal. PNG or SVG, max 2MB.</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <div class="logo-upload">
+                        <div class="logo-preview">
+                          <i class="fas fa-car"></i>
+                        </div>
+                        <div>
+                          <button class="btn btn-secondary btn-sm"><i class="fas fa-upload"></i> Upload Logo</button>
+                          <div style="font-size:var(--text-xs);color:var(--text-tertiary);margin-top:var(--space-1)">Recommended: 200x200px</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Brand Colours</h5>
+                      <p>Primary and secondary colours used in reports and customer portal</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <div class="color-picker-group">
+                        <div class="color-picker-item">
+                          <div class="color-picker-swatch" style="background:#1a56db">
+                            <input type="color" value="#1a56db">
+                          </div>
+                          <label>Primary</label>
+                        </div>
+                        <div class="color-picker-item">
+                          <div class="color-picker-swatch" style="background:#0f172a">
+                            <input type="color" value="#0f172a">
+                          </div>
+                          <label>Secondary</label>
+                        </div>
+                        <div class="color-picker-item">
+                          <div class="color-picker-swatch" style="background:#f59e0b">
+                            <input type="color" value="#f59e0b">
+                          </div>
+                          <label>Accent</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Preview -->
+              <div class="settings-section">
+                <div class="settings-section-header">
+                  <h3>Report Preview</h3>
+                  <p>Preview how your branding appears on customer reports</p>
+                </div>
+                <div class="settings-section-body">
+                  <div class="branding-preview">
+                    <div class="branding-preview-header" style="background:linear-gradient(135deg,#0f172a,#1e40af)">
+                      <div style="width:36px;height:36px;background:#1a56db;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center">
+                        <i class="fas fa-car"></i>
+                      </div>
+                      <div>
+                        <div style="font-weight:var(--font-bold)">Premium Auto Group</div>
+                        <div style="font-size:var(--text-xs);opacity:0.7">Vehicle Inspection Report</div>
+                      </div>
+                    </div>
+                    <div class="branding-preview-body">
+                      <p>This is how your dealership branding will appear at the top of customer-facing inspection reports.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" onclick="showToast('success','Branding Updated','Your brand settings have been saved')">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </div>
+
+            <!-- Reports Settings -->
+            <div class="settings-tab" id="tab-reports" style="display:none">
+              <div class="settings-section">
+                <div class="settings-section-header">
+                  <h3>Report Configuration</h3>
+                  <p>Customise the content and appearance of generated reports</p>
+                </div>
+                <div class="settings-section-body">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Include OBD-II Data</h5>
+                      <p>Show diagnostic data in customer-facing reports</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Include Damage Map</h5>
+                      <p>Show the interactive damage diagram in reports</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Include Photos</h5>
+                      <p>Include inspection photos in the generated PDF</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Report Link Expiry</h5>
+                      <p>How long shareable report links remain active</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <select class="form-select settings-select">
+                        <option>7 days</option>
+                        <option selected>30 days</option>
+                        <option>90 days</option>
+                        <option>Never expires</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="divider"></div>
+
+                  <div class="form-group">
+                    <label class="form-label">Report Disclaimer</label>
+                    <textarea class="form-textarea" rows="4">This inspection report is based on a visual and diagnostic assessment performed at the time of inspection. It does not constitute a warranty or guarantee of vehicle condition. Some faults may not be detectable without further disassembly or specialised testing.</textarea>
+                    <span class="form-hint">This text appears at the bottom of every customer-facing report</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" onclick="showToast('success','Report Settings Saved','Changes will apply to new reports')">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </div>
+
+            <!-- Notifications Settings -->
+            <div class="settings-tab" id="tab-notifications" style="display:none">
+              <div class="settings-section">
+                <div class="settings-section-header">
+                  <h3>Email Notifications</h3>
+                  <p>Configure when email notifications are sent</p>
+                </div>
+                <div class="settings-section-body">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Inspection Completed</h5>
+                      <p>Notify manager when an inspector completes an inspection</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Inspection Approved</h5>
+                      <p>Notify inspector when their inspection is approved</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Critical Defect Found</h5>
+                      <p>Alert admin when a major defect is logged</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Report Viewed by Customer</h5>
+                      <p>Notify when a customer opens a shared report link</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" onclick="showToast('success','Notification Preferences Saved','')">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="settings-tab" id="tab-security" style="display:none">
+              <div class="settings-section">
+                <div class="settings-section-header">
+                  <h3>Security & Access</h3>
+                  <p>Manage security settings and access controls</p>
+                </div>
+                <div class="settings-section-body">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Session Timeout</h5>
+                      <p>Automatically log out inactive users</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <select class="form-select settings-select">
+                        <option>15 minutes</option>
+                        <option selected>30 minutes</option>
+                        <option>1 hour</option>
+                        <option>4 hours</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Two-Factor Authentication</h5>
+                      <p>Require 2FA for all admin accounts</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Audit Log</h5>
+                      <p>Track all user actions for accountability</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <h5>Data Retention Period</h5>
+                      <p>How long to keep inspection data and media</p>
+                    </div>
+                    <div class="settings-row-control">
+                      <select class="form-select settings-select">
+                        <option>1 year</option>
+                        <option>2 years</option>
+                        <option selected>5 years</option>
+                        <option>Indefinitely</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;gap:var(--space-3);flex-wrap:wrap">
+                <a href="audit-log.html" class="btn btn-secondary"><i class="fas fa-scroll"></i> View Audit Log</a>
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" onclick="showToast('success','Security Settings Updated','')">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    renderSidebar('admin-settings');
+    renderHeader('Settings', [{ label: 'Home', href: 'dashboard.html' }, { label: 'Admin' }, { label: 'Settings' }]);
+    renderMobileNav('admin-settings');
+
+    function switchSettingsTab(tabId, navItem) {
+      document.querySelectorAll('.settings-tab').forEach(t => t.style.display = 'none');
+      document.getElementById(`tab-${tabId}`).style.display = 'block';
+      document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+      navItem.classList.add('active');
+    }
+  </script>
+</body>
+</html>

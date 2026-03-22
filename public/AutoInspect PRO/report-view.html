@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspection Report — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/report.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="report-page">
+    <!-- Actions Bar -->
+    <div class="report-actions-bar">
+      <a href="inspections.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Inspections</span>
+      </a>
+      <div class="action-buttons">
+        <div class="report-type-toggle" style="display:flex;align-items:center;gap:var(--space-2);margin-right:var(--space-4)">
+          <span style="font-size:var(--text-sm);color:var(--text-secondary)">Report Type:</span>
+          <button class="btn btn-sm" id="btn-customer-report" style="background:var(--color-primary);color:white" onclick="switchReportType('customer')">Customer</button>
+          <button class="btn btn-sm btn-secondary" id="btn-internal-report" onclick="switchReportType('internal')">Internal</button>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">
+          <i class="fas fa-print"></i> Print
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="openShareModal()">
+          <i class="fas fa-share-alt"></i> Share
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="showToast('success','PDF Downloaded','Report saved as PDF')">
+          <i class="fas fa-download"></i> Download PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Report Container -->
+    <div class="report-container">
+      <!-- Banner -->
+      <div class="report-banner">
+        <div class="report-brand">
+          <div class="report-brand-logo"><i class="fas fa-car"></i></div>
+          <div>
+            <div class="report-brand-name">Premium Auto Group</div>
+            <div class="report-brand-sub">Vehicle Inspection Report</div>
+          </div>
+        </div>
+        <div class="report-title" id="report-vehicle-title"></div>
+        <div class="report-subtitle" id="report-vin"></div>
+
+        <div class="report-meta-strip">
+          <div class="report-meta-item">
+            <span class="meta-label">Report Date</span>
+            <span class="meta-value" id="report-date"></span>
+          </div>
+          <div class="report-meta-item">
+            <span class="meta-label">Inspector</span>
+            <span class="meta-value" id="report-inspector"></span>
+          </div>
+          <div class="report-meta-item">
+            <span class="meta-label">Odometer</span>
+            <span class="meta-value" id="report-odometer"></span>
+          </div>
+          <div class="report-meta-item">
+            <span class="meta-label">Report ID</span>
+            <span class="meta-value" id="report-id"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Report Body -->
+      <div class="report-body">
+        <!-- Overall Score -->
+        <div class="report-score-section" id="score-section"></div>
+
+        <!-- Checklist Sections (dynamically populated) -->
+        <div id="checklist-sections"></div>
+
+        <!-- Damage Map Section -->
+        <div class="report-section" id="damage-section"></div>
+
+        <!-- OBD-II Section -->
+        <div class="report-section" id="obd-section"></div>
+
+        <!-- Photo Gallery -->
+        <div class="report-section">
+          <div class="report-section-header">
+            <i class="fas fa-images"></i>
+            <h3>Inspection Photos</h3>
+          </div>
+          <div class="report-gallery">
+            <div class="report-gallery-item" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe)">
+              <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-primary)"><i class="fas fa-car" style="font-size:2rem"></i></div>
+              <div class="gallery-label">Front View</div>
+            </div>
+            <div class="report-gallery-item" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0)">
+              <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-success)"><i class="fas fa-car-side" style="font-size:2rem"></i></div>
+              <div class="gallery-label">Driver Side</div>
+            </div>
+            <div class="report-gallery-item" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">
+              <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-accent-dark)"><i class="fas fa-car-rear" style="font-size:2rem"></i></div>
+              <div class="gallery-label">Rear View</div>
+            </div>
+            <div class="report-gallery-item" style="background:linear-gradient(135deg,#fee2e2,#fecaca)">
+              <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-danger)"><i class="fas fa-gauge-high" style="font-size:2rem"></i></div>
+              <div class="gallery-label">Dashboard</div>
+            </div>
+            <div class="report-gallery-item" style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe)">
+              <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-info)"><i class="fas fa-gear" style="font-size:2rem"></i></div>
+              <div class="gallery-label">Engine Bay</div>
+            </div>
+            <div class="report-gallery-item" style="background:linear-gradient(135deg,#f1f5f9,#e2e8f0)">
+              <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-gray-500)"><i class="fas fa-circle-dot" style="font-size:2rem"></i></div>
+              <div class="gallery-label">Tyre Tread</div>
+            </div>
+          </div>
+        </div>
+        <!-- Internal Only Sections -->
+        <div class="report-section internal-only" id="internal-sections" style="display:none">
+          <div class="report-section-header">
+            <i class="fas fa-lock"></i>
+            <h3>Internal Notes</h3>
+            <span class="badge badge-warning" style="margin-left:var(--space-2)">Internal Only</span>
+          </div>
+          <div style="padding:var(--space-4)" id="internal-notes-body"></div>
+        </div>
+      </div>
+
+      <!-- Report Footer -->
+      <div class="report-footer">
+        <p class="disclaimer" id="report-disclaimer"></p>
+        <p class="report-generated" id="report-generated"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="share-modal">
+    <div class="modal" style="max-width:min(480px, 95vw)">
+      <div class="modal-header">
+        <h3>Share Report</h3>
+        <button class="modal-close" onclick="closeShareModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Shareable Link</label>
+          <div style="display:flex;gap:var(--space-2)">
+            <input type="text" class="form-input" id="share-link" value="https://premiumauto.autoinspect.com/report/INS-2026-0341?token=abc123xyz" readonly style="font-size:var(--text-xs)">
+            <button class="btn btn-primary btn-sm" onclick="copyShareLink()"><i class="fas fa-copy"></i></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Link Expiry</label>
+          <select class="form-select" id="share-expiry">
+            <option value="7">7 days</option>
+            <option value="30" selected>30 days</option>
+            <option value="90">90 days</option>
+            <option value="0">Never expires</option>
+          </select>
+        </div>
+        <div style="border-top:1px solid var(--color-gray-200);margin:var(--space-4) 0;padding-top:var(--space-4)">
+          <label class="form-label">Send via Email</label>
+          <div style="display:flex;gap:var(--space-2)">
+            <input type="email" class="form-input" id="share-email" placeholder="customer@email.com">
+            <button class="btn btn-primary btn-sm" onclick="sendShareEmail()"><i class="fas fa-paper-plane"></i> Send</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeShareModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const reportTopSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 480" fill="none"><style>.body-outline{fill:#f1f5f9;stroke:#94a3b8;stroke-width:2}.window{fill:#dbeafe;stroke:#94a3b8;stroke-width:1.5}.wheel{fill:#334155;stroke:#1e293b;stroke-width:1.5;rx:4}.mirror{fill:#cbd5e1;stroke:#94a3b8;stroke-width:1}.light{fill:#fef3c7;stroke:#94a3b8;stroke-width:1}.panel-line{stroke:#cbd5e1;stroke-width:.75}</style><path class="body-outline" d="M70,60 Q70,30 110,25 Q150,30 150,60 L155,80 Q160,100 160,120 L165,160 L168,200 L168,280 L168,340 L165,380 L160,400 Q158,420 155,430 L150,445 Q140,460 110,465 Q80,460 70,445 L65,430 Q62,420 60,400 L55,380 L52,340 L52,280 L52,200 L55,160 L60,120 Q60,100 65,80 Z"/><path class="window" d="M75,95 Q80,70 110,65 Q140,70 145,95 L142,120 Q110,115 78,120 Z"/><path class="window" d="M78,400 Q80,380 110,375 Q140,380 142,400 L140,420 Q110,425 80,420 Z"/><path class="window" d="M58,135 L73,120 L73,195 L58,195 Z"/><path class="window" d="M56,200 L73,200 L73,280 L54,280 Z"/><path class="window" d="M162,135 L147,120 L147,195 L162,195 Z"/><path class="window" d="M164,200 L147,200 L147,280 L166,280 Z"/><rect x="78" y="130" width="64" height="240" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1"/><line class="panel-line" x1="52" y1="195" x2="168" y2="195"/><line class="panel-line" x1="52" y1="285" x2="168" y2="285"/><ellipse class="light" cx="75" cy="45" rx="12" ry="8"/><ellipse class="light" cx="145" cy="45" rx="12" ry="8"/><ellipse cx="75" cy="450" rx="10" ry="6" fill="#fee2e2" stroke="#94a3b8" stroke-width="1"/><ellipse cx="145" cy="450" rx="10" ry="6" fill="#fee2e2" stroke="#94a3b8" stroke-width="1"/><ellipse class="mirror" cx="46" cy="130" rx="8" ry="5"/><ellipse class="mirror" cx="174" cy="130" rx="8" ry="5"/><rect class="wheel" x="38" y="148" width="16" height="38" rx="4"/><rect class="wheel" x="166" y="148" width="16" height="38" rx="4"/><rect class="wheel" x="38" y="320" width="16" height="38" rx="4"/><rect class="wheel" x="166" y="320" width="16" height="38" rx="4"/><rect x="55" y="210" width="8" height="3" rx="1.5" fill="#94a3b8"/><rect x="157" y="210" width="8" height="3" rx="1.5" fill="#94a3b8"/></svg>`;
+
+    // --- Role-based report access ---
+    const reportUser = getCurrentUser();
+    if (reportUser.role === 'inspector') {
+      // Hide internal report toggle for inspectors
+      const toggle = document.querySelector('.report-type-toggle');
+      if (toggle) toggle.style.display = 'none';
+    }
+
+    // --- Get inspection from URL param ---
+    const params = new URLSearchParams(window.location.search);
+    const inspectionId = params.get('id') || 'insp_001';
+    const inspection = getInspectionById(inspectionId);
+
+    if (!inspection) {
+      document.querySelector('.report-container').innerHTML = `
+        <div style="text-align:center;padding:var(--space-16)">
+          <i class="fas fa-exclamation-triangle" style="font-size:3rem;color:var(--color-gray-300)"></i>
+          <h3 style="margin-top:var(--space-4);color:var(--text-secondary)">Inspection Not Found</h3>
+          <p style="color:var(--text-tertiary);margin-top:var(--space-2)">The requested inspection could not be found.</p>
+          <a href="inspections.html" class="btn btn-primary" style="margin-top:var(--space-6)">Back to Inspections</a>
+        </div>`;
+    } else {
+      const vehicle = getVehicleById(inspection.vehicleId);
+      const inspector = getUserById(inspection.inspectorId);
+      const damageMarkers = getDamageMarkersForInspection(inspectionId);
+      const obdSnapshot = MOCK_DATA.obdSnapshots[inspectionId];
+      const template = MOCK_DATA.checklistTemplates.find(t => t.id === inspection.templateId);
+      const dealership = MOCK_DATA.dealership;
+      const reportNum = `INS-${new Date(inspection.startedAt).getFullYear()}-${inspection.id.split('_')[1]}`;
+
+      // --- Banner ---
+      document.getElementById('report-vehicle-title').textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim || ''}`;
+      document.getElementById('report-vin').textContent = `VIN: ${vehicle.vin}`;
+      document.getElementById('report-date').textContent = formatDate(inspection.completedAt || inspection.startedAt);
+      document.getElementById('report-inspector').textContent = inspector.name;
+      document.getElementById('report-odometer').textContent = vehicle.odometer.toLocaleString() + ' km';
+      document.getElementById('report-id').textContent = reportNum;
+      document.title = `Report — ${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+
+      // --- Score Section ---
+      const score = inspection.score;
+      const scoreOffset = score !== null ? 314 - (314 * score / 100) : 314;
+      const scoreClass = score >= 90 ? 'excellent' : score >= 75 ? 'good' : score >= 60 ? 'fair' : 'poor';
+
+      // Generate simulated per-section scores from inspection data
+      const sectionNames = template && template.sections.length > 0
+        ? template.sections.map(s => s.title)
+        : ['Exterior', 'Interior', 'Engine & Mechanical', 'Brakes & Suspension', 'Tyres & Wheels', 'Electrical Systems'];
+
+      function pseudoSectionScore(sectionIndex, baseScore) {
+        if (baseScore === null) return null;
+        const offsets = [-4, 3, 0, -7, -2, 8, -1, 5];
+        return Math.max(0, Math.min(100, baseScore + (offsets[sectionIndex % offsets.length] || 0)));
+      }
+
+      function scoreBarColor(val) {
+        if (val >= 85) return 'var(--color-success)';
+        if (val >= 70) return 'var(--color-primary)';
+        if (val >= 50) return 'var(--color-accent)';
+        return 'var(--color-danger)';
+      }
+
+      document.getElementById('score-section').innerHTML = score !== null ? `
+        <div class="score-circle">
+          <svg viewBox="0 0 120 120">
+            <circle class="score-track" cx="60" cy="60" r="50"/>
+            <circle class="score-fill ${scoreClass}" cx="60" cy="60" r="50"
+              stroke-dasharray="314" stroke-dashoffset="${scoreOffset}"/>
+          </svg>
+          <div class="score-label">
+            <span class="score-value">${score}</span>
+            <span class="score-max">/ 100</span>
+          </div>
+        </div>
+        <div class="score-breakdown">
+          <h3>Condition Summary</h3>
+          <div class="score-bars">
+            ${sectionNames.map((name, i) => {
+              const sScore = pseudoSectionScore(i, score);
+              return `<div class="score-bar">
+                <span class="bar-label">${name}</span>
+                <div class="bar-track"><div class="bar-fill" style="width:${sScore}%;background:${scoreBarColor(sScore)}"></div></div>
+                <span class="bar-value">${sScore}%</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      ` : `
+        <div style="text-align:center;padding:var(--space-8);color:var(--text-tertiary)">
+          <i class="fas fa-clock" style="font-size:2rem;margin-bottom:var(--space-3)"></i>
+          <h3>Inspection In Progress</h3>
+          <p style="font-size:var(--text-sm)">Score will be available once the inspection is completed.</p>
+        </div>
+      `;
+
+      // --- Checklist Sections ---
+      const sections = template && template.sections.length > 0 ? template.sections : [];
+      const statusIcons = {
+        pass: '<i class="fas fa-check-circle" style="color:var(--color-success)"></i>',
+        fail: '<i class="fas fa-times-circle" style="color:var(--color-danger)"></i>',
+        advisory: '<i class="fas fa-exclamation-triangle" style="color:var(--color-accent)"></i>',
+        na: '<i class="fas fa-minus-circle" style="color:var(--color-gray-400)"></i>'
+      };
+
+      // Generate simulated checklist results based on inspection pass/fail/advisory counts
+      function generateChecklistResults(templateSections, insp) {
+        const results = [];
+        let passLeft = insp.passCount;
+        let failLeft = insp.failCount;
+        let advisoryLeft = insp.advisoryCount;
+        const totalAssigned = passLeft + failLeft + advisoryLeft;
+
+        templateSections.forEach(section => {
+          const sectionResults = [];
+          section.items.forEach(item => {
+            let status;
+            if (failLeft > 0 && Math.random() < 0.15) {
+              status = 'fail'; failLeft--;
+            } else if (advisoryLeft > 0 && Math.random() < 0.2) {
+              status = 'advisory'; advisoryLeft--;
+            } else if (passLeft > 0) {
+              status = 'pass'; passLeft--;
+            } else if (failLeft > 0) {
+              status = 'fail'; failLeft--;
+            } else if (advisoryLeft > 0) {
+              status = 'advisory'; advisoryLeft--;
+            } else {
+              status = 'pass';
+            }
+            sectionResults.push({ label: item.label, status });
+          });
+          results.push({ title: section.title, icon: section.icon, items: sectionResults });
+        });
+        return results;
+      }
+
+      // Use seeded random for consistent results per inspection
+      const savedRandom = Math.random;
+      let seed = inspectionId.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+      Math.random = () => { seed = (seed * 16807 + 0) % 2147483647; return (seed - 1) / 2147483646; };
+      const checklistResults = sections.length > 0
+        ? generateChecklistResults(sections, inspection)
+        : [];
+      Math.random = savedRandom;
+
+      document.getElementById('checklist-sections').innerHTML = checklistResults.map(section => `
+        <div class="report-section">
+          <div class="report-section-header">
+            <i class="fas ${section.icon}"></i>
+            <h3>${section.title}</h3>
+          </div>
+          <div class="report-checklist">
+            ${section.items.map(item => `
+              <div class="report-checklist-item">
+                <span class="item-name">${statusIcons[item.status]} ${item.label}</span>
+                <span class="item-status ${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      // --- Damage Map ---
+      const severityColors = { minor: 'var(--color-accent)', moderate: 'var(--color-warning)', major: 'var(--color-danger)' };
+
+      document.getElementById('damage-section').innerHTML = `
+        <div class="report-section-header">
+          <i class="fas fa-map-marked-alt"></i>
+          <h3>Damage Map</h3>
+        </div>
+        ${damageMarkers.length > 0 ? `
+          <div class="report-damage-map">
+            <div class="report-damage-diagram">
+              <div style="position:relative">
+                ${reportTopSvg}
+                ${damageMarkers.map((m, i) => `<div class="damage-marker ${m.severity}" style="left:${m.x}%;top:${m.y}%;position:absolute">${i + 1}</div>`).join('')}
+              </div>
+            </div>
+            <div class="report-damage-legend">
+              <h4>Noted Damage</h4>
+              ${damageMarkers.map((m, i) => `
+                <div class="damage-legend-item">
+                  <div class="damage-legend-marker" style="background:${severityColors[m.severity]}">${i + 1}</div>
+                  <div class="damage-legend-info">
+                    <div class="legend-type">${m.type} — ${m.severity.charAt(0).toUpperCase() + m.severity.slice(1)}</div>
+                    <div class="legend-desc">${m.notes}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : `
+          <div style="text-align:center;padding:var(--space-6);color:var(--text-tertiary)">
+            <i class="fas fa-check-circle" style="font-size:2rem;color:var(--color-success);margin-bottom:var(--space-3)"></i>
+            <h4 style="color:var(--text-secondary)">No Damage Noted</h4>
+            <p style="font-size:var(--text-sm)">No exterior damage was recorded during this inspection.</p>
+          </div>
+        `}
+      `;
+
+      // --- OBD-II Section ---
+      if (obdSnapshot) {
+        const p = obdSnapshot.parameters;
+        const hasCodes = obdSnapshot.dtcCodes && obdSnapshot.dtcCodes.length > 0;
+        document.getElementById('obd-section').innerHTML = `
+          <div class="report-section-header">
+            <i class="fas fa-microchip"></i>
+            <h3>OBD-II Diagnostics</h3>
+          </div>
+          <div class="obd-params-grid">
+            <div style="padding:var(--space-4);background:var(--color-gray-50);border-radius:var(--radius-lg);text-align:center">
+              <div style="font-size:var(--text-xs);color:var(--text-tertiary);margin-bottom:var(--space-1)">Engine RPM</div>
+              <div style="font-size:var(--text-xl);font-weight:var(--font-bold)">${p.rpm}</div>
+            </div>
+            <div style="padding:var(--space-4);background:var(--color-gray-50);border-radius:var(--radius-lg);text-align:center">
+              <div style="font-size:var(--text-xs);color:var(--text-tertiary);margin-bottom:var(--space-1)">Coolant Temp</div>
+              <div style="font-size:var(--text-xl);font-weight:var(--font-bold)">${p.coolantTemp}&deg;C</div>
+            </div>
+            <div style="padding:var(--space-4);background:var(--color-gray-50);border-radius:var(--radius-lg);text-align:center">
+              <div style="font-size:var(--text-xs);color:var(--text-tertiary);margin-bottom:var(--space-1)">Battery</div>
+              <div style="font-size:var(--text-xl);font-weight:var(--font-bold)">${p.batteryVoltage}V</div>
+            </div>
+            <div style="padding:var(--space-4);background:${hasCodes ? 'var(--color-danger-light)' : 'var(--color-success-light)'};border-radius:var(--radius-lg);text-align:center">
+              <div style="font-size:var(--text-xs);color:${hasCodes ? 'var(--color-danger-dark)' : 'var(--color-success-dark)'};margin-bottom:var(--space-1)">Fault Codes</div>
+              <div style="font-size:var(--text-xl);font-weight:var(--font-bold);color:${hasCodes ? 'var(--color-danger)' : 'var(--color-success)'}">${hasCodes ? obdSnapshot.dtcCodes.length : 'None'}</div>
+            </div>
+          </div>
+          ${hasCodes ? `
+            <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+              ${obdSnapshot.dtcCodes.map(dtc => {
+                const sevColor = dtc.severity === 'critical' ? 'var(--color-danger)' : dtc.severity === 'warning' ? 'var(--color-accent)' : 'var(--color-info)';
+                const sevBg = dtc.severity === 'critical' ? 'var(--color-danger-light)' : dtc.severity === 'warning' ? 'var(--color-warning-light)' : 'var(--color-info-light)';
+                return `<div style="padding:var(--space-4);background:${sevBg};border:1px solid ${sevColor};border-radius:var(--radius-lg);display:flex;align-items:center;gap:var(--space-3)">
+                  <i class="fas fa-exclamation-triangle" style="color:${sevColor};font-size:var(--text-lg)"></i>
+                  <div>
+                    <div style="font-weight:var(--font-semibold)">${dtc.code}</div>
+                    <div style="font-size:var(--text-sm);color:var(--text-secondary)">${dtc.description}</div>
+                  </div>
+                  <span class="badge" style="margin-left:auto;background:${sevBg};color:${sevColor}">${dtc.severity}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          ` : `
+            <div style="padding:var(--space-4);background:var(--color-success-light);border:1px solid var(--color-success);border-radius:var(--radius-lg);display:flex;align-items:center;gap:var(--space-3)">
+              <i class="fas fa-check-circle" style="color:var(--color-success);font-size:var(--text-xl)"></i>
+              <div>
+                <div style="font-weight:var(--font-semibold);color:var(--color-success-dark)">No Diagnostic Trouble Codes Detected</div>
+                <div style="font-size:var(--text-sm);color:var(--color-success-dark);opacity:0.8">All onboard systems are reporting normal operation.</div>
+              </div>
+            </div>
+          `}
+        `;
+      } else {
+        document.getElementById('obd-section').innerHTML = `
+          <div class="report-section-header">
+            <i class="fas fa-microchip"></i>
+            <h3>OBD-II Diagnostics</h3>
+          </div>
+          <div style="text-align:center;padding:var(--space-6);color:var(--text-tertiary)">
+            <i class="fas fa-plug-circle-xmark" style="font-size:2rem;margin-bottom:var(--space-3)"></i>
+            <h4 style="color:var(--text-secondary)">No OBD Data Available</h4>
+            <p style="font-size:var(--text-sm)">OBD-II diagnostics were not captured for this inspection.</p>
+          </div>
+        `;
+      }
+
+      // --- Internal Notes ---
+      document.getElementById('internal-notes-body').innerHTML = `
+        <div style="margin-bottom:var(--space-4)">
+          <h4 style="font-size:var(--text-sm);color:var(--text-tertiary);margin-bottom:var(--space-2)">Inspection Summary</h4>
+          <p style="font-size:var(--text-sm)">${vehicle.year} ${vehicle.make} ${vehicle.model} — Grade: ${inspection.grade || 'Pending'}, Score: ${inspection.score !== null ? inspection.score + '%' : 'N/A'}. ${inspection.passCount} passed, ${inspection.failCount} failed, ${inspection.advisoryCount} advisory out of ${inspection.totalItems} items checked.</p>
+        </div>
+        ${damageMarkers.length > 0 ? `<div style="margin-bottom:var(--space-4)">
+          <h4 style="font-size:var(--text-sm);color:var(--text-tertiary);margin-bottom:var(--space-2)">Damage Notes</h4>
+          ${damageMarkers.map(m => `<p style="font-size:var(--text-sm)"><strong>${m.type}</strong> (${m.severity}) — ${m.notes}</p>`).join('')}
+        </div>` : ''}
+        <div>
+          <h4 style="font-size:var(--text-sm);color:var(--text-tertiary);margin-bottom:var(--space-2)">Inspector</h4>
+          <p style="font-size:var(--text-sm)">${inspector.name} (${inspector.email})</p>
+        </div>
+      `;
+
+      // --- Footer ---
+      document.getElementById('report-disclaimer').textContent = dealership.disclaimer;
+      document.getElementById('report-generated').innerHTML = `<i class="fas fa-shield-halved"></i> Generated by AutoInspect Pro &middot; Report #${reportNum} &middot; ${formatDate(inspection.completedAt || inspection.startedAt)}`;
+
+      // --- Vehicle History Link ---
+      const otherInspections = getInspectionsForVehicle(vehicle.id).filter(i => i.id !== inspectionId);
+      if (otherInspections.length > 0) {
+        const historyLink = document.createElement('div');
+        historyLink.className = 'report-section';
+        historyLink.innerHTML = `
+          <div class="report-section-header">
+            <i class="fas fa-clock-rotate-left"></i>
+            <h3>Vehicle History</h3>
+          </div>
+          <div style="padding:var(--space-4);background:var(--color-gray-50);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">This vehicle has ${otherInspections.length + 1} inspection${otherInspections.length + 1 !== 1 ? 's' : ''} on record</div>
+              <div style="font-size:var(--text-xs);color:var(--text-tertiary)">View the full inspection timeline and condition trend for this vehicle.</div>
+            </div>
+            <a href="vehicle-history.html?id=${vehicle.id}" class="btn btn-sm btn-secondary"><i class="fas fa-clock-rotate-left"></i> View Full History</a>
+          </div>
+        `;
+        document.querySelector('.report-body').appendChild(historyLink);
+      }
+
+      // --- Share link ---
+      document.getElementById('share-link').value = `https://${dealership.subdomain}.autoinspect.com/report/${reportNum}?token=abc123xyz`;
+    }
+
+    // --- UI Helpers ---
+    function switchReportType(type) {
+      const internalSections = document.getElementById('internal-sections');
+      const btnCustomer = document.getElementById('btn-customer-report');
+      const btnInternal = document.getElementById('btn-internal-report');
+      if (type === 'internal') {
+        internalSections.style.display = 'block';
+        btnInternal.style.background = 'var(--color-primary)';
+        btnInternal.style.color = 'white';
+        btnInternal.className = 'btn btn-sm';
+        btnCustomer.style.background = '';
+        btnCustomer.style.color = '';
+        btnCustomer.className = 'btn btn-sm btn-secondary';
+      } else {
+        internalSections.style.display = 'none';
+        btnCustomer.style.background = 'var(--color-primary)';
+        btnCustomer.style.color = 'white';
+        btnCustomer.className = 'btn btn-sm';
+        btnInternal.style.background = '';
+        btnInternal.style.color = '';
+        btnInternal.className = 'btn btn-sm btn-secondary';
+      }
+    }
+
+    function openShareModal() {
+      document.getElementById('share-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeShareModal() {
+      document.getElementById('share-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    function copyShareLink() {
+      const input = document.getElementById('share-link');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      showToast('success', 'Link Copied', 'Shareable link copied to clipboard');
+    }
+    function sendShareEmail() {
+      const email = document.getElementById('share-email').value;
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('error', 'Invalid Email', 'Please enter a valid email address');
+        return;
+      }
+      showToast('success', 'Email Sent', `Report link sent to ${email}`);
+      document.getElementById('share-email').value = '';
+    }
+  </script>
+</body>
+</html>

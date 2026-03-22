@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Inspection — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/inspection.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+        <div class="inspection-layout">
+          <!-- Step Navigation -->
+          <div class="inspection-nav" id="inspection-nav">
+            <div class="inspection-nav-title">Inspection Steps</div>
+            <div class="inspection-timer-display" style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);font-size:var(--text-sm);color:var(--text-tertiary)">
+              <i class="fas fa-stopwatch"></i>
+              <span id="inspection-timer">0:00</span>
+              <span id="autosave-indicator" style="margin-left:auto;font-size:var(--text-xs);color:var(--color-success)"></span>
+            </div>
+            <div class="inspection-nav-item active" data-step="vehicle-intake" onclick="goToStep('vehicle-intake', this)">
+              <div class="nav-step-icon"><i class="fas fa-car"></i></div>
+              <span class="nav-step-label">Vehicle Intake</span>
+            </div>
+            <div class="inspection-nav-item" data-step="exterior" onclick="goToStep('exterior', this)">
+              <div class="nav-step-icon">1</div>
+              <span class="nav-step-label">Exterior</span>
+              <span class="nav-step-status">0/8</span>
+            </div>
+            <div class="inspection-nav-item" data-step="interior" onclick="goToStep('interior', this)">
+              <div class="nav-step-icon">2</div>
+              <span class="nav-step-label">Interior</span>
+              <span class="nav-step-status">0/8</span>
+            </div>
+            <div class="inspection-nav-item" data-step="engine" onclick="goToStep('engine', this)">
+              <div class="nav-step-icon">3</div>
+              <span class="nav-step-label">Engine & Mechanical</span>
+              <span class="nav-step-status">0/8</span>
+            </div>
+            <div class="inspection-nav-item" data-step="brakes" onclick="goToStep('brakes', this)">
+              <div class="nav-step-icon">4</div>
+              <span class="nav-step-label">Brakes & Suspension</span>
+              <span class="nav-step-status">0/8</span>
+            </div>
+            <div class="inspection-nav-item" data-step="tyres" onclick="goToStep('tyres', this)">
+              <div class="nav-step-icon">5</div>
+              <span class="nav-step-label">Tyres & Wheels</span>
+              <span class="nav-step-status">0/8</span>
+            </div>
+            <div class="inspection-nav-item" data-step="electrical" onclick="goToStep('electrical', this)">
+              <div class="nav-step-icon">6</div>
+              <span class="nav-step-label">Electrical Systems</span>
+              <span class="nav-step-status">0/8</span>
+            </div>
+            <div class="inspection-nav-item" data-step="road_test" onclick="goToStep('road_test', this)">
+              <div class="nav-step-icon">7</div>
+              <span class="nav-step-label">Road Test</span>
+              <span class="nav-step-status">0/8</span>
+            </div>
+            <div class="inspection-nav-item" data-step="damage-map" onclick="goToStep('damage-map', this)">
+              <div class="nav-step-icon"><i class="fas fa-map-marked-alt"></i></div>
+              <span class="nav-step-label">Damage Map</span>
+            </div>
+            <div class="inspection-nav-item" data-step="summary" onclick="goToStep('summary', this)">
+              <div class="nav-step-icon"><i class="fas fa-check-circle"></i></div>
+              <span class="nav-step-label">Summary</span>
+            </div>
+          </div>
+
+          <!-- Mobile Step Bar (visible on mobile only) -->
+          <div class="mobile-step-bar" id="mobile-step-bar">
+            <div class="mobile-step-dot active" data-step="vehicle-intake" onclick="goToStep('vehicle-intake')"><i class="fas fa-car" style="font-size:0.7rem"></i></div>
+            <div class="mobile-step-dot" data-step="exterior" onclick="goToStep('exterior')">1</div>
+            <div class="mobile-step-dot" data-step="interior" onclick="goToStep('interior')">2</div>
+            <div class="mobile-step-dot" data-step="engine" onclick="goToStep('engine')">3</div>
+            <div class="mobile-step-dot" data-step="brakes" onclick="goToStep('brakes')">4</div>
+            <div class="mobile-step-dot" data-step="tyres" onclick="goToStep('tyres')">5</div>
+            <div class="mobile-step-dot" data-step="electrical" onclick="goToStep('electrical')">6</div>
+            <div class="mobile-step-dot" data-step="road_test" onclick="goToStep('road_test')">7</div>
+            <div class="mobile-step-dot" data-step="damage-map" onclick="goToStep('damage-map')"><i class="fas fa-map-marked-alt" style="font-size:0.7rem"></i></div>
+            <div class="mobile-step-dot" data-step="summary" onclick="goToStep('summary')"><i class="fas fa-check-circle" style="font-size:0.7rem"></i></div>
+          </div>
+
+          <!-- Main Content Area -->
+          <div class="inspection-main">
+            <!-- Step 0: Vehicle Intake -->
+            <div class="inspection-section active" id="step-vehicle-intake">
+              <div class="section-header">
+                <h3>Vehicle Intake</h3>
+                <p>Enter the vehicle's VIN to auto-populate details, or fill in manually.</p>
+              </div>
+
+              <!-- VIN Scanner -->
+              <div class="card mb-6">
+                <div class="card-header">
+                  <h4><i class="fas fa-barcode mr-2" style="color:var(--color-primary)"></i> VIN Lookup</h4>
+                </div>
+                <div class="card-body">
+                  <div class="vin-scanner">
+                    <input type="text" class="form-input" id="vin-input" placeholder="Enter 17-character VIN" maxlength="17" value="">
+                    <button class="btn btn-primary" onclick="decodeVIN()">
+                      <i class="fas fa-search"></i> Decode
+                    </button>
+                    <button class="btn btn-secondary" onclick="simulateScan()">
+                      <i class="fas fa-camera"></i> Scan
+                    </button>
+                  </div>
+
+                  <!-- Decoded result -->
+                  <div class="vehicle-decoded-card hidden" id="decoded-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="decoded-info">
+                      <h4 id="decoded-title">Vehicle Identified</h4>
+                      <div class="decoded-specs" id="decoded-specs"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Vehicle Details Form -->
+              <div class="card">
+                <div class="card-header">
+                  <h4><i class="fas fa-car mr-2" style="color:var(--color-primary)"></i> Vehicle Details</h4>
+                </div>
+                <div class="card-body">
+                  <div class="vehicle-details-grid">
+                    <div class="form-group">
+                      <label class="form-label">Year <span class="required">*</span></label>
+                      <input type="text" class="form-input" id="v-year" placeholder="2024">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Make <span class="required">*</span></label>
+                      <input type="text" class="form-input" id="v-make" placeholder="Toyota">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Model <span class="required">*</span></label>
+                      <input type="text" class="form-input" id="v-model" placeholder="Camry">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Trim</label>
+                      <input type="text" class="form-input" id="v-trim" placeholder="Sport">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Engine</label>
+                      <input type="text" class="form-input" id="v-engine" placeholder="2.5L I4">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Transmission</label>
+                      <select class="form-select" id="v-transmission">
+                        <option value="">Select...</option>
+                        <option>Automatic</option>
+                        <option>Manual</option>
+                        <option>CVT</option>
+                        <option>DCT</option>
+                        <option>Single Speed (EV)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Body Type</label>
+                      <select class="form-select" id="v-bodytype">
+                        <option value="">Select...</option>
+                        <option>Sedan</option>
+                        <option>SUV</option>
+                        <option>Hatchback</option>
+                        <option>Truck</option>
+                        <option>Van</option>
+                        <option>Coupe</option>
+                        <option>Convertible</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Exterior Colour</label>
+                      <input type="text" class="form-input" id="v-color" placeholder="Silver">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Drive Type</label>
+                      <select class="form-select" id="v-drive">
+                        <option value="">Select...</option>
+                        <option>FWD</option>
+                        <option>RWD</option>
+                        <option>AWD</option>
+                        <option>4WD</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="divider"></div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Odometer (km) <span class="required">*</span></label>
+                      <input type="number" class="form-input" id="v-odometer" placeholder="45,000">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Registration / Plate</label>
+                      <input type="text" class="form-input" id="v-plate" placeholder="ABC-123" style="text-transform:uppercase">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Inspection Template</label>
+                      <select class="form-select" id="v-template">
+                        <option value="tmpl_001">Standard Sedan Inspection</option>
+                        <option value="tmpl_002">SUV / Crossover Inspection</option>
+                        <option value="tmpl_003">Truck / Utility Inspection</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer" style="display:flex; justify-content:flex-end;">
+                  <button class="btn btn-primary" onclick="startInspection()">
+                    Start Inspection <i class="fas fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checklist Sections (generated by JS) -->
+            <div class="inspection-section" id="step-exterior"></div>
+            <div class="inspection-section" id="step-interior"></div>
+            <div class="inspection-section" id="step-engine"></div>
+            <div class="inspection-section" id="step-brakes"></div>
+            <div class="inspection-section" id="step-tyres"></div>
+            <div class="inspection-section" id="step-electrical"></div>
+            <div class="inspection-section" id="step-road_test"></div>
+
+            <!-- Damage Map Step -->
+            <div class="inspection-section" id="step-damage-map">
+              <div class="section-header">
+                <h3>Damage Map</h3>
+                <p>Click on the vehicle diagram to mark damage locations. Classify each by type and severity.</p>
+              </div>
+
+              <div class="damage-map-container">
+                <div class="damage-map-canvas">
+                  <div class="damage-map-tabs">
+                    <button class="damage-map-tab active" onclick="switchDiagram('top', this)">Top View</button>
+                    <button class="damage-map-tab" onclick="switchDiagram('side', this)">Side View</button>
+                  </div>
+                  <div class="vehicle-diagram" id="diagram-container" onclick="addDamageMarker(event)">
+                    <div id="diagram-top"></div>
+                    <div id="diagram-side" style="display:none"></div>
+                    <div id="damage-markers-layer"></div>
+                  </div>
+                </div>
+                <div class="damage-sidebar">
+                  <div class="damage-sidebar-header">
+                    <h4>Damage Points</h4>
+                    <p>Click on diagram to add markers</p>
+                  </div>
+                  <div class="damage-list" id="damage-list">
+                    <div class="empty-state" style="padding: var(--space-8)">
+                      <i class="fas fa-map-marker-alt" style="font-size:2rem"></i>
+                      <p style="font-size:var(--text-sm);margin-top:var(--space-2)">No damage marked yet</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="inspection-footer">
+                <button class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="btn btn-primary" onclick="nextStep()">Continue to Summary <i class="fas fa-arrow-right"></i></button>
+              </div>
+            </div>
+
+            <!-- Summary Step -->
+            <div class="inspection-section" id="step-summary">
+              <div class="section-header">
+                <h3>Inspection Summary</h3>
+                <p>Review all findings before submitting for approval.</p>
+              </div>
+
+              <div class="card mb-6">
+                <div class="card-body">
+                  <div class="summary-stats-grid">
+                    <div class="stat-card" style="border:none;padding:var(--space-4)">
+                      <div class="stat-icon green"><i class="fas fa-check"></i></div>
+                      <div class="stat-content">
+                        <div class="stat-value" id="summary-pass">0</div>
+                        <div class="stat-label">Passed</div>
+                      </div>
+                    </div>
+                    <div class="stat-card" style="border:none;padding:var(--space-4)">
+                      <div class="stat-icon red"><i class="fas fa-times"></i></div>
+                      <div class="stat-content">
+                        <div class="stat-value" id="summary-fail">0</div>
+                        <div class="stat-label">Failed</div>
+                      </div>
+                    </div>
+                    <div class="stat-card" style="border:none;padding:var(--space-4)">
+                      <div class="stat-icon amber"><i class="fas fa-exclamation-triangle"></i></div>
+                      <div class="stat-content">
+                        <div class="stat-value" id="summary-advisory">0</div>
+                        <div class="stat-label">Advisory</div>
+                      </div>
+                    </div>
+                    <div class="stat-card" style="border:none;padding:var(--space-4)">
+                      <div class="stat-icon blue"><i class="fas fa-map-marker-alt"></i></div>
+                      <div class="stat-content">
+                        <div class="stat-value" id="summary-damage">0</div>
+                        <div class="stat-label">Damage Points</div>
+                      </div>
+                    </div>
+                    <div class="stat-card" style="border:none;padding:var(--space-4)">
+                      <div class="stat-icon" style="background:var(--color-gray-100);color:var(--color-gray-500)"><i class="fas fa-minus-circle"></i></div>
+                      <div class="stat-content">
+                        <div class="stat-value" id="summary-na">0</div>
+                        <div class="stat-label">N/A</div>
+                      </div>
+                    </div>
+                    <div class="stat-card" style="border:none;padding:var(--space-4)">
+                      <div class="stat-icon green"><i class="fas fa-star"></i></div>
+                      <div class="stat-content">
+                        <div class="stat-value" id="summary-score">0</div>
+                        <div class="stat-label">Score</div>
+                      </div>
+                    </div>
+                    <div class="stat-card" style="border:none;padding:var(--space-4)">
+                      <div class="stat-icon blue"><i class="fas fa-award"></i></div>
+                      <div class="stat-content">
+                        <div class="stat-value" id="summary-grade" style="font-size:var(--text-2xl)">—</div>
+                        <div class="stat-label">Grade</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card mb-6">
+                <div class="card-header"><h4>Overall Notes</h4></div>
+                <div class="card-body">
+                  <textarea class="form-textarea" rows="4" placeholder="Add any overall notes or comments about this inspection..."></textarea>
+                </div>
+              </div>
+
+              <div class="inspection-footer">
+                <button class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <div style="display:flex;gap:var(--space-3)">
+                  <button class="btn btn-secondary" onclick="saveDraft()"><i class="fas fa-save"></i> Save Draft</button>
+                  <button class="btn btn-success" onclick="submitInspection()"><i class="fas fa-paper-plane"></i> Submit for Review</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Damage Type Modal -->
+  <div class="modal-overlay" id="damage-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Damage Point</h3>
+        <button class="modal-close" onclick="closeModal('damage-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Damage Type <span class="required">*</span></label>
+          <select class="form-select" id="dmg-type">
+            <option value="Scratch">Scratch</option>
+            <option value="Dent">Dent</option>
+            <option value="Crack">Crack</option>
+            <option value="Chip">Chip</option>
+            <option value="Rust">Rust</option>
+            <option value="Paint Defect">Paint Defect</option>
+            <option value="Missing Part">Missing Part</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Severity <span class="required">*</span></label>
+          <div style="display:flex;gap:var(--space-2)">
+            <button class="status-btn" id="sev-minor" onclick="selectSeverity('minor')" style="flex:1">Minor</button>
+            <button class="status-btn" id="sev-moderate" onclick="selectSeverity('moderate')" style="flex:1">Moderate</button>
+            <button class="status-btn" id="sev-major" onclick="selectSeverity('major')" style="flex:1">Major</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" id="dmg-notes" rows="3" placeholder="Describe the damage..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('damage-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmDamage()"><i class="fas fa-plus"></i> Add Damage</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    renderSidebar('new-inspection');
+    renderHeader('New Inspection', [
+      { label: 'Home', href: 'dashboard.html' },
+      { label: 'Inspections', href: 'inspections.html' },
+      { label: 'New Inspection' }
+    ]);
+    renderMobileNav('new-inspection');
+
+    // State
+    const template = MOCK_DATA.checklistTemplates[0];
+    const checklistState = {};
+    const damageMarkers = [];
+    let pendingDamage = { x: 0, y: 0 };
+    let selectedSeverity = 'minor';
+    let currentDiagram = 'top';
+    const steps = ['vehicle-intake', 'exterior', 'interior', 'engine', 'brakes', 'tyres', 'electrical', 'road_test', 'damage-map', 'summary'];
+    let currentStepIdx = 0;
+
+    // Inspection timer
+    let inspectionStartTime = null;
+    let timerInterval = null;
+    function startTimer() {
+      inspectionStartTime = new Date();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+    function updateTimer() {
+      if (!inspectionStartTime) return;
+      const elapsed = Math.floor((new Date() - inspectionStartTime) / 1000);
+      const mins = Math.floor(elapsed / 60);
+      const secs = elapsed % 60;
+      const timerEl = document.getElementById('inspection-timer');
+      if (timerEl) timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Initialize checklist state
+    template.sections.forEach(section => {
+      section.items.forEach(item => {
+        checklistState[`${section.key}_${item.key}`] = { status: null, notes: '' };
+      });
+    });
+
+    // Render checklist sections
+    function renderChecklistSections() {
+      template.sections.forEach(section => {
+        const container = document.getElementById(`step-${section.key}`);
+        container.innerHTML = `
+          <div class="section-header">
+            <h3>${section.title}</h3>
+            <p>Inspect each item and set the appropriate status.</p>
+          </div>
+          <div class="checklist-section">
+            <div class="checklist-section-header">
+              <h4><i class="fas ${section.icon}"></i> ${section.title}</h4>
+              <span class="section-progress" id="progress-${section.key}">0 / ${section.items.length} completed</span>
+            </div>
+            <div class="checklist-items">
+              ${section.items.map(item => renderChecklistItem(section.key, item)).join('')}
+            </div>
+          </div>
+          <div class="inspection-footer">
+            <button class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button>
+            <div style="display:flex;gap:var(--space-3);align-items:center">
+              <span style="font-size:var(--text-sm);color:var(--text-tertiary)"><i class="fas fa-save mr-2"></i>Auto-saving...</span>
+              <button class="btn btn-primary" onclick="nextStep()">Next Section <i class="fas fa-arrow-right"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderChecklistItem(sectionKey, item) {
+      const stateKey = `${sectionKey}_${item.key}`;
+      const state = checklistState[stateKey];
+      return `
+        <div class="checklist-item" id="item-${stateKey}">
+          <div class="checklist-item-header">
+            <span class="checklist-item-label">
+              ${item.label}
+              ${item.required ? '<span class="required-marker">*</span>' : ''}
+            </span>
+            <div class="checklist-item-actions">
+              <button class="status-btn ${state.status === 'pass' ? 'pass' : ''}" onclick="setStatus('${stateKey}','pass',this)">
+                <i class="fas fa-check"></i> Pass
+              </button>
+              <button class="status-btn ${state.status === 'fail' ? 'fail' : ''}" onclick="setStatus('${stateKey}','fail',this)">
+                <i class="fas fa-times"></i> Fail
+              </button>
+              ${item.type === 'pass_fail_advisory' ? `
+                <button class="status-btn ${state.status === 'advisory' ? 'advisory' : ''}" onclick="setStatus('${stateKey}','advisory',this)">
+                  <i class="fas fa-exclamation"></i> Advisory
+                </button>
+              ` : ''}
+              <button class="status-btn ${state.status === 'na' ? 'na' : ''}" onclick="setStatus('${stateKey}','na',this)">
+                N/A
+              </button>
+              <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleItemExpand('${stateKey}')" data-tooltip="Add notes/photos">
+                <i class="fas fa-chevron-down"></i>
+              </button>
+            </div>
+          </div>
+          <div class="checklist-item-expanded" id="expand-${stateKey}">
+            <textarea class="checklist-item-note" placeholder="Add notes..." oninput="checklistState['${stateKey}'].notes=this.value">${state.notes}</textarea>
+            <div class="checklist-item-photos">
+              <div class="photo-thumbnail" onclick="simulatePhotoCapture(this)">
+                <i class="fas fa-camera"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function setStatus(stateKey, status, btn) {
+      const item = document.getElementById(`item-${stateKey}`);
+      const buttons = item.querySelectorAll('.status-btn');
+
+      // Toggle off if same button clicked
+      if (checklistState[stateKey].status === status) {
+        checklistState[stateKey].status = null;
+        buttons.forEach(b => b.className = 'status-btn');
+      } else {
+        checklistState[stateKey].status = status;
+        buttons.forEach(b => b.className = 'status-btn');
+        btn.classList.add(status);
+      }
+
+      // Auto-expand notes on fail
+      if (status === 'fail') {
+        document.getElementById(`expand-${stateKey}`).classList.add('show');
+      }
+
+      updateSectionProgress();
+      AutoSave.save();
+    }
+
+    function toggleItemExpand(stateKey) {
+      document.getElementById(`expand-${stateKey}`).classList.toggle('show');
+    }
+
+    function updateSectionProgress() {
+      template.sections.forEach(section => {
+        const total = section.items.length;
+        const completed = section.items.filter(item => checklistState[`${section.key}_${item.key}`].status !== null).length;
+        const el = document.getElementById(`progress-${section.key}`);
+        if (el) el.textContent = `${completed} / ${total} completed`;
+
+        // Update desktop nav
+        const navItem = document.querySelector(`.inspection-nav-item[data-step="${section.key}"]`);
+        if (navItem) {
+          const statusEl = navItem.querySelector('.nav-step-status');
+          if (statusEl) statusEl.textContent = `${completed}/${total}`;
+          if (completed === total && total > 0) {
+            navItem.classList.add('completed');
+          } else {
+            navItem.classList.remove('completed');
+          }
+        }
+
+        // Update mobile step dot
+        const mobileDot = document.querySelector(`.mobile-step-dot[data-step="${section.key}"]`);
+        if (mobileDot) {
+          if (completed === total && total > 0) {
+            mobileDot.classList.add('completed');
+          } else {
+            mobileDot.classList.remove('completed');
+          }
+        }
+      });
+
+      // Update summary
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const result = calculateInspectionGrade(checklistState, damageMarkers, null);
+      document.getElementById('summary-pass').textContent = result.passCount;
+      document.getElementById('summary-fail').textContent = result.failCount;
+      document.getElementById('summary-advisory').textContent = result.advisoryCount;
+      document.getElementById('summary-damage').textContent = damageMarkers.length;
+
+      const naEl = document.getElementById('summary-na');
+      if (naEl) naEl.textContent = result.naCount;
+
+      // Update score and grade in summary if elements exist
+      const scoreEl = document.getElementById('summary-score');
+      const gradeEl = document.getElementById('summary-grade');
+      if (scoreEl) scoreEl.textContent = result.score;
+      if (gradeEl) {
+        gradeEl.textContent = result.grade;
+        gradeEl.style.color = getGradeColor(result.grade);
+      }
+    }
+
+    // Step Navigation
+    function goToStep(stepId, navItem) {
+      currentStepIdx = steps.indexOf(stepId);
+      document.querySelectorAll('.inspection-section').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step-${stepId}`).classList.add('active');
+
+      // Sync desktop nav
+      document.querySelectorAll('.inspection-nav-item').forEach(n => n.classList.remove('active'));
+      if (navItem) navItem.classList.add('active');
+      else {
+        const desktopNav = document.querySelector(`.inspection-nav-item[data-step="${stepId}"]`);
+        if (desktopNav) desktopNav.classList.add('active');
+      }
+
+      // Sync mobile step bar
+      document.querySelectorAll('.mobile-step-dot').forEach(d => d.classList.remove('active'));
+      const mobileDot = document.querySelector(`.mobile-step-dot[data-step="${stepId}"]`);
+      if (mobileDot) {
+        mobileDot.classList.add('active');
+        mobileDot.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextStep() {
+      if (currentStepIdx < steps.length - 1) {
+        currentStepIdx++;
+        goToStep(steps[currentStepIdx]);
+      }
+    }
+
+    function prevStep() {
+      if (currentStepIdx > 0) {
+        currentStepIdx--;
+        goToStep(steps[currentStepIdx]);
+      }
+    }
+
+    // VIN Decode
+    function decodeVIN() {
+      const vin = document.getElementById('vin-input').value.trim();
+      const validation = validateVIN(vin);
+      if (!validation.valid) {
+        showToast('error', 'Invalid VIN', validation.error);
+        document.getElementById('vin-input').classList.add('input-error');
+        return;
+      }
+      document.getElementById('vin-input').classList.remove('input-error');
+      // Simulate decode
+      const vehicle = MOCK_DATA.vehicles[0];
+      document.getElementById('v-year').value = vehicle.year;
+      document.getElementById('v-make').value = vehicle.make;
+      document.getElementById('v-model').value = vehicle.model;
+      document.getElementById('v-trim').value = vehicle.trim;
+      document.getElementById('v-engine').value = vehicle.engine;
+      document.getElementById('v-color').value = vehicle.color;
+      document.getElementById('v-odometer').value = vehicle.odometer;
+      document.getElementById('v-plate').value = vehicle.plate;
+
+      const card = document.getElementById('decoded-card');
+      card.classList.remove('hidden');
+      document.getElementById('decoded-title').textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim}`;
+      document.getElementById('decoded-specs').innerHTML = `
+        <span class="spec-tag">${vehicle.engine}</span>
+        <span class="spec-tag">${vehicle.bodyType}</span>
+        <span class="spec-tag">${vehicle.driveType}</span>
+        <span class="spec-tag">${vehicle.color}</span>
+        <span class="spec-tag">PPSR: ${vehicle.ppsr}</span>
+      `;
+      showToast('success', 'VIN Decoded', `${vehicle.year} ${vehicle.make} ${vehicle.model} identified`);
+    }
+
+    function simulateScan() {
+      document.getElementById('vin-input').value = '1HGCV1F34LA012345';
+      showToast('info', 'Barcode Scanned', 'VIN captured from barcode scanner');
+      setTimeout(decodeVIN, 500);
+    }
+
+    function startInspection() {
+      const result = validateForm([
+        { id: 'v-year', label: 'Year', required: true },
+        { id: 'v-make', label: 'Make', required: true },
+        { id: 'v-model', label: 'Model', required: true },
+        { id: 'v-odometer', label: 'Odometer', required: true }
+      ]);
+
+      if (!result.isValid) {
+        showToast('warning', 'Missing Info', 'Please fill in all required vehicle details');
+        return;
+      }
+      showToast('success', 'Inspection Started', 'Vehicle intake complete. Begin exterior inspection.');
+      startTimer();
+      nextStep();
+    }
+
+    // Damage Map
+    function loadDiagrams() {
+      const topSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 480" fill="none" id="vehicle-top-svg">
+  <style>.body-outline{fill:#f1f5f9;stroke:#94a3b8;stroke-width:2}.window{fill:#dbeafe;stroke:#94a3b8;stroke-width:1.5}.wheel{fill:#334155;stroke:#1e293b;stroke-width:1.5;rx:4}.detail{stroke:#94a3b8;stroke-width:1;fill:none}.mirror{fill:#cbd5e1;stroke:#94a3b8;stroke-width:1}.light{fill:#fef3c7;stroke:#94a3b8;stroke-width:1}.panel-line{stroke:#cbd5e1;stroke-width:.75}.clickable-zone{fill:transparent;cursor:crosshair}.clickable-zone:hover{fill:rgba(26,86,219,.08)}</style>
+  <path class="body-outline" d="M70,60 Q70,30 110,25 Q150,30 150,60 L155,80 Q160,100 160,120 L165,160 L168,200 L168,280 L168,340 L165,380 L160,400 Q158,420 155,430 L150,445 Q140,460 110,465 Q80,460 70,445 L65,430 Q62,420 60,400 L55,380 L52,340 L52,280 L52,200 L55,160 L60,120 Q60,100 65,80 Z"/>
+  <path class="window" d="M75,95 Q80,70 110,65 Q140,70 145,95 L142,120 Q110,115 78,120 Z"/>
+  <path class="window" d="M78,400 Q80,380 110,375 Q140,380 142,400 L140,420 Q110,425 80,420 Z"/>
+  <path class="window" d="M58,135 L73,120 L73,195 L58,195 Z"/>
+  <path class="window" d="M56,200 L73,200 L73,280 L54,280 Z"/>
+  <path class="window" d="M162,135 L147,120 L147,195 L162,195 Z"/>
+  <path class="window" d="M164,200 L147,200 L147,280 L166,280 Z"/>
+  <rect x="78" y="130" width="64" height="240" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+  <line class="panel-line" x1="52" y1="195" x2="168" y2="195"/>
+  <line class="panel-line" x1="52" y1="285" x2="168" y2="285"/>
+  <line class="panel-line" x1="110" y1="25" x2="110" y2="65" opacity="0.5"/>
+  <line class="panel-line" x1="110" y1="420" x2="110" y2="465" opacity="0.5"/>
+  <ellipse class="light" cx="75" cy="45" rx="12" ry="8"/>
+  <ellipse class="light" cx="145" cy="45" rx="12" ry="8"/>
+  <ellipse cx="75" cy="450" rx="10" ry="6" fill="#fee2e2" stroke="#94a3b8" stroke-width="1"/>
+  <ellipse cx="145" cy="450" rx="10" ry="6" fill="#fee2e2" stroke="#94a3b8" stroke-width="1"/>
+  <ellipse class="mirror" cx="46" cy="130" rx="8" ry="5"/>
+  <ellipse class="mirror" cx="174" cy="130" rx="8" ry="5"/>
+  <rect class="wheel" x="38" y="148" width="16" height="38" rx="4"/>
+  <rect class="wheel" x="166" y="148" width="16" height="38" rx="4"/>
+  <rect class="wheel" x="38" y="320" width="16" height="38" rx="4"/>
+  <rect class="wheel" x="166" y="320" width="16" height="38" rx="4"/>
+  <rect x="55" y="210" width="8" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="157" y="210" width="8" height="3" rx="1.5" fill="#94a3b8"/>
+  <path class="clickable-zone" data-zone="hood" d="M70,30 Q110,25 150,30 L155,80 Q160,100 160,120 L145,95 Q140,70 110,65 Q80,70 75,95 L60,120 Q60,100 65,80 Z"/>
+  <path class="clickable-zone" data-zone="front-bumper" d="M70,25 Q110,20 150,25 L70,25 Z"/>
+  <rect class="clickable-zone" data-zone="roof" x="78" y="130" width="64" height="240"/>
+  <path class="clickable-zone" data-zone="left-front-fender" d="M52,120 L73,120 L73,195 L52,195 Z"/>
+  <path class="clickable-zone" data-zone="right-front-fender" d="M147,120 L168,120 L168,195 L147,195 Z"/>
+  <path class="clickable-zone" data-zone="left-rear-quarter" d="M52,285 L73,285 L73,400 L55,380 L52,340 Z"/>
+  <path class="clickable-zone" data-zone="right-rear-quarter" d="M147,285 L168,285 L168,340 L165,380 L147,400 Z"/>
+  <path class="clickable-zone" data-zone="trunk" d="M65,400 L78,400 Q80,380 110,375 Q140,380 142,400 L155,400 L150,445 Q140,460 110,465 Q80,460 70,445 Z"/>
+  <rect class="clickable-zone" data-zone="left-front-door" x="52" y="195" width="21" height="90"/>
+  <rect class="clickable-zone" data-zone="right-front-door" x="147" y="195" width="21" height="90"/>
+</svg>`;
+
+      const sideSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 250" fill="none" id="vehicle-side-svg">
+  <style>.body-fill{fill:#f1f5f9;stroke:#94a3b8;stroke-width:2}.window-fill{fill:#dbeafe;stroke:#94a3b8;stroke-width:1.5}.wheel-outer{fill:#334155;stroke:#1e293b;stroke-width:2}.wheel-inner{fill:#64748b;stroke:#475569;stroke-width:1}.wheel-hub{fill:#94a3b8}.trim{stroke:#cbd5e1;stroke-width:1;fill:none}.light-front{fill:#fef3c7;stroke:#94a3b8;stroke-width:1.5}.light-rear{fill:#fee2e2;stroke:#94a3b8;stroke-width:1.5}.detail-line{stroke:#cbd5e1;stroke-width:.75}.bumper{fill:#e2e8f0;stroke:#94a3b8;stroke-width:1.5}.side-zone{fill:transparent;cursor:crosshair}.side-zone:hover{fill:rgba(26,86,219,.08)}</style>
+  <path class="body-fill" d="M80,170 L50,170 Q30,170 28,155 L30,140 L45,135 L80,130 L140,108 Q170,90 220,78 Q260,72 300,70 Q340,72 380,78 Q420,88 440,100 L500,120 L540,130 L560,135 L572,140 Q575,155 572,170 L550,170 Q548,170 545,168 L520,170 L475,170 Q440,170 440,170 L440,170 Q440,195 440,170 L160,170 Q160,170 160,170 L80,170 Z"/>
+  <path class="body-fill" d="M180,108 Q200,80 250,68 Q300,63 350,68 Q400,78 420,100 L430,108 Q430,108 420,108 L180,108 Z" fill="#e2e8f0"/>
+  <path class="window-fill" d="M180,108 Q200,80 250,70 L260,70 L260,108 L195,108 Z"/>
+  <path class="window-fill" d="M262,70 L340,68 L340,108 L262,108 Z"/>
+  <path class="window-fill" d="M342,68 Q390,78 410,100 L420,108 L342,108 Z"/>
+  <path class="window-fill" d="M422,108 Q430,100 440,108 L422,108 Z" opacity="0.5"/>
+  <line class="detail-line" x1="260" y1="70" x2="260" y2="170" stroke-width="1"/>
+  <line class="detail-line" x1="340" y1="68" x2="340" y2="170" stroke-width="1"/>
+  <rect x="285" y="120" width="16" height="4" rx="2" fill="#94a3b8"/>
+  <rect x="375" y="120" width="16" height="4" rx="2" fill="#94a3b8"/>
+  <path class="bumper" d="M30,140 L45,135 L80,130 L80,170 L50,170 Q30,170 28,155 L30,140 Z"/>
+  <path class="bumper" d="M540,130 L560,135 L572,140 Q575,155 572,170 L550,170 L520,170 L520,130 Z"/>
+  <path class="light-front" d="M50,135 L80,128 L80,145 L50,148 Z"/>
+  <path class="light-rear" d="M540,128 L555,133 L555,152 L540,155 Z"/>
+  <line class="trim" x1="80" y1="130" x2="520" y2="130" stroke-width="1.5"/>
+  <rect x="80" y="165" width="440" height="8" rx="2" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+  <circle class="wheel-outer" cx="155" cy="175" r="35"/>
+  <circle class="wheel-inner" cx="155" cy="175" r="25"/>
+  <circle class="wheel-hub" cx="155" cy="175" r="8"/>
+  <line x1="155" y1="152" x2="155" y2="165" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="155" y1="185" x2="155" y2="198" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="132" y1="175" x2="145" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="165" y1="175" x2="178" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="139" y1="159" x2="148" y2="168" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="162" y1="182" x2="171" y2="191" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="139" y1="191" x2="148" y2="182" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="162" y1="168" x2="171" y2="159" stroke="#94a3b8" stroke-width="2"/>
+  <circle class="wheel-outer" cx="445" cy="175" r="35"/>
+  <circle class="wheel-inner" cx="445" cy="175" r="25"/>
+  <circle class="wheel-hub" cx="445" cy="175" r="8"/>
+  <line x1="445" y1="152" x2="445" y2="165" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="445" y1="185" x2="445" y2="198" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="422" y1="175" x2="435" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="455" y1="175" x2="468" y2="175" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="429" y1="159" x2="438" y2="168" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="452" y1="182" x2="461" y2="191" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="429" y1="191" x2="438" y2="182" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="452" y1="168" x2="461" y2="159" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M115,170 Q115,140 155,140 Q195,140 195,170" fill="none" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M405,170 Q405,140 445,140 Q485,140 485,170" fill="none" stroke="#94a3b8" stroke-width="2"/>
+  <ellipse cx="170" cy="100" rx="10" ry="6" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1"/>
+  <rect class="side-zone" data-zone="front-door" x="195" y="68" width="65" height="100"/>
+  <rect class="side-zone" data-zone="rear-door" x="262" y="68" width="78" height="100"/>
+  <rect class="side-zone" data-zone="front-fender" x="80" y="100" width="115" height="70"/>
+  <rect class="side-zone" data-zone="rear-quarter" x="340" y="100" width="180" height="70"/>
+  <path class="side-zone" data-zone="hood-side" d="M80,100 L180,80 L195,68 L195,108 L80,130 Z"/>
+  <path class="side-zone" data-zone="roof-side" d="M195,68 Q250,63 350,68 L420,108 L195,108 Z"/>
+  <rect class="side-zone" data-zone="rocker" x="80" y="165" width="440" height="10"/>
+</svg>`;
+
+      document.getElementById('diagram-top').innerHTML = topSvg;
+      document.getElementById('diagram-side').innerHTML = sideSvg;
+    }
+
+    function switchDiagram(view, btn) {
+      currentDiagram = view;
+      document.querySelectorAll('.damage-map-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('diagram-top').style.display = view === 'top' ? 'block' : 'none';
+      document.getElementById('diagram-side').style.display = view === 'side' ? 'block' : 'none';
+      renderDamageMarkers();
+    }
+
+    function addDamageMarker(event) {
+      const container = document.getElementById('diagram-container');
+      const rect = container.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      pendingDamage = { x, y };
+      selectedSeverity = 'minor';
+      document.getElementById('sev-minor').className = 'status-btn advisory';
+      document.getElementById('sev-moderate').className = 'status-btn';
+      document.getElementById('sev-major').className = 'status-btn';
+      document.getElementById('dmg-type').value = 'Scratch';
+      document.getElementById('dmg-notes').value = '';
+      openModal('damage-modal');
+    }
+
+    function selectSeverity(sev) {
+      selectedSeverity = sev;
+      ['minor', 'moderate', 'major'].forEach(s => {
+        const btn = document.getElementById(`sev-${s}`);
+        btn.className = 'status-btn' + (s === sev ? (s === 'minor' ? ' advisory' : s === 'moderate' ? ' advisory' : ' fail') : '');
+      });
+    }
+
+    function confirmDamage() {
+      const marker = {
+        id: `dmg_new_${damageMarkers.length + 1}`,
+        x: pendingDamage.x,
+        y: pendingDamage.y,
+        view: currentDiagram,
+        type: document.getElementById('dmg-type').value,
+        severity: selectedSeverity,
+        notes: document.getElementById('dmg-notes').value
+      };
+      damageMarkers.push(marker);
+      renderDamageMarkers();
+      renderDamageList();
+      closeModal('damage-modal');
+      updateSummary();
+      showToast('success', 'Damage Added', `${marker.type} (${marker.severity}) marked on diagram`);
+    }
+
+    function renderDamageMarkers() {
+      const layer = document.getElementById('damage-markers-layer');
+      const viewMarkers = damageMarkers.filter(m => m.view === currentDiagram);
+      layer.innerHTML = viewMarkers.map((m, i) => `
+        <div class="damage-marker ${m.severity}" style="left:${m.x}%;top:${m.y}%" data-tooltip="${m.type}">
+          ${i + 1}
+        </div>
+      `).join('');
+    }
+
+    function renderDamageList() {
+      const list = document.getElementById('damage-list');
+      if (damageMarkers.length === 0) {
+        list.innerHTML = '<div class="empty-state" style="padding:var(--space-8)"><i class="fas fa-map-marker-alt" style="font-size:2rem"></i><p style="font-size:var(--text-sm);margin-top:var(--space-2)">No damage marked yet</p></div>';
+        return;
+      }
+      const sevColors = { minor: 'var(--color-accent)', moderate: 'var(--color-warning)', major: 'var(--color-danger)' };
+      list.innerHTML = damageMarkers.map((m, i) => `
+        <div class="damage-list-item">
+          <div class="damage-marker-small" style="background:${sevColors[m.severity]}">${i + 1}</div>
+          <div class="damage-details">
+            <div class="damage-type">${m.type}</div>
+            <div class="damage-severity">${m.severity.charAt(0).toUpperCase() + m.severity.slice(1)} &middot; ${m.view} view</div>
+            ${m.notes ? `<div style="font-size:var(--text-xs);color:var(--text-tertiary);margin-top:2px">${m.notes}</div>` : ''}
+          </div>
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="removeDamage(${i})" data-tooltip="Remove"><i class="fas fa-trash" style="color:var(--color-danger)"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function removeDamage(idx) {
+      showConfirmDialog('Remove Damage Point', 'Are you sure you want to remove this damage marker?', () => {
+        damageMarkers.splice(idx, 1);
+        renderDamageMarkers();
+        renderDamageList();
+        updateSummary();
+        showToast('info', 'Damage Removed', 'Damage point has been removed');
+      });
+    }
+
+    function simulatePhotoCapture(el) {
+      const colors = ['#dbeafe', '#d1fae5', '#fef3c7', '#fee2e2'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      const img = document.createElement('div');
+      img.style.cssText = `width:100%;height:100%;background:${randomColor};display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);color:var(--text-tertiary)`;
+      img.innerHTML = '<i class="fas fa-image"></i>';
+      el.innerHTML = '';
+      el.appendChild(img);
+      el.style.borderStyle = 'solid';
+      el.style.borderColor = 'var(--color-gray-200)';
+
+      // Add new capture button
+      const newCapture = document.createElement('div');
+      newCapture.className = 'photo-thumbnail';
+      newCapture.innerHTML = '<i class="fas fa-camera"></i>';
+      newCapture.onclick = function() { simulatePhotoCapture(this); };
+      el.parentElement.appendChild(newCapture);
+
+      showToast('success', 'Photo Captured', 'Image attached to checklist item');
+    }
+
+    function saveDraft() {
+      showToast('info', 'Draft Saved', 'Inspection has been saved as draft');
+    }
+
+    function submitInspection() {
+      // Check mandatory fields
+      const template = MOCK_DATA.checklistTemplates[0];
+      const missingRequired = [];
+      template.sections.forEach(section => {
+        section.items.forEach(item => {
+          if (item.required) {
+            const state = checklistState[`${section.key}_${item.key}`];
+            if (!state || !state.status) {
+              missingRequired.push(item.label);
+            }
+          }
+        });
+      });
+
+      if (missingRequired.length > 0) {
+        showToast('error', 'Required Items Incomplete', `${missingRequired.length} mandatory item(s) need a status before submission.`);
+        // Highlight first incomplete required item
+        return;
+      }
+
+      AutoSave.clear();
+      if (timerInterval) clearInterval(timerInterval);
+      showToast('success', 'Inspection Submitted', 'Sent to David Chen for review');
+      setTimeout(() => { window.location.href = 'inspections.html'; }, 1500);
+    }
+
+    // Initialize
+    renderChecklistSections();
+    loadDiagrams();
+    updateSummary();
+
+    // Auto-save
+    AutoSave.start(() => ({
+      checklistState,
+      damageMarkers,
+      vehicleData: {
+        vin: document.getElementById('vin-input').value,
+        year: document.getElementById('v-year').value,
+        make: document.getElementById('v-make').value,
+        model: document.getElementById('v-model').value
+      }
+    }));
+  </script>
+</body>
+</html>

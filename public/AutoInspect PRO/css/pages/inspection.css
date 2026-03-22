@@ -1,0 +1,841 @@
+/* ============================================
+   AutoInspect Pro — Inspection Pages
+   ============================================ */
+
+/* --- Inspections List Page --- */
+.inspection-status-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.status-tab {
+  padding: 0.375rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.status-tab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.status-tab.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.status-tab .count {
+  font-size: var(--text-xs);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.0625rem 0.375rem;
+  border-radius: var(--radius-full);
+}
+
+.status-tab:not(.active) .count {
+  background: var(--color-gray-100);
+  color: var(--text-tertiary);
+}
+
+/* --- New Inspection Page --- */
+.inspection-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0;
+  min-height: calc(100vh - var(--header-height) - 4rem);
+}
+
+.inspection-nav {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  position: sticky;
+  top: calc(var(--header-height) + 2rem);
+  height: fit-content;
+  max-height: calc(100vh - var(--header-height) - 4rem);
+  overflow-y: auto;
+}
+
+.inspection-nav-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.inspection-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: 2px;
+}
+
+.inspection-nav-item:hover {
+  background: var(--color-gray-50);
+  color: var(--text-primary);
+}
+
+.inspection-nav-item.active {
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  font-weight: var(--font-medium);
+}
+
+.inspection-nav-item.completed {
+  color: var(--color-success);
+}
+
+.inspection-nav-item .nav-step-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.inspection-nav-item.active .nav-step-icon {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+}
+
+.inspection-nav-item.completed .nav-step-icon {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: white;
+}
+
+.inspection-nav-item .nav-step-label {
+  flex: 1;
+}
+
+.inspection-nav-item .nav-step-status {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.inspection-main {
+  padding-left: var(--space-6);
+  min-width: 0;
+}
+
+/* --- Inspection Sections --- */
+.inspection-section {
+  display: none;
+}
+
+.inspection-section.active {
+  display: block;
+}
+
+.section-header {
+  margin-bottom: var(--space-6);
+}
+
+.section-header h3 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-2);
+}
+
+.section-header p {
+  font-size: var(--text-sm);
+}
+
+/* --- Vehicle Intake Form --- */
+.vin-scanner {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.vin-scanner .form-input {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.vehicle-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.vehicle-decoded-card {
+  background: var(--color-success-light);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.vehicle-decoded-card.hidden {
+  display: none;
+}
+
+.vehicle-decoded-card i {
+  color: var(--color-success);
+  font-size: var(--text-xl);
+  margin-top: 2px;
+}
+
+.vehicle-decoded-card .decoded-info h4 {
+  color: var(--color-success-dark);
+  margin-bottom: var(--space-2);
+}
+
+.vehicle-decoded-card .decoded-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.vehicle-decoded-card .decoded-specs .spec-tag {
+  background: white;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-success-dark);
+}
+
+/* --- Checklist Items --- */
+.checklist-section {
+  margin-bottom: var(--space-8);
+}
+
+.checklist-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.checklist-section-header h4 {
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.checklist-section-header h4 i {
+  color: var(--color-primary);
+}
+
+.checklist-section-header .section-progress {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.checklist-items {
+  border: 1px solid var(--color-gray-200);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.checklist-item {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-gray-100);
+  transition: background var(--transition-fast);
+}
+
+.checklist-item:last-child {
+  border-bottom: none;
+}
+
+.checklist-item:hover {
+  background: var(--color-gray-50);
+}
+
+.checklist-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.checklist-item-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.checklist-item-label .required-marker {
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+}
+
+.checklist-item-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.status-btn {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  border: 2px solid var(--color-gray-300);
+  background: white;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.status-btn:hover {
+  border-color: var(--color-gray-400);
+  color: var(--text-secondary);
+}
+
+.status-btn.pass {
+  border-color: var(--color-success);
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.status-btn.fail {
+  border-color: var(--color-danger);
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+}
+
+.status-btn.advisory {
+  border-color: var(--color-accent);
+  background: var(--color-accent-lighter);
+  color: var(--color-accent-dark);
+}
+
+.status-btn.na {
+  border-color: var(--color-gray-400);
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+}
+
+.checklist-item-expanded {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-gray-100);
+  display: none;
+}
+
+.checklist-item-expanded.show {
+  display: block;
+}
+
+.checklist-item-note {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  resize: vertical;
+  min-height: 60px;
+}
+
+.checklist-item-photos {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.photo-thumbnail {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px dashed var(--color-gray-300);
+  transition: all var(--transition-fast);
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-thumbnail:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+}
+
+.photo-thumbnail i {
+  color: var(--color-gray-400);
+  font-size: var(--text-lg);
+}
+
+.photo-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-thumbnail .photo-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-danger);
+  color: white;
+  font-size: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.photo-thumbnail:hover .photo-remove {
+  opacity: 1;
+}
+
+/* --- Damage Map --- */
+.damage-map-container {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.damage-map-canvas {
+  flex: 1;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.damage-map-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.damage-map-tab {
+  padding: 0.375rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  background: var(--color-gray-100);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.damage-map-tab.active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.vehicle-diagram {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.vehicle-diagram svg {
+  width: 100%;
+  height: auto;
+}
+
+.damage-marker {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: var(--font-bold);
+  color: white;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: transform var(--transition-fast);
+  z-index: 10;
+  border: 2px solid white;
+  box-shadow: var(--shadow-md);
+}
+
+.damage-marker:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  z-index: 11;
+}
+
+.damage-marker.minor {
+  background: var(--color-accent);
+}
+
+.damage-marker.moderate {
+  background: var(--color-warning);
+}
+
+.damage-marker.major {
+  background: var(--color-danger);
+}
+
+.damage-sidebar {
+  width: 320px;
+  border-left: 1px solid var(--color-gray-200);
+  display: flex;
+  flex-direction: column;
+}
+
+.damage-sidebar-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.damage-sidebar-header h4 {
+  font-size: var(--text-md);
+  margin-bottom: var(--space-1);
+}
+
+.damage-sidebar-header p {
+  font-size: var(--text-xs);
+}
+
+.damage-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3);
+}
+
+.damage-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-2);
+  transition: border-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.damage-list-item:hover {
+  border-color: var(--color-primary);
+}
+
+.damage-list-item .damage-marker-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: white;
+  flex-shrink: 0;
+}
+
+.damage-list-item .damage-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.damage-list-item .damage-type {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.damage-list-item .damage-severity {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.damage-add-form {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+}
+
+/* --- Summary Stats Grid --- */
+.summary-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+/* --- Inspection Footer --- */
+.inspection-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) 0;
+  margin-top: var(--space-8);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.inspection-footer .progress-info {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.inspection-footer .footer-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* --- Mobile Step Indicator Bar (hidden on desktop) --- */
+.mobile-step-bar {
+  display: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .inspection-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .inspection-nav {
+    position: static;
+    margin-bottom: var(--space-4);
+  }
+
+  .inspection-main {
+    padding-left: 0;
+  }
+
+  .vehicle-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  /* --- Step nav: convert to horizontal scrollable strip --- */
+  .inspection-nav {
+    display: none;
+  }
+
+  .mobile-step-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-card);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-3);
+    margin-bottom: var(--space-4);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mobile-step-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-step-dot {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: var(--font-bold);
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: white;
+  }
+
+  .mobile-step-dot.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .mobile-step-dot.completed {
+    border-color: var(--color-success);
+    background: var(--color-success);
+    color: white;
+  }
+
+  .mobile-step-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5625rem;
+    white-space: nowrap;
+    color: var(--text-tertiary);
+    pointer-events: none;
+  }
+
+  .mobile-step-dot.active .mobile-step-label {
+    color: var(--color-primary);
+    font-weight: var(--font-semibold);
+  }
+
+  /* --- VIN scanner: stack on mobile --- */
+  .vin-scanner {
+    flex-direction: column;
+  }
+
+  .vin-scanner .btn {
+    width: 100%;
+  }
+
+  /* --- Vehicle form grid --- */
+  .vehicle-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* --- Checklist items: stack label above actions --- */
+  .checklist-item {
+    padding: var(--space-3);
+  }
+
+  .checklist-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .checklist-item-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: var(--space-2);
+  }
+
+  /* When advisory button exists, use 5-col grid */
+  .checklist-item-actions:has(.status-btn:nth-child(4)) {
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  }
+
+  .checklist-item-actions .status-btn {
+    padding: 0.5rem 0.25rem;
+    min-height: 40px;
+    font-size: var(--text-xs);
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  /* --- Damage map --- */
+  .damage-map-container {
+    flex-direction: column;
+  }
+
+  .damage-sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--color-gray-200);
+  }
+
+  .damage-map-canvas {
+    padding: var(--space-4);
+  }
+
+  /* --- Sticky bottom navigation bar --- */
+  .inspection-footer {
+    position: fixed;
+    bottom: 72px;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--color-gray-200);
+    padding: var(--space-3) var(--space-4);
+    margin-top: 0;
+    z-index: var(--z-sticky);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+    flex-direction: row;
+    gap: var(--space-3);
+  }
+
+  .inspection-footer .btn {
+    flex: 1;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .inspection-footer > div {
+    display: flex;
+    gap: var(--space-2);
+    flex: 1;
+  }
+
+  .inspection-footer > div .btn {
+    flex: 1;
+  }
+
+  /* Auto-saving text hidden on mobile footer */
+  .inspection-footer span[style*="Auto-saving"] {
+    display: none;
+  }
+
+  /* Extra bottom padding on main so content isn't hidden behind sticky footer */
+  .inspection-main {
+    padding-bottom: 80px;
+  }
+
+  /* --- Summary stats: 2 columns on mobile --- */
+  .summary-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .inspection-section .stat-card {
+    padding: var(--space-3) !important;
+  }
+
+  /* --- Section header tighter on mobile --- */
+  .section-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .section-header h3 {
+    font-size: var(--text-lg);
+  }
+}

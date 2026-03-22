@@ -1,0 +1,239 @@
+/* ============================================
+   AutoInspect Pro — Analytics Page
+   ============================================ */
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+}
+
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.chart-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.chart-header h4 {
+  font-size: var(--text-md);
+  font-weight: var(--font-semibold);
+}
+
+.chart-header .chart-period {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.chart-header .chart-period button {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.chart-header .chart-period button:hover {
+  background: var(--color-gray-100);
+}
+
+.chart-header .chart-period button.active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.chart-body {
+  padding: var(--space-6);
+}
+
+.chart-container {
+  position: relative;
+  height: 280px;
+}
+
+.chart-container.short {
+  height: 200px;
+}
+
+/* --- Metric Cards Row --- */
+.metric-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+}
+
+.metric-card .metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.metric-card .metric-header i {
+  color: var(--color-gray-400);
+}
+
+.metric-card .metric-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.metric-card .metric-label {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.metric-card .metric-change {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  margin-top: var(--space-2);
+}
+
+.metric-card .metric-change.positive { color: var(--color-success); }
+.metric-card .metric-change.negative { color: var(--color-danger); }
+
+/* --- Defect Table --- */
+.defect-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.defect-row:last-child {
+  border-bottom: none;
+}
+
+.defect-rank {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.defect-info {
+  flex: 1;
+}
+
+.defect-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.defect-category {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.defect-count {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.defect-bar {
+  width: 80px;
+  height: 6px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.defect-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+}
+
+/* --- Inspector Leaderboard --- */
+.inspector-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.inspector-row:last-child {
+  border-bottom: none;
+}
+
+.inspector-row .inspector-stats {
+  display: flex;
+  gap: var(--space-4);
+  margin-left: auto;
+}
+
+.inspector-row .inspector-stat {
+  text-align: center;
+}
+
+.inspector-row .inspector-stat .stat-num {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.inspector-row .inspector-stat .stat-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 1024px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .metric-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .metric-cards {
+    grid-template-columns: 1fr;
+  }
+}

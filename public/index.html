@@ -1,810 +1,601 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en">
+<html lang="en">
 <head>
-
-    <!--- basic page needs
-    ================================================== -->
     <meta charset="utf-8">
-    <title>Mohamad Al Kayal</title>
-    <meta name="description" content="Mohamad Al Kayal's portfolio">
+    <title>Mohamad Al Kayal — Front-End Developer</title>
+    <meta name="description" content="Front-End Developer specializing in Angular, TypeScript, and modern web technologies. Building enterprise-grade digital experiences across 4 countries.">
     <meta name="author" content="Mohamad Al Kayal">
+    <meta name="robots" content="index, follow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robot" content="index, follow">
-    <meta name="keywords" content="Mohamad Al Kayal, mkayal, kayal,mohamad kial, mohamal alkayal, mohammed al kayal, portfolio, web developer, full stack developer, front end developer, back end developer, software engineer, software development, web design, web development, web application development, web application design, web application engineer, web application engineer
-    , web application, web application development, web application design, web application engineer, web application engineer, web application development, web application design, web application engineer, web application engineer, web application development, web application design, web application engineer, web application engineer">
+    <meta name="theme-color" content="#0c0c0e">
 
-    <!-- mobile specific metas
-    ================================================== -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Mohamad Al Kayal — Front-End Developer">
+    <meta property="og:description" content="Front-End Developer specializing in Angular and modern web technologies.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://moekayal.me">
 
-    <!-- CSS
-    ================================================== -->
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/vendor.css">
-    <link rel="stylesheet" href="css/main.css">
-
-    <!-- script
-    ================================================== -->
-    <script src="js/modernizr.js"></script>
-    <script src="js/pace.min.js"></script>
-
-    <!-- favicons
-    ================================================== -->
+    <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png">
     <link rel="manifest" href="site.webmanifest">
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Mohamad Al Kayal",
+        "url": "https://moekayal.me",
+        "jobTitle": "Front-End Developer",
+        "worksFor": { "@type": "Organization", "name": "A&G Insurance Australia" },
+        "sameAs": [
+            "https://github.com/mohamad-kayal",
+            "https://www.linkedin.com/in/moekayal/",
+            "https://twitter.com/MohamadAlkayal"
+        ]
+    }
+    </script>
 </head>
 
-<body id="top">
+<body>
 
-    <div id="preloader">
-        <div id="loader"></div>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader__content">
+            <div class="preloader__text" id="preloader-text">MK</div>
+            <div class="preloader__bar">
+                <div class="preloader__bar-inner" id="preloader-bar"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- site header
-    ================================================== -->
-    <header class="s-header">
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor">
+        <div class="cursor__dot"></div>
+        <div class="cursor__circle"></div>
+    </div>
 
-        <div class="header-logo">
-            <a class="site-logo" href="index.html">
-                <img src="images/logo.svg" alt="Homepage">
+    <!-- Navigation -->
+    <header class="nav" id="nav">
+        <a href="#hero" class="nav__logo magnetic">MK</a>
+
+        <nav class="nav__links">
+            <a href="#about" class="nav__link">About</a>
+            <a href="#experience" class="nav__link">Experience</a>
+            <a href="#portfolio" class="nav__link">Work</a>
+            <a href="#contact" class="nav__link">Contact</a>
+        </nav>
+
+        <div class="nav__socials">
+            <a href="https://github.com/mohamad-kayal" target="_blank" rel="noopener" aria-label="GitHub" class="magnetic">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/moekayal/" target="_blank" rel="noopener" aria-label="LinkedIn" class="magnetic">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="https://twitter.com/MohamadAlkayal" target="_blank" rel="noopener" aria-label="X / Twitter" class="magnetic">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
         </div>
 
-        <nav class="header-nav-wrap">
-            <ul class="header-main-nav">
-                <li class="current"><a class="smoothscroll" href="#intro" title="intro">Intro</a></li>
-                <li><a class="smoothscroll" href="#about" title="about">About</a></li>
-                <!-- <li><a class="smoothscroll" href="#services" title="services">Services</a></li> -->
-                <li><a class="smoothscroll" href="#works" title="works">Works</a></li>
-                <li><a class="smoothscroll" href="#contact" title="contact us">Say Hello</a></li>	
-            </ul>
+        <button class="nav__toggle" id="nav-toggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+        </button>
+    </header>
 
-            <ul class="header-social">
-                <li><a href="https://github.com/mohamad-kayal" target="_blank"><i class="fab fa-github" aria-hidden="true"></i></a></li>
-                <li><a href="https://www.linkedin.com/in/moekayal/" target="_blank"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
-                <li><a href="https://twitter.com/MohamadAlkayal" target="_blank"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
-            </ul>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <nav class="mobile-menu__nav">
+            <a href="#about" class="mobile-menu__link">About</a>
+            <a href="#experience" class="mobile-menu__link">Experience</a>
+            <a href="#portfolio" class="mobile-menu__link">Work</a>
+            <a href="#contact" class="mobile-menu__link">Contact</a>
         </nav>
+        <div class="mobile-menu__socials">
+            <a href="https://github.com/mohamad-kayal" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://www.linkedin.com/in/moekayal/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://twitter.com/MohamadAlkayal" target="_blank" rel="noopener">X / Twitter</a>
+        </div>
+    </div>
 
-        <a class="header-menu-toggle" href="#"><span>Menu</span></a>
 
-    </header> <!-- end s-header -->
+    <!-- ================================================== -->
+    <!-- HERO -->
+    <!-- ================================================== -->
+    <section class="hero" id="hero">
+        <div class="hero__bg">
+            <div class="hero__orb hero__orb--1"></div>
+            <div class="hero__orb hero__orb--2"></div>
+            <div class="hero__noise"></div>
+        </div>
 
-
-    <!-- intro
-    ================================================== -->
-    <section id="intro" class="s-intro target-section">
-
-        <div class="row intro-content">
-
-            <div class="column large-9 mob-full intro-text">
-                <h3>Hello, I'm Mohamad AlKayal</h3>
-                <h1>
-                    Technology Enthusiast <br>
-                    and a Front-End Web Developer <br>
+        <div class="container hero__container">
+            <div class="hero__left">
+                <div class="hero__badge">
+                    <span class="hero__badge-dot"></span>
+                    Available for opportunities
+                </div>
+                <h1 class="hero__title">
+                    <span class="hero__title-line">Mohamad</span>
+                    <span class="hero__title-line">Al Kayal<span class="hero__title-accent">.</span></span>
                 </h1>
-                <a href="https://drive.google.com/drive/folders/1WW0RjBLE271VWiT4YDoXlK4JuwyixXLV?usp=sharing" class="btn btn-primary" target="_blank" style="margin-top: 20px; background-color: #4127fb; color: #fff; border-radius: 10px;">
-                    Download My Resume
-                </a>
-            </div>
-
-            <div class="intro-scroll">
-                <a href="#about" class="intro-scroll-link smoothscroll">
-                    Scroll For More
-                </a>
-            </div>
-
-            <div class="intro-grid"></div>
-            <div class="intro-pic">
-                <img src="images/blogging.svg" alt="">
-            </div>
-
-        </div> <!-- end row -->
-
-    </section> <!-- end intro -->
-
-
-    <!-- about
-    ================================================== -->
-    <section id="about" class="s-about target-section">
-
-        <div class="about-me">
-    
-            <div class="row heading-block" data-aos="fade-up">
-                <div class="column large-full">
-                    <h2 class="section-heading">About Me</h2>
+                <p class="hero__desc">Front-end developer crafting polished, high-performance interfaces for enterprise and luxury brands &mdash; from insurance platforms in Australia to e-commerce across the Middle East and Europe.</p>
+                <div class="hero__subtitle">
+                    <span class="hero__subtitle-rotate" id="rotating-text"></span>
+                    <span class="hero__cursor">|</span>
+                </div>
+                <div class="hero__ctas">
+                    <a href="https://drive.google.com/drive/folders/1WW0RjBLE271VWiT4YDoXlK4JuwyixXLV?usp=sharing" class="btn btn--primary magnetic" target="_blank" rel="noopener">
+                        <span>Resume</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    </a>
+                    <a href="#portfolio" class="btn btn--ghost magnetic">
+                        <span>Selected Work</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                    </a>
                 </div>
             </div>
-    
-            <div class="row about-me__content" data-aos="fade-up">
-                <div class="column large-full about-me__text">
-                    <p class="lead">
-                        Front-End Developer specializing in Angular and modern web technologies.
-                    </p>
-    
-                    <p>
-                        Currently working at A&G Insurance Australia, where I focus on enhancing policy management systems and improving sales applications through innovative front-end solutions.
-                    </p>
-    
-                    <p>
-                        With experience across multiple industries and technologies, I've developed expertise in creating efficient, user-friendly web applications and e-commerce platforms.
-                    </p>
-    
-                    <p>
-                        My technical stack includes Angular, TypeScript, NGRX, RxJs for front-end development, along with experience in Shopify, Odoo ERP systems, and various e-commerce platforms.
-                    </p>
-
-                    <p>
-                        I'm passionate about continuous improvement and excel in agile environments, with strong experience in CI/CD pipelines and modern development practices.
-                    </p>
-                </div>
-            </div>
-    
-        </div> <!-- end about-me -->
-    
-        <div class="about-experience">
-    
-            <div class="row heading-block" data-aos="fade-up">
-                <div class="column large-full">
-                    <h2 class="section-heading">Work & Education</h2>
-                </div>
-            </div>
-    
-            <div class="row about-experience__timeline">
-    
-                <div class="column large-half tab-full" data-aos="fade-up">
-                    <div class="timeline">
-    
-                        <div class="timeline__icon-wrap">
-                            <span class="timeline__icon timeline__icon--work"></span>
-                        </div>
-    
-                        <div class="timeline__block">
-                            <div class="timeline__bullet"></div>
-                            <div class="timeline__header">
-                                <p class="timeline__timeframe">May 2023 - Present</p>
-                                <p class="timeline__timeframe">Brisbane, Australia</p>
-                                <h3 class="item-title">A&G Insurance Australia</h3>
-                                <h5>Front-end Developer</h5>
-                            </div>
-                            <div class="timeline__desc">
-                                <p>
-                                    ● Enhanced policy management, sales process, website performance, and UI improvement for sales & support applications with ING, Virgin, Coles, and Ozicare partnerships.<br>
-                                    ● Excelled in CI/CD pipelines, deployment processes, and collaborated in large-scale deployment teams using Agile methodology.<br>
-                                    ● Developed Angular apps using NGRX and RxJs to boost operational efficiency through innovative technology solutions.
-                                </p>
-                            </div>
-                        </div>
-    
-                        <div class="timeline__block">
-                            <div class="timeline__bullet"></div>
-                            <div class="timeline__header">
-                                <p class="timeline__timeframe">March 2022 - April 2023 · 1 yr 2 mos</p>
-                                <p class="timeline__timeframe">Istanbul, Turkey </p>
-                                <h3 class="item-title">Invelops Engineering</h3>
-                                <h5>Integration Engineer</h5>
-                            </div>
-                            <div class="timeline__desc">
-                                <p>
-                                    ● Spearheaded the integration of Odoo ERP into a new organisational environment, managing the entire process from inception to completion.<br>
-                                    ● Led the team through challenges and complexities, ensuring smooth implementation.<br>
-                                    ● Developed custom Odoo modules and integration strategies tailored to company's needs.<br>
-                                    ● Streamlined operations and enhanced business processes through innovative Odoo solutions.
-                                </p>
-                            </div>
-                        </div>
-    
-                        <div class="timeline__block">
-                            <div class="timeline__bullet"></div>
-                            <div class="timeline__header">
-                                <p class="timeline__timeframe">July 2021 - August 2022 · 1 yr 2 mos</p>
-                                <p class="timeline__timeframe">Istanbul, Turkey </p>
-                                <h3 class="item-title">MAA-ALTHAHAB</h3>
-                                <h5>Full-Stack Developer</h5>
-                            </div>
-                            <div class="timeline__desc">
-                                <p>
-                                    ● Developed and maintained multiple Shopify websites, streamlining Front-end and Back-end functionalities.<br>
-                                    ● Innovated new features for the company’s e-commerce websites on Shopify, improving user interface and experience.<br>
-                                    ● Collaborated with graphic designers and other developers to ensure responsiveness, maintaining code quality and optimising web applications.<br>
-                                    ● Supporting existing ERP and other management platforms the company is using, such as maintaining Odoo servers and giving hands-on support and suggestions for team members.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="timeline__block">
-                            <div class="timeline__bullet"></div>
-                            <div class="timeline__header">
-                                <p class="timeline__timeframe">Dec 2019 - May 2021 · 1 yr 6 mos</p>
-                                <p class="timeline__timeframe">Abu Dhabi, UAE </p>
-                                <h3 class="item-title">Obaidli & Zarooni Lawyers LLC</h3>
-                                <h5>IT Support specialist</h5>
-                            </div>
-                            <div class="timeline__desc">
-                                <p>
-                                    ● Provided expert-level technical support, resolving hardware and software issues promptly.<br>
-                                    ● Initiated and supported the rollout of new applications to enhance organizational technology use.<br>
-                                    ● Collaborated with cross-functional teams to optimize IT systems for efficiency and productivity.
-                                </p>
-                            </div>
-                        </div>
-    
+            <div class="hero__right">
+                <div class="hero__stats-grid">
+                    <div class="hero__stat">
+                        <span class="hero__stat-number" data-target="6">0</span><span class="hero__stat-suffix">+</span>
+                        <span class="hero__stat-label">Years of<br>Experience</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-number" data-target="11">0</span><span class="hero__stat-suffix">+</span>
+                        <span class="hero__stat-label">Projects<br>Delivered</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-number" data-target="4">0</span>
+                        <span class="hero__stat-label">Countries<br>Worked In</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-number" data-target="5">0</span><span class="hero__stat-suffix">+</span>
+                        <span class="hero__stat-label">Enterprise<br>Clients</span>
                     </div>
                 </div>
-    
-                <div class="column large-half tab-full" data-aos="fade-up">
-                    <div class="timeline">
-    
-                        <div class="timeline__icon-wrap">
-                            <span class="timeline__icon timeline__icon--education"></span>
-                        </div>
-    
-                        <div class="timeline__block">
-                            <div class="timeline__bullet"></div>
-                            <div class="timeline__header">
-                                <p class="timeline__timeframe">September 2016 - May 2019</p>
-                                <h3 class="item-title">Lebanese International University</h3>
-                                <h5>Bachelor Degree</h5>
-                            </div>
-                            <div class="timeline__desc">
-                                <p>Bachelor of science in Computer Science</p>
-                            </div>
-                        </div>
-    
-                        <div class="timeline__block">
-                            <div class="timeline__bullet"></div>
-                            <div class="timeline__header">
-                                <p class="timeline__timeframe">May 2019</p>
-                                <h3 class="item-title">Cisco Networking Academy</h3>
-                                <h5>CCNA Certified</h5>
-                            </div>
-                            <div class="timeline__desc">
-                                <p>Introduction to networks, Switching and routing, Scaling networks, IT Essentials</p>
-                            </div>
-                        </div>
-    
-                    </div>
-                </div>
-            </div>
-    
-        </div> <!-- end about-experience -->
-    
-    </section> <!-- end s-about -->
-
-    <!-- services
-    <section id="services" class="s-services ss-dark target-section">
-
-        <div class="shadow-overlay"></div>
-
-        <div class="row heading-block heading-block--center" data-aos="fade-up">
-            <div class="column large-full">
-                <h2 class="section-heading section-heading--centerbottom">Capabilities</h2>
-
-                <p class="section-desc">
-                     My passion and goal is to help you make your business standout.
-                </p>
-            </div>
-        </div> 
-    
-        <div class="row services-list block-large-1-3 block-medium-1-2 block-tab-full">
-
-            <div class="column item-service" data-aos="fade-up">
-                <div class="item-service__content">
-                    <h4 class="item-title">Web App Development</h4>
-                    <p>
-                    Sit ut cum molestiae. Dolore ducimus qui quasi. Fugiat consequatur sit vel illum vel et 
-                    a delectus. Vel sequi vitae voluptatem perspiciatis eligendi. Voluptatibus optio natus 
-                    asperiores est commodi amet quia architecto. Dolores necessitatibus et. 
-                    </p>
-                </div>
-            </div>
-
-            
-            <div class="column item-service" data-aos="fade-up">
-                <div class="item-service__content">
-                    <h4 class="item-title">Web Design</h4>
-                    <p>
-                     Sit ut cum molestiae. Dolore ducimus qui quasi. Fugiat consequatur sit vel illum vel et 
-                    a delectus. Vel sequi vitae voluptatem perspiciatis eligendi. Voluptatibus optio natus 
-                    asperiores est commodi amet quia architecto. Dolores necessitatibus et.
-                    </p>
-                </div>
-            </div>
-
-            <div class="column item-service" data-aos="fade-up">
-                <div class="item-service__content">
-                    <h4 class="item-title">Product Strategy</h4>
-                    <p>
-                     Sit ut cum molestiae. Dolore ducimus qui quasi. Fugiat consequatur sit vel illum vel et 
-                    a delectus. Vel sequi vitae voluptatem perspiciatis eligendi. Voluptatibus optio natus 
-                    asperiores est commodi amet quia architecto. Dolores necessitatibus et.
-                    </p>
-                </div>
-            </div>
-
-            <div class="column item-service" data-aos="fade-up">
-                <div class="item-service__content">
-                    <h4 class="item-title">UI/UX Design</h4>
-                    <p>
-                     Sit ut cum molestiae. Dolore ducimus qui quasi. Fugiat consequatur sit vel illum vel et 
-                    a delectus. Vel sequi vitae voluptatem perspiciatis eligendi. Voluptatibus optio natus 
-                    asperiores est commodi amet quia architecto. Dolores necessitatibus et.
-                    </p>
-                </div>
-            </div>
-
-            <div class="column item-service" data-aos="fade-up">
-                <div class="item-service__content">
-                    <h4 class="item-title">Mobile Design</h4>
-                    <p>
-                     Sit ut cum molestiae. Dolore ducimus qui quasi. Fugiat consequatur sit vel illum vel et 
-                    a delectus. Vel sequi vitae voluptatem perspiciatis eligendi. Voluptatibus optio natus 
-                    asperiores est commodi amet quia architecto. Dolores necessitatibus et. 
-                    </p>
-                </div>
-            </div>
-
-            <div class="column item-service" data-aos="fade-up">
-                <div class="item-service__content">
-                    <h4 class="item-title">Mobile Development (Using PWA)</h4>
-                    <p>
-                     Sit ut cum molestiae. Dolore ducimus qui quasi. Fugiat consequatur sit vel illum vel et 
-                    a delectus. Vel sequi vitae voluptatem perspiciatis eligendi. Voluptatibus optio natus 
-                    asperiores est commodi amet quia architecto. Dolores necessitatibus et.
-                    </p>
-                </div>
-            </div>
-
-
-        </div> 
-
-    </section> end s-services
--->
-
-    <!-- works
-    ================================================== -->
-    <section id="works" class="s-works target-section">
-
-        <div class="row heading-block heading-block--center" data-aos="fade-up">
-            <div class="column large-full">
-                <h2 class="section-heading section-heading--centerbottom">Selected Works</h2>
-                <p class="section-desc">
-           Here are some of my selected works I have collaborated and helped with lately. Feel free to check them out.
-                </p>
-            </div>
-        </div> <!-- end heading-block -->
-
-        <div class="masonry-wrap">
-
-            <div class="masonry">
-                <div class="grid-sizer"></div>
-    
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/budget-direct-logo.svg" class="thumb-link" title="Budget Direct" data-size="1050x700">
-                                <img src="images/portfolio/gallery/budget-direct-logo.svg" 
-                                     srcset="images/portfolio/gallery/budget-direct-logo.svg 1x" alt="">
-                            </a>    
-                            <a href="https://www.budgetdirect.com.au" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-    
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Budget Direct
-                            </h4>
-                            <p class="item-folio__cat">
-                                Budget Direct sales apps development and optimisation
-                            </p>
-                        </div>
-    
-                        <div class="item-folio__caption">
-                            <p>Budget Direct sales apps development and optimisation (Car, Home).</p>
-                        </div>
-                    </div>
-                </div> 
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/maison-matine.png" class="thumb-link" title="Maison Matine Fragrances" data-size="1050x700">
-                                <img src="images/portfolio/gallery/maison-matine.png" 
-                                     srcset="images/portfolio/gallery/maison-matine.png 0.5x" alt="">
-                            </a>    
-                            <a href="https://maisonmatine.com" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-    
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Maison Matine
-                            </h4>
-                            <p class="item-folio__cat">
-                                E-commerce Website Development
-                            </p>
-                        </div>
-    
-                        <div class="item-folio__caption">
-                            <p>Maison Matine Website Development.</p>
-                        </div>
-                    </div>
-                </div> 
-    
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/mat-tr.png" class="thumb-link" title="MAA Al Thahab Fragrnces Turkey" data-size="1050x700">
-                                <img src="images/portfolio/gallery/mat-tr.png" 
-                                     srcset="images/portfolio/gallery/mat.png 1x" alt="">
-                            </a>
-                            <a href="https://tr.maa-althahab.com/en" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                MAA-ALTHAHAB Turkey
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Developing and maintaining MAT E-commerce store in Turkey.</p>
-                        </div>
-                    </div>
-                </div>  
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/mat-originals.png" class="thumb-link" title="MAA Al Thahab Originals" data-size="1050x700">
-                                <img src="images/portfolio/gallery/mat-originals.png" 
-                                     srcset="images/portfolio/gallery/mat-originals.png 1x" alt="">
-                            </a>
-                            <a href="https://mat.ebda3is.com/" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                MAA-ALTHAHAB Originals
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Design & Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Developing and maintaining MAT Originals E-commerce.</p>
-                        </div>
-                    </div>
-                </div>  
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/mdm.png" class="thumb-link" title="Maison De MAA" data-size="1050x700">
-                                <img src="images/portfolio/gallery/mdm.png" 
-                                     srcset="images/portfolio/gallery/mdm.png 1x" alt="">
-                            </a>
-                            <a href="https://maisondemaa.com" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Maison De MAA
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Design implementation for Maison De MAA website</p>
-                        </div>
-                    </div>
-                </div>  
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/mat.png" class="thumb-link" title="MAA Al Thahab Fragrnces Turkey" data-size="1050x700">
-                                <img src="images/portfolio/gallery/mat.png" 
-                                     srcset="images/portfolio/gallery/mat.png 1x" alt="">
-                            </a>
-                            <a href="https://maa-althahab.com" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                MAA-ALTHAHAB International
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Developing and maintaining MAT E-commerce store.</p>
-                        </div>
-                    </div>
-                </div>  
-
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                            
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/majouri.png" class="thumb-link" title="Majouri Fragrances" data-size="1050x700">
-                                <img src="images/portfolio/gallery/majouri.png"
-                                     srcset="images/portfolio/gallery/majouri.png 1x" alt="">
-                            </a>
-                            <a href="https://www.majouri.com/" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Majouri
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Design & Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Develping Majouri Fragrances design and implementation.</p>
-                        </div>
-                    </div>
-                </div>  
-
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/reelink.png" class="thumb-link" title="Reelink Media" data-size="1050x700">
-                                <img src="images/portfolio/gallery/reelink.png" 
-                                     srcset="images/portfolio/gallery/reelink.png 1x" alt="">
-                            </a>
-                            <a href="https://reelink.media/" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Reelink Media
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Developing a CMS & landing page for Reelink media in Germany.</p>
-                        </div>
-                    </div>
-                </div>  
-
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                            
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/radiashaker.png" class="thumb-link" title="Radia Shaker - Istanbul" data-size="1050x700">
-                                <img src="images/portfolio/gallery/radiashaker.png" 
-                                     srcset="images/portfolio/gallery/radiashaker.png 1x" alt="">
-                            </a>
-                            <a href="https://www.radiashaker.com/" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Radia Shaker - Istanbul
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Design
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Re-innovating the design of Radiashaker.</p>
-                        </div>
-                    </div>
-                </div>  
-        
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                            
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/unifind-tr.png" class="thumb-link" title="Palmeira" data-size="1050x700">
-                                <img src="images/portfolio/gallery/unifind-tr.png"
-                                     srcset="images/portfolio/gallery/unifind-tr.png 1x" alt="">
-                            </a>
-                            <a href="https://unifind-tr.com/" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Unifind TR
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Major enhancements in Unifind-TR website.</p>
-                        </div>
-                    </div>
-                </div>  
-                <div class="masonry__brick" data-aos="fade-up">
-                    <div class="item-folio">
-                            
-                        <div class="item-folio__thumb">
-                            <a href="images/portfolio/gallery/ajyal.png" class="thumb-link" title="Palmeira" data-size="1050x700">
-                                <img src="images/portfolio/gallery/ajyal.png"
-                                     srcset="images/portfolio/gallery/ajyal.png 1x" alt="">
-                            </a>
-                            <a href="https://ajyalacademyjax.com/" class="item-folio__project-link" title="Project link" target="_blank"></a>
-                        </div>
-                        <div class="item-folio__text">
-                            <h4 class="item-folio__title">
-                                Ajyal Academy
-                            </h4>
-                            <p class="item-folio__cat">
-                                Web Development
-                            </p>
-                        </div>
-                        <div class="item-folio__caption">
-                            <p>Re-implementation.</p>
-                        </div>
-                    </div>
-                </div>  
-
-            </div> 
-
-        </div> 
-        
-
-    </section> <!-- end s-work -->
-
-
-    <!-- testimonies
-    ================================================== -->
-    <!-- <section class="s-testimonials">
-    
-        <div class="row testimonials" data-aos="fade-up">
-
-            <div class="column large-full testimonials__slider">
-
-                <div class="testimonials__slide">
-                    <p>Molestiae incidunt consequatur quis ipsa autem nam sit enim magni. Voluptas tempore rem. 
-                    Explicabo a quaerat sint autem dolore ducimus ut consequatur neque.  Nisi dolores quaerat fuga rem nihil nostrum.
-                    Laudantium quia consequatur molestias delectus culpa.</p>
-                    <div class="testimonials__info">
-                        <img src="images/avatars/user-02.jpg" alt="Author image" class="testimonials__avatar">
-                        <cite class="testimonials__cite">
-                            <strong>Tim Cook</strong>
-                            <span>CEO, Apple</span>
-                        </cite>
-                    </div>
-                </div> 
-
-                <div class="testimonials__slide">
-                    <p>Excepturi nam cupiditate culpa doloremque deleniti repellat. Veniam quos repellat voluptas animi adipisci.
-                    Nisi eaque consequatur. Voluptatem dignissimos ut ducimus accusantium perspiciatis.
-                        Quasi voluptas eius distinctio. Atque eos maxime.</p>
-                    <div class="testimonials__info">
-                        <img src="images/avatars/user-01.jpg" alt="Author image" class="testimonials__avatar">
-                        <cite class="testimonials__cite">
-                            <strong>Sundar Pichai</strong>
-                            <span>CEO, Google</span>
-                        </cite>
-                    </div>
-                </div> 
-
-                <div class="testimonials__slide">
-                    <p>Repellat dignissimos libero. Qui sed at corrupti expedita voluptas odit. Nihil ea quia nesciunt. Ducimus aut sed ipsam.  
-                    Autem eaque officia cum exercitationem sunt voluptatum accusamus. Quasi voluptas eius distinctio.
-                    Voluptatem dignissimos ut.</p>
-                    <div class="testimonials__info">
-                        <img src="images/avatars/user-04.jpg" alt="Author image" class="testimonials__avatar">
-                        <cite class="testimonials__cite">
-                            <strong>Satya Nadella</strong>
-                            <span>CEO, Microsoft</span>
-                        </cite>
-                    </div>
-                </div> 
-                
-            </div>
-        </div> 
-
-    </section> 
-     -->
-    <!-- end s-testimonials -->
-
-
-    <!-- contact
-    ================================================== -->
-    <section id="contact" class="s-contact ss-dark target-section">
-
-        <div class="row heading-block" data-aos="fade-up">
-            <div class="column large-full">
-                <h2 class="section-heading">Get In Touch</h2>
             </div>
         </div>
 
-        <div class="row contact-main" data-aos="fade-up">
-            <div class="column large-full">
-                <p class="contact-email">
-                    <a href="mailto:moekayal98@gmail.com">info@moekayal.me</a>
-                </p>
+        <div class="hero__scroll">
+            <div class="hero__scroll-line"></div>
+            <span>Scroll</span>
+        </div>
+    </section>
 
-                <p class="section-desc">
-                I'm happy to connect, listen and help. Let's work together and build
-                something awesome. Let's turn your idea to an even greater product.
-                <a href="mailto:moekayal98@gmail.com">Email Me</a>.
-                </p>
+
+    <!-- ================================================== -->
+    <!-- ABOUT -->
+    <!-- ================================================== -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-count">01</span>
+                <h2 class="section-title">About</h2>
+            </div>
+
+            <div class="about__content">
+                <div class="about__bio">
+                    <p class="about__lead">Building interfaces people genuinely enjoy using &mdash; where performance meets craft.</p>
+                    <p>I'm a front-end developer at <strong>A&G Insurance Australia</strong> in Brisbane, where I architect Angular applications that serve millions of policy holders through partnerships with ING, Virgin, Coles, and Ozicare.</p>
+                    <p>Before Australia, I spent two years in Istanbul building luxury e-commerce for fragrance houses &mdash; <strong>Majouri</strong>, <strong>Maison Matine</strong>, and the <strong>MAA-ALTHAHAB</strong> family of brands. That experience taught me that great front-end work is invisible: fast loads, fluid interactions, and layouts that make products look irresistible.</p>
+                    <p>My path started with a Computer Science degree in Lebanon, a CCNA certification, and IT infrastructure work in Abu Dhabi. Each chapter added a layer &mdash; networking fundamentals, system thinking, full-stack development, and finally, the front-end specialization I practice today.</p>
+                </div>
+                <div class="about__aside">
+                    <div class="about__detail-card">
+                        <h3>Core Stack</h3>
+                        <div class="about__tags">
+                            <span>Angular</span><span>TypeScript</span><span>NGRX</span><span>RxJS</span>
+                            <span>JavaScript</span><span>HTML / CSS</span><span>SCSS</span>
+                        </div>
+                    </div>
+                    <div class="about__detail-card">
+                        <h3>Also Fluent In</h3>
+                        <div class="about__tags">
+                            <span>Shopify / Liquid</span><span>Odoo ERP</span><span>REST APIs</span>
+                            <span>CI/CD</span><span>Git</span><span>Azure DevOps</span><span>Agile</span>
+                        </div>
+                    </div>
+                    <div class="about__detail-card">
+                        <h3>Location</h3>
+                        <p class="about__location">Brisbane, Australia</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row contact-infos" data-aos="fade-up" data-aos-anchor=".contact-main">
+        <!-- Tech Marquee -->
+        <div class="marquee">
+            <div class="marquee__track">
+                <span class="marquee__item">Angular</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">TypeScript</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">NGRX</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">RxJS</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">JavaScript</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">Shopify</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">Odoo ERP</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">CI/CD</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">REST APIs</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">Agile</span>
+                <span class="marquee__sep">/</span>
+                <!-- duplicate -->
+                <span class="marquee__item">Angular</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">TypeScript</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">NGRX</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">RxJS</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">JavaScript</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">Shopify</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">Odoo ERP</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">CI/CD</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">REST APIs</span>
+                <span class="marquee__sep">/</span>
+                <span class="marquee__item">Agile</span>
+                <span class="marquee__sep">/</span>
+            </div>
+        </div>
+    </section>
 
-            <div class="column large-5 medium-full contact-phone">
-                <h4>Call Me</h4>
-                <a href="tel:00905313326501">+90 531 332 65 01</a>
+
+    <!-- ================================================== -->
+    <!-- EXPERIENCE -->
+    <!-- ================================================== -->
+    <section class="experience" id="experience">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-count">02</span>
+                <h2 class="section-title">Experience</h2>
+            </div>
+        </div>
+
+        <div class="experience__wrapper">
+            <div class="experience__track" id="experience-track">
+
+                <div class="experience__card">
+                    <div class="experience__card-inner">
+                        <span class="experience__tag">Current Role</span>
+                        <div class="experience__meta">
+                            <span class="experience__date">May 2023 &mdash; Present</span>
+                            <span class="experience__location">Brisbane, Australia</span>
+                        </div>
+                        <h3 class="experience__company">A&G Insurance Australia</h3>
+                        <h4 class="experience__role">Front-End Developer</h4>
+                        <ul class="experience__details">
+                            <li>Architect Angular applications serving ING, Virgin, Coles, and Ozicare policy holders</li>
+                            <li>Manage reactive state with NGRX and RxJS across complex insurance quote flows</li>
+                            <li>Lead CI/CD pipeline design within a large-scale Agile deployment team</li>
+                        </ul>
+                        <div class="experience__tech">
+                            <span>Angular</span><span>TypeScript</span><span>NGRX</span><span>RxJS</span><span>CI/CD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experience__card">
+                    <div class="experience__card-inner">
+                        <div class="experience__meta">
+                            <span class="experience__date">Mar 2022 &mdash; Apr 2023</span>
+                            <span class="experience__location">Istanbul, Turkey</span>
+                        </div>
+                        <h3 class="experience__company">Invelops Engineering</h3>
+                        <h4 class="experience__role">Integration Engineer</h4>
+                        <ul class="experience__details">
+                            <li>Led end-to-end Odoo ERP integration for a new organisational environment</li>
+                            <li>Built custom modules and integration strategies tailored to operations</li>
+                            <li>Streamlined business processes through innovative ERP architecture</li>
+                        </ul>
+                        <div class="experience__tech">
+                            <span>Odoo</span><span>Python</span><span>ERP</span><span>Integration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experience__card">
+                    <div class="experience__card-inner">
+                        <div class="experience__meta">
+                            <span class="experience__date">Jul 2021 &mdash; Aug 2022</span>
+                            <span class="experience__location">Istanbul, Turkey</span>
+                        </div>
+                        <h3 class="experience__company">MAA-ALTHAHAB</h3>
+                        <h4 class="experience__role">Full-Stack Developer</h4>
+                        <ul class="experience__details">
+                            <li>Built and maintained Shopify storefronts for luxury fragrance brands</li>
+                            <li>Designed features that elevated product presentation and conversion</li>
+                            <li>Managed Odoo servers and collaborated cross-functionally with design</li>
+                        </ul>
+                        <div class="experience__tech">
+                            <span>Shopify</span><span>Liquid</span><span>JavaScript</span><span>Odoo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experience__card">
+                    <div class="experience__card-inner">
+                        <div class="experience__meta">
+                            <span class="experience__date">Dec 2019 &mdash; May 2021</span>
+                            <span class="experience__location">Abu Dhabi, UAE</span>
+                        </div>
+                        <h3 class="experience__company">Obaidli & Zarooni Lawyers</h3>
+                        <h4 class="experience__role">IT Support Specialist</h4>
+                        <ul class="experience__details">
+                            <li>Provided expert-level technical support across hardware and software</li>
+                            <li>Drove adoption of new applications and optimised IT infrastructure</li>
+                            <li>Built cross-functional relationships to align technology with operations</li>
+                        </ul>
+                        <div class="experience__tech">
+                            <span>IT Support</span><span>Networking</span><span>Systems</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experience__card experience__card--edu">
+                    <div class="experience__card-inner">
+                        <span class="experience__tag experience__tag--edu">Education</span>
+                        <div class="experience__meta">
+                            <span class="experience__date">Sep 2016 &mdash; May 2019</span>
+                            <span class="experience__location">Lebanon</span>
+                        </div>
+                        <h3 class="experience__company">Lebanese International University</h3>
+                        <h4 class="experience__role">B.Sc. Computer Science</h4>
+                    </div>
+                </div>
+
+                <div class="experience__card experience__card--edu">
+                    <div class="experience__card-inner">
+                        <span class="experience__tag experience__tag--edu">Certification</span>
+                        <div class="experience__meta">
+                            <span class="experience__date">May 2019</span>
+                        </div>
+                        <h3 class="experience__company">Cisco Networking Academy</h3>
+                        <h4 class="experience__role">CCNA Certified</h4>
+                        <p class="experience__cert-detail">Networks, Switching & Routing, Scaling Networks, IT Essentials</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="experience__progress">
+            <div class="experience__progress-bar" id="experience-progress"></div>
+        </div>
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- PORTFOLIO -->
+    <!-- ================================================== -->
+    <section class="portfolio" id="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-count">03</span>
+                <h2 class="section-title">Selected Work</h2>
+                <p class="section-desc">A selection of projects I've designed, developed, and shipped.</p>
             </div>
 
-            <div class="column large-7 medium-full contact-social">
-                <h4>Social</h4>
-                <ul>
-                    <li><a href="https://github.com/mohamad-kayal" target="_blank"><i class="fab fa-github" aria-hidden="true"></i></a></li>
-                <li><a href="https://www.linkedin.com/in/moekayal/" target="_blank"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
-                <li><a href="https://twitter.com/MohamadAlkayal" target="_blank"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
-                </ul>
+            <!-- Featured Projects -->
+            <div class="portfolio__featured">
+
+                <a href="https://www.budgetdirect.com.au" target="_blank" rel="noopener" class="project project--featured">
+                    <div class="project__image">
+                        <img src="images/portfolio/gallery/budget-direct-logo.svg" alt="Budget Direct" loading="lazy">
+                    </div>
+                    <div class="project__info">
+                        <span class="project__number">01</span>
+                        <h3 class="project__title">Budget Direct</h3>
+                        <p class="project__desc">Enterprise insurance platform serving millions of Australians. I build and maintain the Angular front-end for car and home insurance quote flows, partnering with ING, Virgin, and Coles.</p>
+                        <div class="project__tech">
+                            <span>Angular</span><span>NGRX</span><span>TypeScript</span><span>CI/CD</span>
+                        </div>
+                        <span class="project__link-text">
+                            View Live
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </span>
+                    </div>
+                </a>
+
+                <a href="https://www.majouri.com/" target="_blank" rel="noopener" class="project project--featured project--reverse">
+                    <div class="project__image">
+                        <img src="images/portfolio/gallery/majouri.png" alt="Majouri" loading="lazy">
+                    </div>
+                    <div class="project__info">
+                        <span class="project__number">02</span>
+                        <h3 class="project__title">Majouri</h3>
+                        <p class="project__desc">A luxury fragrance house deserves a storefront to match. Full design implementation and Shopify development &mdash; from product pages to checkout experience.</p>
+                        <div class="project__tech">
+                            <span>Shopify</span><span>Liquid</span><span>JavaScript</span><span>UX</span>
+                        </div>
+                        <span class="project__link-text">
+                            View Live
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </span>
+                    </div>
+                </a>
+
+                <a href="https://maisonmatine.com" target="_blank" rel="noopener" class="project project--featured">
+                    <div class="project__image">
+                        <img src="images/portfolio/gallery/maison-matine.png" alt="Maison Matine" loading="lazy">
+                    </div>
+                    <div class="project__info">
+                        <span class="project__number">03</span>
+                        <h3 class="project__title">Maison Matine</h3>
+                        <p class="project__desc">French fragrance brand's online presence. Custom Shopify theme that captures the brand's playful, colourful identity while delivering a seamless shopping experience.</p>
+                        <div class="project__tech">
+                            <span>Shopify</span><span>Theme Dev</span><span>E-Commerce</span>
+                        </div>
+                        <span class="project__link-text">
+                            View Live
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </span>
+                    </div>
+                </a>
+
+                <a href="https://reelink.media/" target="_blank" rel="noopener" class="project project--featured project--reverse">
+                    <div class="project__image">
+                        <img src="images/portfolio/gallery/reelink.png" alt="Reelink Media" loading="lazy">
+                    </div>
+                    <div class="project__info">
+                        <span class="project__number">04</span>
+                        <h3 class="project__title">Reelink Media</h3>
+                        <p class="project__desc">A German media company's digital home. CMS-powered platform with a compelling landing page designed to convert visitors into partners.</p>
+                        <div class="project__tech">
+                            <span>CMS</span><span>JavaScript</span><span>Responsive</span>
+                        </div>
+                        <span class="project__link-text">
+                            View Live
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </span>
+                    </div>
+                </a>
+
             </div>
 
-        </div> <!-- end contact-infos -->
+            <!-- Grid -->
+            <h3 class="portfolio__grid-heading">More Projects</h3>
+            <div class="portfolio__grid">
 
-    </section> <!-- end s-contact -->
+                <a href="https://maa-althahab.com" target="_blank" rel="noopener" class="project-card">
+                    <div class="project-card__img"><img src="images/portfolio/gallery/mat.png" alt="MAA-ALTHAHAB International" loading="lazy"></div>
+                    <div class="project-card__body">
+                        <h4>MAA-ALTHAHAB International</h4>
+                        <p>Global e-commerce &mdash; Shopify, multi-currency</p>
+                    </div>
+                    <span class="project-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                </a>
 
+                <a href="https://tr.maa-althahab.com/en" target="_blank" rel="noopener" class="project-card">
+                    <div class="project-card__img"><img src="images/portfolio/gallery/mat-tr.png" alt="MAA-ALTHAHAB Turkey" loading="lazy"></div>
+                    <div class="project-card__body">
+                        <h4>MAA-ALTHAHAB Turkey</h4>
+                        <p>Regional e-commerce &mdash; localization</p>
+                    </div>
+                    <span class="project-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                </a>
 
-    <!-- footer
-    ================================================== -->
-    <footer>
-        <div class="row">
-            <div class="column large-full ss-copyright">
-                <span>© Copyright MoeKayal 2021</span> 
-                <span>Design by <a href="https://www.styleshout.com/" target="_blank">StyleShout</a></span>
-            </div>            
+                <a href="https://mat.ebda3is.com/" target="_blank" rel="noopener" class="project-card">
+                    <div class="project-card__img"><img src="images/portfolio/gallery/mat-originals.png" alt="MAA-ALTHAHAB Originals" loading="lazy"></div>
+                    <div class="project-card__body">
+                        <h4>MAA-ALTHAHAB Originals</h4>
+                        <p>Sub-label &mdash; custom theme, UX design</p>
+                    </div>
+                    <span class="project-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                </a>
 
-            <div class="ss-go-top">
-                <a class="smoothscroll" title="Back to Top" href="#top"></a>
+                <a href="https://maisondemaa.com" target="_blank" rel="noopener" class="project-card">
+                    <div class="project-card__img"><img src="images/portfolio/gallery/mdm.png" alt="Maison De MAA" loading="lazy"></div>
+                    <div class="project-card__body">
+                        <h4>Maison De MAA</h4>
+                        <p>Luxury brand &mdash; design implementation</p>
+                    </div>
+                    <span class="project-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                </a>
+
+                <a href="https://www.radiashaker.com/" target="_blank" rel="noopener" class="project-card">
+                    <div class="project-card__img"><img src="images/portfolio/gallery/radiashaker.png" alt="Radia Shaker" loading="lazy"></div>
+                    <div class="project-card__body">
+                        <h4>Radia Shaker</h4>
+                        <p>Artist portfolio &mdash; design refresh</p>
+                    </div>
+                    <span class="project-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                </a>
+
+                <a href="https://unifind-tr.com/" target="_blank" rel="noopener" class="project-card">
+                    <div class="project-card__img"><img src="images/portfolio/gallery/unifind-tr.png" alt="Unifind TR" loading="lazy"></div>
+                    <div class="project-card__body">
+                        <h4>Unifind TR</h4>
+                        <p>University search &mdash; UI improvements</p>
+                    </div>
+                    <span class="project-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                </a>
+
+                <a href="https://ajyalacademyjax.com/" target="_blank" rel="noopener" class="project-card">
+                    <div class="project-card__img"><img src="images/portfolio/gallery/ajyal.png" alt="Ajyal Academy" loading="lazy"></div>
+                    <div class="project-card__body">
+                        <h4>Ajyal Academy</h4>
+                        <p>Education &mdash; full reimplementation</p>
+                    </div>
+                    <span class="project-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                </a>
+
             </div>
+        </div>
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- CONTACT -->
+    <!-- ================================================== -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header section-header--center">
+                <span class="section-count">04</span>
+                <h2 class="section-title">Let's Work Together</h2>
+            </div>
+
+            <div class="contact__content">
+                <p class="contact__lead">Got a project, an idea, or just want to say hello?</p>
+                <a href="mailto:moekayal98@gmail.com" class="contact__email magnetic">info@moekayal.me</a>
+            </div>
+
+            <div class="contact__socials">
+                <a href="https://github.com/mohamad-kayal" target="_blank" rel="noopener" class="contact__social magnetic">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    <span>GitHub</span>
+                </a>
+                <a href="https://www.linkedin.com/in/moekayal/" target="_blank" rel="noopener" class="contact__social magnetic">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://twitter.com/MohamadAlkayal" target="_blank" rel="noopener" class="contact__social magnetic">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <span>X / Twitter</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <span class="footer__copy">&copy; 2026 Mohamad Al Kayal</span>
+            <a href="#hero" class="footer__top magnetic" aria-label="Back to top">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            </a>
         </div>
     </footer>
 
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="js/app.js"></script>
 
-    <!-- photoswipe background
-    ================================================== -->
-    <div aria-hidden="true" class="pswp" role="dialog" tabindex="-1">
-
-        <div class="pswp__bg"></div>
-        <div class="pswp__scroll-wrap">
-
-            <div class="pswp__container">
-                <div class="pswp__item"></div>
-                <div class="pswp__item"></div>
-                <div class="pswp__item"></div>
-            </div>
-
-            <div class="pswp__ui pswp__ui--hidden">
-                <div class="pswp__top-bar">
-                    <div class="pswp__counter"></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button> <button class="pswp__button pswp__button--share" title=
-                    "Share"></button> <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button> <button class="pswp__button pswp__button--zoom" title=
-                    "Zoom in/out"></button>
-                    <div class="pswp__preloader">
-                        <div class="pswp__preloader__icn">
-                            <div class="pswp__preloader__cut">
-                                <div class="pswp__preloader__donut"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-                    <div class="pswp__share-tooltip"></div>
-                </div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button> <button class="pswp__button pswp__button--arrow--right" title=
-                "Next (arrow right)"></button>
-                <div class="pswp__caption">
-                    <div class="pswp__caption__center"></div>
-                </div>
-            </div>
-
-        </div>
-
-    </div><!-- end photoSwipe background -->
-
-
-    <!-- Java Script
-    ================================================== -->
-    <script src="js/jquery-3.2.1.min.js"></script>
-    <script src="js/plugins.js"></script>
-    <script src="js/main.js"></script>
 </body>
+</html>

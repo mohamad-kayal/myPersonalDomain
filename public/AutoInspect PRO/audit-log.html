@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Log — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/admin.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Audit Log</h2>
+            <p>Track all user actions and system events</p>
+          </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar mb-6">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-input" placeholder="Search by user or action..." id="audit-search" oninput="filterAuditLog()">
+          </div>
+          <select class="form-select" id="action-filter" onchange="filterAuditLog()">
+            <option value="">All Actions</option>
+            <option value="login">Login</option>
+            <option value="create">Create</option>
+            <option value="update">Update</option>
+            <option value="delete">Delete</option>
+            <option value="approve">Approve</option>
+          </select>
+          <select class="form-select" id="date-filter" onchange="filterAuditLog()">
+            <option value="all">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+          </select>
+        </div>
+
+        <!-- Audit Table -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th class="hide-mobile">Entity</th>
+                <th class="hide-mobile">Description</th>
+                <th class="hide-mobile">IP Address</th>
+              </tr>
+            </thead>
+            <tbody id="audit-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Info -->
+        <div style="padding: var(--space-4); font-size: var(--text-sm); color: var(--text-secondary);" id="audit-count"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    renderSidebar('admin-settings');
+    renderHeader('Audit Log', [{ label: 'Home', href: 'dashboard.html' }, { label: 'Administration' }, { label: 'Audit Log' }]);
+    renderMobileNav('audit-log');
+
+    const actionBadges = {
+      login:   'badge-info',
+      create:  'badge-success',
+      update:  'badge-warning',
+      delete:  'badge-danger',
+      approve: 'badge-success'
+    };
+
+    function filterAuditLog() {
+      const search = document.getElementById('audit-search').value.toLowerCase();
+      const action = document.getElementById('action-filter').value;
+      const dateRange = document.getElementById('date-filter').value;
+
+      let filtered = MOCK_DATA.auditLog;
+
+      if (search) {
+        filtered = filtered.filter(e =>
+          e.userName.toLowerCase().includes(search) ||
+          e.action.toLowerCase().includes(search) ||
+          e.description.toLowerCase().includes(search)
+        );
+      }
+
+      if (action) {
+        filtered = filtered.filter(e => e.action === action);
+      }
+
+      if (dateRange !== 'all') {
+        const now = new Date();
+        let cutoff;
+        if (dateRange === 'today') {
+          cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        } else if (dateRange === 'week') {
+          cutoff = new Date(now);
+          cutoff.setDate(cutoff.getDate() - 7);
+        } else if (dateRange === 'month') {
+          cutoff = new Date(now);
+          cutoff.setMonth(cutoff.getMonth() - 1);
+        }
+        filtered = filtered.filter(e => new Date(e.timestamp) >= cutoff);
+      }
+
+      renderAuditLog(filtered);
+    }
+
+    function renderAuditLog(entries) {
+      document.getElementById('audit-body').innerHTML = entries.map(e => `
+        <tr>
+          <td data-label="Timestamp" style="font-size:var(--text-sm);white-space:nowrap">${formatDate(e.timestamp)}</td>
+          <td data-label="User" style="font-weight:var(--font-medium)">${e.userName}</td>
+          <td data-label="Action"><span class="badge ${actionBadges[e.action] || 'badge-info'}">${e.action.charAt(0).toUpperCase() + e.action.slice(1)}</span></td>
+          <td data-label="Entity" class="hide-mobile" style="font-size:var(--text-sm);color:var(--text-secondary)">${e.entityType || '-'}</td>
+          <td data-label="Description" class="hide-mobile" style="font-size:var(--text-sm)">${e.description}</td>
+          <td data-label="IP Address" class="hide-mobile" style="font-size:var(--text-sm);color:var(--text-tertiary);font-family:monospace">${e.ipAddress}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('audit-count').textContent = `Showing ${entries.length} of ${MOCK_DATA.auditLog.length} entries`;
+    }
+
+    filterAuditLog();
+  </script>
+</body>
+</html>

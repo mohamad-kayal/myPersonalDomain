@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspections — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/inspection.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Inspections</h2>
+            <p>Manage and track all vehicle inspections</p>
+          </div>
+          <div class="page-header-right">
+            <a href="new-inspection.html" class="btn btn-primary">
+              <i class="fas fa-plus"></i> New Inspection
+            </a>
+          </div>
+        </div>
+
+        <!-- Status Tabs -->
+        <div class="inspection-status-tabs" id="status-tabs">
+          <button class="status-tab active" data-status="all" onclick="filterByStatus('all', this)">
+            All <span class="count" id="count-all">0</span>
+          </button>
+          <button class="status-tab" data-status="in_progress" onclick="filterByStatus('in_progress', this)">
+            <span class="status-dot blue"></span> In Progress <span class="count" id="count-in_progress">0</span>
+          </button>
+          <button class="status-tab" data-status="pending_review" onclick="filterByStatus('pending_review', this)">
+            <span class="status-dot amber"></span> Pending Review <span class="count" id="count-pending_review">0</span>
+          </button>
+          <button class="status-tab" data-status="approved" onclick="filterByStatus('approved', this)">
+            <span class="status-dot green"></span> Approved <span class="count" id="count-approved">0</span>
+          </button>
+          <button class="status-tab" data-status="draft" onclick="filterByStatus('draft', this)">
+            <span class="status-dot gray"></span> Draft <span class="count" id="count-draft">0</span>
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar mb-6">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-input" placeholder="Search by VIN, make, model..." id="search-input" oninput="filterInspections()">
+          </div>
+          <select class="form-select" id="inspector-filter" onchange="filterInspections()">
+            <option value="">All Inspectors</option>
+          </select>
+          <select class="form-select" id="date-filter" onchange="filterInspections()">
+            <option value="">All Dates</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+          </select>
+        </div>
+
+        <!-- Inspections Table -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Vehicle</th>
+                <th>Inspector</th>
+                <th>Status</th>
+                <th>Grade</th>
+                <th class="hide-mobile">Score</th>
+                <th class="hide-mobile">Duration</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inspections-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="pagination-info">Showing <strong id="showing-count">0</strong> of <strong id="total-count">0</strong> inspections</div>
+          <div class="pagination-controls">
+            <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    renderSidebar('inspections');
+    renderHeader('Inspections', [{ label: 'Home', href: 'dashboard.html' }, { label: 'Inspections' }]);
+    renderMobileNav('inspections');
+
+    const currentUser = getCurrentUser();
+    const userRole = currentUser.role;
+    let currentStatus = 'all';
+
+    // Role-based base inspection set
+    function getBaseInspections() {
+      if (userRole === 'inspector') {
+        return MOCK_DATA.inspections.filter(i => i.inspectorId === currentUser.id);
+      }
+      return MOCK_DATA.inspections;
+    }
+
+    // Populate inspector filter (hidden for inspectors)
+    function populateFilters() {
+      const select = document.getElementById('inspector-filter');
+      if (userRole === 'inspector') {
+        select.style.display = 'none';
+        return;
+      }
+      const inspectors = MOCK_DATA.users.filter(u => u.role === 'inspector');
+      inspectors.forEach(i => {
+        const opt = document.createElement('option');
+        opt.value = i.id;
+        opt.textContent = i.name;
+        select.appendChild(opt);
+      });
+    }
+
+    // Update status counts
+    function updateCounts() {
+      const inspections = getBaseInspections();
+      document.getElementById('count-all').textContent = inspections.length;
+      document.getElementById('count-in_progress').textContent = inspections.filter(i => i.status === 'in_progress').length;
+      document.getElementById('count-pending_review').textContent = inspections.filter(i => i.status === 'pending_review').length;
+      document.getElementById('count-approved').textContent = inspections.filter(i => i.status === 'approved').length;
+      document.getElementById('count-draft').textContent = inspections.filter(i => i.status === 'draft').length;
+    }
+
+    function filterByStatus(status, btn) {
+      currentStatus = status;
+      document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      filterInspections();
+    }
+
+    function filterInspections() {
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const inspectorId = document.getElementById('inspector-filter').value;
+      let inspections = getBaseInspections();
+
+      if (currentStatus !== 'all') {
+        inspections = inspections.filter(i => i.status === currentStatus);
+      }
+      if (inspectorId) {
+        inspections = inspections.filter(i => i.inspectorId === inspectorId);
+      }
+      if (search) {
+        inspections = inspections.filter(i => {
+          const v = getVehicleById(i.vehicleId);
+          return v && (`${v.year} ${v.make} ${v.model} ${v.vin}`.toLowerCase().includes(search));
+        });
+      }
+
+      renderInspections(inspections);
+    }
+
+    function renderInspections(inspections) {
+      const tbody = document.getElementById('inspections-body');
+      document.getElementById('showing-count').textContent = inspections.length;
+      document.getElementById('total-count').textContent = getBaseInspections().length;
+
+      if (inspections.length === 0) {
+        tbody.innerHTML = `
+          <tr><td colspan="8" class="empty-state-large" style="padding:var(--space-8)">
+            <i class="fas fa-clipboard" style="font-size:2.5rem;color:var(--color-gray-300)"></i>
+            <h3 style="margin-top:var(--space-3);color:var(--text-secondary)">No inspections found</h3>
+            <p style="color:var(--text-tertiary);font-size:var(--text-sm)">Try adjusting your filters or start a new inspection.</p>
+          </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = inspections.map(insp => {
+        const vehicle = getVehicleById(insp.vehicleId);
+        const inspector = getUserById(insp.inspectorId);
+        const progress = insp.totalItems > 0 ? Math.round(((insp.passCount + insp.failCount + insp.advisoryCount) / insp.totalItems) * 100) : 0;
+
+        return `
+          <tr>
+            <td data-label="">
+              <div class="vehicle-cell" style="display:flex;align-items:center;gap:var(--space-3)">
+                <div class="avatar sm ${getAvatarColor(vehicle.make)}"><i class="fas fa-car" style="font-size:0.6rem"></i></div>
+                <div>
+                  <div style="font-weight:var(--font-medium)">${vehicle.year} ${vehicle.make} ${vehicle.model}</div>
+                  <div style="font-size:var(--text-xs);color:var(--text-tertiary);font-family:var(--font-mono)">${vehicle.vin}</div>
+                </div>
+              </div>
+            </td>
+            <td data-label="Inspector">
+              <div style="display:flex;align-items:center;gap:var(--space-2)">
+                <div class="avatar sm ${getAvatarColor(inspector.name)}">${inspector.avatar}</div>
+                <span style="font-size:var(--text-sm)">${inspector.name}</span>
+              </div>
+            </td>
+            <td data-label="Status"><span class="badge ${getStatusBadgeClass(insp.status)}">${getStatusLabel(insp.status)}</span></td>
+            <td data-label="Grade"><strong style="color:${getGradeColor(insp.grade)};font-size:var(--text-md)">${insp.grade || '—'}</strong></td>
+            <td data-label="Score" class="hide-mobile">
+              ${insp.score !== null ? `
+                <div style="display:flex;align-items:center;gap:var(--space-2)">
+                  <div class="progress-bar" style="width:60px">
+                    <div class="progress-fill ${insp.score >= 80 ? 'green' : insp.score >= 60 ? 'amber' : 'red'}" style="width:${insp.score}%"></div>
+                  </div>
+                  <span style="font-size:var(--text-sm);font-weight:var(--font-medium)">${insp.score}%</span>
+                </div>
+              ` : `<span style="color:var(--text-tertiary)">—</span>`}
+            </td>
+            <td data-label="Duration" class="hide-mobile" style="font-size:var(--text-sm);color:var(--text-secondary)">${formatDuration(insp.startedAt, insp.completedAt)}</td>
+            <td data-label="Date" style="font-size:var(--text-sm);color:var(--text-secondary)">${formatDate(insp.startedAt)}</td>
+            <td data-label="">
+              <div class="table-actions">
+                <a href="report-view.html?id=${insp.id}" class="btn btn-ghost btn-icon btn-sm" data-tooltip="View Report"><i class="fas fa-eye"></i></a>
+                <div class="dropdown">
+                  <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleDropdown(this)"><i class="fas fa-ellipsis-v"></i></button>
+                  <div class="dropdown-menu">
+                    <button class="dropdown-item" onclick="window.location.href='report-view.html?id=${insp.id}'"><i class="fas fa-file-pdf"></i> View Report</button>
+                    <button class="dropdown-item"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="dropdown-item"><i class="fas fa-copy"></i> Duplicate</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item danger"><i class="fas fa-trash"></i> Delete</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Initialize
+    populateFilters();
+    updateCounts();
+    renderInspections(getBaseInspections());
+  </script>
+</body>
+</html>

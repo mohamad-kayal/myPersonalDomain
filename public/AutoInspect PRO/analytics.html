@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/analytics.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Analytics</h2>
+            <p>Inspection performance metrics and trends</p>
+          </div>
+          <div class="page-header-right">
+            <select class="form-select" id="period-select" onchange="updateCharts()">
+              <option value="week">This Week</option>
+              <option value="month" selected>This Month</option>
+              <option value="quarter">This Quarter</option>
+            </select>
+            <button class="btn btn-secondary" onclick="showToast('success','Exported','Analytics data exported to CSV')">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="metric-cards">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span style="font-size:var(--text-sm);color:var(--text-secondary)">Total Inspections</span>
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+            <div class="metric-value">142</div>
+            <div class="metric-label">This month</div>
+            <div class="metric-change positive"><i class="fas fa-arrow-up"></i> 12% vs last month</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <span style="font-size:var(--text-sm);color:var(--text-secondary)">Avg. Completion</span>
+              <i class="fas fa-stopwatch"></i>
+            </div>
+            <div class="metric-value">23 min</div>
+            <div class="metric-label">Per inspection</div>
+            <div class="metric-change positive"><i class="fas fa-stopwatch"></i> 8% faster</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <span style="font-size:var(--text-sm);color:var(--text-secondary)">Pass Rate</span>
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="metric-value">90%</div>
+            <div class="metric-label">Overall pass rate</div>
+            <div class="metric-change positive"><i class="fas fa-arrow-up"></i> 3% improvement</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <span style="font-size:var(--text-sm);color:var(--text-secondary)">Completion Rate</span>
+              <i class="fas fa-chart-pie"></i>
+            </div>
+            <div class="metric-value">94%</div>
+            <div class="metric-label">Checklist completion</div>
+            <div class="metric-change positive"><i class="fas fa-arrow-up"></i> 2% improvement</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="analytics-grid">
+          <!-- Inspections Trend -->
+          <div class="chart-card full-width">
+            <div class="chart-header">
+              <h4>Inspections Over Time</h4>
+              <div class="chart-period">
+                <button onclick="this.parentElement.querySelector('.active').classList.remove('active');this.classList.add('active')">Daily</button>
+                <button class="active" onclick="this.parentElement.querySelector('.active').classList.remove('active');this.classList.add('active')">Weekly</button>
+                <button onclick="this.parentElement.querySelector('.active').classList.remove('active');this.classList.add('active')">Monthly</button>
+              </div>
+            </div>
+            <div class="chart-body">
+              <div class="chart-container">
+                <canvas id="inspections-chart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grade Distribution -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h4>Grade Distribution</h4>
+            </div>
+            <div class="chart-body">
+              <div class="chart-container short">
+                <canvas id="grade-chart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Avg Completion Time -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h4>Avg. Completion Time</h4>
+            </div>
+            <div class="chart-body">
+              <div class="chart-container short">
+                <canvas id="time-chart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Defects -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h4>Most Common Defects</h4>
+            </div>
+            <div class="chart-body">
+              <div id="defects-list"></div>
+            </div>
+          </div>
+
+          <!-- Inspector Performance -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h4>Inspector Performance</h4>
+            </div>
+            <div class="chart-body">
+              <div id="inspector-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    renderSidebar('analytics');
+    renderHeader('Analytics', [{ label: 'Home', href: 'dashboard.html' }, { label: 'Analytics' }]);
+    renderMobileNav('analytics');
+
+    const chartDefaults = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleFont: { family: "'Inter', sans-serif", size: 13 },
+          bodyFont: { family: "'Inter', sans-serif", size: 12 },
+          padding: 12,
+          cornerRadius: 8
+        }
+      }
+    };
+
+    // Inspections Trend Chart
+    const inspCtx = document.getElementById('inspections-chart').getContext('2d');
+    new Chart(inspCtx, {
+      type: 'bar',
+      data: {
+        labels: MOCK_DATA.analytics.monthlyTrend.map(d => d.month),
+        datasets: [
+          {
+            label: 'Inspections',
+            data: MOCK_DATA.analytics.monthlyTrend.map(d => d.inspections),
+            backgroundColor: '#1a56db',
+            borderRadius: 6,
+            barPercentage: 0.6
+          },
+          {
+            label: 'Pass Rate %',
+            data: MOCK_DATA.analytics.monthlyTrend.map(d => d.passRate),
+            type: 'line',
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245,158,11,0.1)',
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: '#f59e0b',
+            fill: true,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        ...chartDefaults,
+        plugins: {
+          ...chartDefaults.plugins,
+          legend: { display: true, position: 'top', labels: { font: { family: "'Inter',sans-serif", size: 12 }, usePointStyle: true, padding: 20 } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { family: "'Inter',sans-serif" } } },
+          y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { family: "'Inter',sans-serif" } } },
+          y1: { position: 'right', min: 70, max: 100, grid: { display: false }, ticks: { callback: v => v + '%', font: { family: "'Inter',sans-serif" } } }
+        }
+      }
+    });
+
+    // Grade Distribution Doughnut
+    const gradeCtx = document.getElementById('grade-chart').getContext('2d');
+    new Chart(gradeCtx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(MOCK_DATA.analytics.gradeDistribution),
+        datasets: [{
+          data: Object.values(MOCK_DATA.analytics.gradeDistribution),
+          backgroundColor: ['#059669', '#1a56db', '#f59e0b', '#d97706', '#dc2626'],
+          borderWidth: 0,
+          cutout: '65%'
+        }]
+      },
+      options: {
+        ...chartDefaults,
+        plugins: {
+          ...chartDefaults.plugins,
+          legend: { display: true, position: 'bottom', labels: { font: { family: "'Inter',sans-serif", size: 12 }, usePointStyle: true, padding: 16 } }
+        }
+      }
+    });
+
+    // Avg Completion Time
+    const timeCtx = document.getElementById('time-chart').getContext('2d');
+    new Chart(timeCtx, {
+      type: 'line',
+      data: {
+        labels: MOCK_DATA.analytics.avgCompletionTime.map(d => d.date),
+        datasets: [{
+          data: MOCK_DATA.analytics.avgCompletionTime.map(d => d.minutes),
+          borderColor: '#059669',
+          backgroundColor: 'rgba(5,150,105,0.1)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: '#059669',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        ...chartDefaults,
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { family: "'Inter',sans-serif" } } },
+          y: { beginAtZero: false, min: 15, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + 'm', font: { family: "'Inter',sans-serif" } } }
+        }
+      }
+    });
+
+    // Top Defects
+    const defectsList = document.getElementById('defects-list');
+    defectsList.innerHTML = MOCK_DATA.analytics.topDefects.slice(0, 6).map((d, i) => `
+      <div class="defect-row">
+        <div class="defect-rank">${i + 1}</div>
+        <div class="defect-info">
+          <div class="defect-name">${d.name}</div>
+          <div class="defect-category">${d.category}</div>
+        </div>
+        <div class="defect-count">${d.count}</div>
+        <div class="defect-bar">
+          <div class="defect-bar-fill" style="width:${d.percentage}%"></div>
+        </div>
+      </div>
+    `).join('');
+
+    // Inspector Performance
+    const inspectorList = document.getElementById('inspector-list');
+    inspectorList.innerHTML = MOCK_DATA.analytics.inspectorPerformance.map(ip => `
+      <div class="inspector-row">
+        <div class="avatar ${getAvatarColor(ip.name)}">${ip.avatar}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:var(--font-medium);font-size:var(--text-sm)">${ip.name}</div>
+          <div style="font-size:var(--text-xs);color:var(--text-tertiary)">${ip.total} total inspections</div>
+        </div>
+        <div class="inspector-stats">
+          <div class="inspector-stat">
+            <div class="stat-num">${ip.avgTime}m</div>
+            <div class="stat-label">Avg</div>
+          </div>
+          <div class="inspector-stat">
+            <div class="stat-num">${ip.passRate}%</div>
+            <div class="stat-label">Pass</div>
+          </div>
+          <div class="inspector-stat">
+            <div class="stat-num">${ip.thisWeek}</div>
+            <div class="stat-label">Week</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    function updateCharts() {
+      showToast('info', 'Period Updated', 'Charts refreshed with new date range');
+    }
+  </script>
+</body>
+</html>

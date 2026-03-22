@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle History — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/vehicles.css">
+  <link rel="stylesheet" href="css/pages/vehicle-history.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+
+        <!-- Vehicle Header Card -->
+        <div class="vehicle-detail-header" id="vehicle-header"></div>
+
+        <!-- Quick Stats -->
+        <div class="history-stats" id="history-stats"></div>
+
+        <!-- Condition Trend -->
+        <div class="history-section">
+          <div class="history-section-header">
+            <h3><i class="fas fa-chart-line"></i> Condition Trend</h3>
+          </div>
+          <div class="condition-trend-chart" id="condition-trend"></div>
+        </div>
+
+        <!-- Inspection Timeline -->
+        <div class="history-section">
+          <div class="history-section-header">
+            <h3><i class="fas fa-clock-rotate-left"></i> Inspection Timeline</h3>
+            <span class="badge badge-gray" id="timeline-count"></span>
+          </div>
+          <div class="inspection-timeline" id="inspection-timeline"></div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+
+    // --- Get vehicle from URL param ---
+    const params = new URLSearchParams(window.location.search);
+    const vehicleId = params.get('id');
+
+    if (!vehicleId) {
+      window.location.href = 'vehicles.html';
+    }
+
+    const vehicle = getVehicleById(vehicleId);
+
+    if (!vehicle) {
+      document.getElementById('main-content').innerHTML = `
+        <div style="text-align:center;padding:var(--space-16)">
+          <i class="fas fa-car-burst" style="font-size:3rem;color:var(--color-gray-300)"></i>
+          <h3 style="margin-top:var(--space-4);color:var(--text-secondary)">Vehicle Not Found</h3>
+          <p style="color:var(--text-tertiary);margin-top:var(--space-2)">The requested vehicle could not be found.</p>
+          <a href="vehicles.html" class="btn btn-primary" style="margin-top:var(--space-6)">Back to Vehicles</a>
+        </div>`;
+    } else {
+      renderSidebar('vehicles');
+      renderHeader(`${vehicle.year} ${vehicle.make} ${vehicle.model}`, [
+        { label: 'Home', href: 'dashboard.html' },
+        { label: 'Vehicles', href: 'vehicles.html' },
+        { label: `${vehicle.make} ${vehicle.model}` }
+      ]);
+      renderMobileNav('vehicles');
+
+      const inspections = getInspectionsForVehicle(vehicleId)
+        .sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt));
+
+      const completedInspections = inspections.filter(i => i.score !== null);
+      const avgScore = completedInspections.length > 0
+        ? Math.round(completedInspections.reduce((sum, i) => sum + i.score, 0) / completedInspections.length)
+        : null;
+      const latestGrade = completedInspections.length > 0 ? completedInspections[0].grade : '—';
+      const totalDamage = inspections.reduce((sum, i) => {
+        return sum + getDamageMarkersForInspection(i.id).length;
+      }, 0);
+
+      // Determine score trend
+      let trendIcon = 'fa-minus';
+      let trendColor = 'var(--text-tertiary)';
+      let trendLabel = 'Stable';
+      if (completedInspections.length >= 2) {
+        const diff = completedInspections[0].score - completedInspections[1].score;
+        if (diff > 2) { trendIcon = 'fa-arrow-trend-up'; trendColor = 'var(--color-success)'; trendLabel = `+${diff} pts`; }
+        else if (diff < -2) { trendIcon = 'fa-arrow-trend-down'; trendColor = 'var(--color-danger)'; trendLabel = `${diff} pts`; }
+      }
+
+      const bodyIcon = vehicle.bodyType === 'SUV' ? 'fa-truck-monster' : vehicle.bodyType === 'Truck' ? 'fa-truck-pickup' : 'fa-car';
+
+      // --- Vehicle Header ---
+      document.getElementById('vehicle-header').innerHTML = `
+        <div class="vehicle-detail-icon"><i class="fas ${bodyIcon}"></i></div>
+        <div class="vehicle-detail-info">
+          <h2>${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim}</h2>
+          <div class="vehicle-detail-meta">
+            <div class="meta-item"><i class="fas fa-fingerprint"></i> ${vehicle.vin}</div>
+            <div class="meta-item"><i class="fas fa-id-badge"></i> ${vehicle.plate}</div>
+            <div class="meta-item"><i class="fas fa-gauge-high"></i> ${vehicle.odometer.toLocaleString()} km</div>
+            <div class="meta-item"><i class="fas fa-palette"></i> ${vehicle.color}</div>
+            <div class="meta-item"><i class="fas fa-gear"></i> ${vehicle.engine} &middot; ${vehicle.transmission}</div>
+            <div class="meta-item">
+              <span class="badge ${vehicle.ppsr === 'Clear' ? 'badge-success' : 'badge-danger'}">PPSR: ${vehicle.ppsr}</span>
+            </div>
+          </div>
+        </div>
+        <div class="vehicle-header-actions">
+          <a href="vehicles.html" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+          <a href="new-inspection.html" class="btn btn-primary btn-sm"><i class="fas fa-clipboard-check"></i> New Inspection</a>
+        </div>
+      `;
+
+      // --- Quick Stats ---
+      document.getElementById('history-stats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--color-primary-lighter);color:var(--color-primary)"><i class="fas fa-clipboard-list"></i></div>
+          <div class="stat-content">
+            <div class="stat-value">${inspections.length}</div>
+            <div class="stat-label">Total Inspections</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--color-success-light);color:var(--color-success)"><i class="fas fa-star"></i></div>
+          <div class="stat-content">
+            <div class="stat-value">${avgScore !== null ? avgScore + '%' : '—'}</div>
+            <div class="stat-label">Average Score</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--color-info-light);color:var(--color-info)"><i class="fas fa-award"></i></div>
+          <div class="stat-content">
+            <div class="stat-value" style="color:${getGradeColor(latestGrade)}">${latestGrade}</div>
+            <div class="stat-label">Latest Grade</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:${trendColor === 'var(--color-success)' ? 'var(--color-success-light)' : trendColor === 'var(--color-danger)' ? 'var(--color-danger-light)' : 'var(--color-gray-100)'};color:${trendColor}"><i class="fas ${trendIcon}"></i></div>
+          <div class="stat-content">
+            <div class="stat-value" style="color:${trendColor}">${trendLabel}</div>
+            <div class="stat-label">Score Trend</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--color-warning-light);color:var(--color-accent)"><i class="fas fa-triangle-exclamation"></i></div>
+          <div class="stat-content">
+            <div class="stat-value">${totalDamage}</div>
+            <div class="stat-label">Total Damage Records</div>
+          </div>
+        </div>
+      `;
+
+      // --- Condition Trend Chart (CSS-based bar chart) ---
+      if (completedInspections.length > 0) {
+        const chartData = [...completedInspections].reverse();
+        const maxScore = 100;
+        document.getElementById('condition-trend').innerHTML = `
+          <div class="trend-chart">
+            <div class="trend-y-axis">
+              <span>100</span><span>75</span><span>50</span><span>25</span><span>0</span>
+            </div>
+            <div class="trend-bars">
+              ${chartData.map(insp => {
+                const barColor = insp.score >= 90 ? 'var(--color-success)' : insp.score >= 75 ? 'var(--color-primary)' : insp.score >= 60 ? 'var(--color-accent)' : 'var(--color-danger)';
+                const dateLabel = new Date(insp.startedAt).toLocaleDateString('en-AU', { month: 'short', year: '2-digit' });
+                return `
+                  <div class="trend-bar-group">
+                    <div class="trend-bar-wrapper">
+                      <div class="trend-bar" style="height:${insp.score}%;background:${barColor}" data-tooltip="${insp.grade} — ${insp.score}%">
+                        <span class="trend-bar-label">${insp.score}</span>
+                      </div>
+                    </div>
+                    <div class="trend-bar-date">${dateLabel}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+          <div class="trend-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:var(--color-success)"></span> Excellent (90+)</span>
+            <span class="legend-item"><span class="legend-dot" style="background:var(--color-primary)"></span> Good (75–89)</span>
+            <span class="legend-item"><span class="legend-dot" style="background:var(--color-accent)"></span> Fair (60–74)</span>
+            <span class="legend-item"><span class="legend-dot" style="background:var(--color-danger)"></span> Poor (&lt;60)</span>
+          </div>
+        `;
+      } else {
+        document.getElementById('condition-trend').innerHTML = `
+          <div style="text-align:center;padding:var(--space-8);color:var(--text-tertiary)">
+            <i class="fas fa-chart-line" style="font-size:2rem;margin-bottom:var(--space-3)"></i>
+            <p style="font-size:var(--text-sm)">No completed inspections to show trends.</p>
+          </div>
+        `;
+      }
+
+      // --- Inspection Timeline ---
+      document.getElementById('timeline-count').textContent = `${inspections.length} inspection${inspections.length !== 1 ? 's' : ''}`;
+
+      if (inspections.length > 0) {
+        document.getElementById('inspection-timeline').innerHTML = inspections.map(insp => {
+          const inspector = getUserById(insp.inspectorId);
+          const reviewer = insp.reviewerId ? getUserById(insp.reviewerId) : null;
+          const damageMarkers = getDamageMarkersForInspection(insp.id);
+          const reportNum = `INS-${new Date(insp.startedAt).getFullYear()}-${insp.id.split('_')[1]}`;
+          const isCompleted = insp.status === 'approved' || insp.status === 'pending_review';
+          const dotClass = insp.status === 'approved' ? 'pass' : insp.status === 'pending_review' ? 'pending' : insp.status === 'in_progress' ? 'pending' : 'draft';
+          const duration = insp.completedAt
+            ? Math.round((new Date(insp.completedAt) - new Date(insp.startedAt)) / 60000) + ' min'
+            : 'In progress';
+
+          return `
+            <div class="timeline-item">
+              <div class="timeline-dot ${dotClass}"></div>
+              <div class="timeline-card">
+                <div class="timeline-card-header">
+                  <div>
+                    <span class="timeline-date">${formatDate(insp.startedAt)}</span>
+                    <span class="timeline-report-id">${reportNum}</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:var(--space-2)">
+                    <span class="badge ${getStatusBadgeClass(insp.status)}">${getStatusLabel(insp.status)}</span>
+                    ${insp.grade ? `<span class="timeline-grade" style="color:${getGradeColor(insp.grade)}">${insp.grade}</span>` : ''}
+                  </div>
+                </div>
+                ${insp.score !== null ? `
+                <div class="timeline-score-bar">
+                  <div class="timeline-score-fill" style="width:${insp.score}%;background:${insp.score >= 90 ? 'var(--color-success)' : insp.score >= 75 ? 'var(--color-primary)' : insp.score >= 60 ? 'var(--color-accent)' : 'var(--color-danger)'}"></div>
+                  <span class="timeline-score-value">${insp.score}%</span>
+                </div>
+                ` : ''}
+                <div class="timeline-card-body">
+                  <div class="timeline-stat"><i class="fas fa-user"></i> ${inspector.name}</div>
+                  <div class="timeline-stat"><i class="fas fa-clock"></i> ${duration}</div>
+                  ${isCompleted ? `
+                    <div class="timeline-stat"><i class="fas fa-check-circle" style="color:var(--color-success)"></i> ${insp.passCount} passed</div>
+                    ${insp.failCount > 0 ? `<div class="timeline-stat"><i class="fas fa-times-circle" style="color:var(--color-danger)"></i> ${insp.failCount} failed</div>` : ''}
+                    ${insp.advisoryCount > 0 ? `<div class="timeline-stat"><i class="fas fa-exclamation-triangle" style="color:var(--color-accent)"></i> ${insp.advisoryCount} advisory</div>` : ''}
+                    ${damageMarkers.length > 0 ? `<div class="timeline-stat"><i class="fas fa-map-pin" style="color:var(--color-danger)"></i> ${damageMarkers.length} damage</div>` : ''}
+                  ` : ''}
+                </div>
+                ${reviewer ? `
+                <div class="timeline-reviewer">
+                  <i class="fas fa-user-check"></i> Reviewed by ${reviewer.name}
+                </div>
+                ` : ''}
+                <div class="timeline-card-actions">
+                  ${isCompleted ? `
+                    <a href="report-view.html?id=${insp.id}" class="btn btn-sm btn-primary"><i class="fas fa-file-lines"></i> View Report</a>
+                  ` : `
+                    <span class="btn btn-sm btn-secondary" style="opacity:0.5;pointer-events:none"><i class="fas fa-file-lines"></i> Report Pending</span>
+                  `}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        document.getElementById('inspection-timeline').innerHTML = `
+          <div style="text-align:center;padding:var(--space-8);color:var(--text-tertiary)">
+            <i class="fas fa-clipboard" style="font-size:2rem;margin-bottom:var(--space-3)"></i>
+            <h4 style="color:var(--text-secondary)">No Inspections Yet</h4>
+            <p style="font-size:var(--text-sm)">This vehicle hasn't been inspected yet.</p>
+            <a href="new-inspection.html" class="btn btn-primary" style="margin-top:var(--space-4)"><i class="fas fa-plus"></i> Start Inspection</a>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

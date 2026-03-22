@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicles — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/vehicles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Vehicle Database</h2>
+            <p>All vehicles that have been inspected or registered in the system</p>
+          </div>
+          <div class="page-header-right">
+            <button class="btn btn-secondary" id="view-toggle" onclick="toggleView()">
+              <i class="fas fa-table"></i> Table View
+            </button>
+            <a href="new-inspection.html" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Vehicle
+            </a>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar mb-6">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-input" placeholder="Search by VIN, make, model, plate..." id="vehicle-search" oninput="filterVehicles()">
+          </div>
+          <select class="form-select" id="body-filter" onchange="filterVehicles()">
+            <option value="">All Body Types</option>
+            <option>Sedan</option>
+            <option>SUV</option>
+            <option>Hatchback</option>
+            <option>Truck</option>
+          </select>
+          <select class="form-select" id="ppsr-filter" onchange="filterVehicles()">
+            <option value="">All PPSR Status</option>
+            <option value="Clear">Clear</option>
+            <option value="Encumbered">Encumbered</option>
+          </select>
+        </div>
+
+        <!-- Cards View -->
+        <div class="vehicles-grid" id="vehicles-grid"></div>
+
+        <!-- Table View -->
+        <div class="table-container hidden" id="vehicles-table">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Vehicle</th>
+                <th>VIN</th>
+                <th class="hide-mobile">Body Type</th>
+                <th class="hide-mobile">Odometer</th>
+                <th>Inspections</th>
+                <th>PPSR</th>
+                <th class="hide-mobile">Last Inspected</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vehicles-table-body"></tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <div class="pagination-info">Showing <strong id="showing-count">0</strong> vehicles</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Vehicle Detail Modal -->
+  <div class="modal-overlay" id="vehicle-detail-modal">
+    <div class="modal" style="max-width:min(640px, 95vw)">
+      <div class="modal-header">
+        <h3 id="modal-vehicle-title">Vehicle Details</h3>
+        <button class="modal-close" onclick="closeModal('vehicle-detail-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" id="modal-vehicle-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('vehicle-detail-modal')">Close</button>
+        <a id="modal-history-link" href="#" class="btn btn-secondary"><i class="fas fa-clock-rotate-left"></i> Full History</a>
+        <a href="new-inspection.html" class="btn btn-primary"><i class="fas fa-clipboard-check"></i> New Inspection</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    renderSidebar('vehicles');
+    renderHeader('Vehicles', [{ label: 'Home', href: 'dashboard.html' }, { label: 'Vehicles' }]);
+    renderMobileNav('vehicles');
+
+    let isTableView = false;
+
+    function toggleView() {
+      isTableView = !isTableView;
+      document.getElementById('vehicles-grid').classList.toggle('hidden', isTableView);
+      document.getElementById('vehicles-table').classList.toggle('hidden', !isTableView);
+      const btn = document.getElementById('view-toggle');
+      btn.innerHTML = isTableView
+        ? '<i class="fas fa-th-large"></i> Card View'
+        : '<i class="fas fa-table"></i> Table View';
+    }
+
+    function filterVehicles() {
+      const search = document.getElementById('vehicle-search').value.toLowerCase();
+      const bodyType = document.getElementById('body-filter').value;
+      const ppsr = document.getElementById('ppsr-filter').value;
+
+      let vehicles = MOCK_DATA.vehicles;
+
+      if (search) {
+        vehicles = vehicles.filter(v =>
+          `${v.year} ${v.make} ${v.model} ${v.vin} ${v.plate}`.toLowerCase().includes(search)
+        );
+      }
+      if (bodyType) vehicles = vehicles.filter(v => v.bodyType === bodyType);
+      if (ppsr) vehicles = vehicles.filter(v => v.ppsr === ppsr);
+
+      renderVehicles(vehicles);
+    }
+
+    function renderVehicles(vehicles) {
+      document.getElementById('showing-count').textContent = vehicles.length;
+
+      // Card view
+      const grid = document.getElementById('vehicles-grid');
+      if (vehicles.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:var(--space-10)">
+            <i class="fas fa-car" style="font-size:2.5rem;color:var(--color-gray-300)"></i>
+            <h3 style="margin-top:var(--space-3);color:var(--text-secondary)">No vehicles found</h3>
+            <p style="color:var(--text-tertiary);font-size:var(--text-sm)">Try adjusting your filters or add a new vehicle.</p>
+          </div>`;
+        document.getElementById('vehicles-table-body').innerHTML = `
+          <tr><td colspan="8" style="text-align:center;padding:var(--space-8)">
+            <i class="fas fa-car" style="font-size:2.5rem;color:var(--color-gray-300)"></i>
+            <h3 style="margin-top:var(--space-3);color:var(--text-secondary)">No vehicles found</h3>
+            <p style="color:var(--text-tertiary);font-size:var(--text-sm)">Try adjusting your filters or add a new vehicle.</p>
+          </td></tr>`;
+        return;
+      }
+      grid.innerHTML = vehicles.map(v => `
+        <div class="vehicle-card" onclick="showVehicleDetail('${v.id}')">
+          <div class="vehicle-card-header">
+            <div class="vehicle-card-title">
+              <div class="vehicle-icon"><i class="fas fa-${v.bodyType === 'SUV' ? 'truck-monster' : v.bodyType === 'Truck' ? 'truck-pickup' : 'car'}"></i></div>
+              <div>
+                <h4>${v.make} ${v.model}</h4>
+                <div class="vehicle-year">${v.year} &middot; ${v.trim}</div>
+              </div>
+            </div>
+            <span class="badge ${v.ppsr === 'Clear' ? 'badge-success' : 'badge-danger'}">${v.ppsr}</span>
+          </div>
+          <div class="vehicle-card-body">
+            <div class="vehicle-card-specs">
+              <div class="vehicle-spec">
+                <span class="spec-label">VIN</span>
+                <span class="spec-value" style="font-family:var(--font-mono);font-size:var(--text-xs)">${v.vin.substring(0, 11)}...</span>
+              </div>
+              <div class="vehicle-spec">
+                <span class="spec-label">Plate</span>
+                <span class="spec-value">${v.plate}</span>
+              </div>
+              <div class="vehicle-spec">
+                <span class="spec-label">Odometer</span>
+                <span class="spec-value">${v.odometer.toLocaleString()} km</span>
+              </div>
+              <div class="vehicle-spec">
+                <span class="spec-label">Engine</span>
+                <span class="spec-value">${v.engine}</span>
+              </div>
+            </div>
+          </div>
+          <div class="vehicle-card-footer">
+            <span class="inspection-count"><i class="fas fa-clipboard-check"></i> ${v.inspectionCount} inspection${v.inspectionCount !== 1 ? 's' : ''}</span>
+            <a href="vehicle-history.html?id=${v.id}" class="btn btn-ghost btn-sm" onclick="event.stopPropagation()" style="font-size:var(--text-xs);padding:var(--space-1) var(--space-2)"><i class="fas fa-clock-rotate-left"></i> History</a>
+          </div>
+        </div>
+      `).join('');
+
+      // Table view
+      const tbody = document.getElementById('vehicles-table-body');
+      tbody.innerHTML = vehicles.map(v => `
+        <tr onclick="showVehicleDetail('${v.id}')" style="cursor:pointer">
+          <td data-label="">
+            <div style="display:flex;align-items:center;gap:var(--space-3)">
+              <div class="avatar sm ${getAvatarColor(v.make)}"><i class="fas fa-car" style="font-size:0.6rem"></i></div>
+              <div>
+                <div style="font-weight:var(--font-medium)">${v.year} ${v.make} ${v.model}</div>
+                <div style="font-size:var(--text-xs);color:var(--text-tertiary)">${v.trim} &middot; ${v.color}</div>
+              </div>
+            </div>
+          </td>
+          <td data-label="VIN" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-secondary)">${v.vin}</td>
+          <td data-label="Body Type" class="hide-mobile"><span class="badge badge-gray">${v.bodyType}</span></td>
+          <td data-label="Odometer" class="hide-mobile" style="font-size:var(--text-sm)">${v.odometer.toLocaleString()} km</td>
+          <td data-label="Inspections"><strong>${v.inspectionCount}</strong></td>
+          <td data-label="PPSR"><span class="badge ${v.ppsr === 'Clear' ? 'badge-success' : 'badge-danger'}">${v.ppsr}</span></td>
+          <td data-label="Last Inspected" class="hide-mobile" style="font-size:var(--text-sm);color:var(--text-secondary)">${formatDate(v.lastInspected)}</td>
+          <td data-label="" style="white-space:nowrap">
+            <button class="btn btn-ghost btn-icon btn-sm" data-tooltip="View"><i class="fas fa-eye"></i></button>
+            <a href="vehicle-history.html?id=${v.id}" class="btn btn-ghost btn-icon btn-sm" data-tooltip="History" onclick="event.stopPropagation()"><i class="fas fa-clock-rotate-left"></i></a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function showVehicleDetail(id) {
+      const v = getVehicleById(id);
+      const inspections = getInspectionsForVehicle(id);
+
+      document.getElementById('modal-vehicle-title').textContent = `${v.year} ${v.make} ${v.model} ${v.trim}`;
+      document.getElementById('modal-vehicle-body').innerHTML = `
+        <div class="vehicle-detail-grid">
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">VIN</div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-sm);font-weight:var(--font-medium)">${v.vin}</div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">Plate</div>
+            <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">${v.plate}</div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">Engine</div>
+            <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">${v.engine}</div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">Transmission</div>
+            <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">${v.transmission}</div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">Colour</div>
+            <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">${v.color}</div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">Odometer</div>
+            <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">${v.odometer.toLocaleString()} km</div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">Drive Type</div>
+            <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">${v.driveType}</div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <div style="font-size:var(--text-xs);color:var(--text-tertiary)">PPSR Status</div>
+            <div><span class="badge ${v.ppsr === 'Clear' ? 'badge-success' : 'badge-danger'}">${v.ppsr}</span></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="margin-bottom:var(--space-3)">Inspection History (${inspections.length})</h4>
+        ${inspections.length > 0 ? inspections.map(insp => {
+          const inspector = getUserById(insp.inspectorId);
+          return `
+            <a href="report-view.html?id=${insp.id}" style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3);background:var(--color-gray-50);border-radius:var(--radius-lg);margin-bottom:var(--space-2);text-decoration:none;color:inherit;transition:background 0.15s" onmouseover="this.style.background='var(--color-gray-100)'" onmouseout="this.style.background='var(--color-gray-50)'">
+              <div style="display:flex;align-items:center;gap:var(--space-3)">
+                <div class="avatar sm ${getAvatarColor(inspector.name)}">${inspector.avatar}</div>
+                <div>
+                  <div style="font-size:var(--text-sm);font-weight:var(--font-medium)">${formatDate(insp.startedAt)}</div>
+                  <div style="font-size:var(--text-xs);color:var(--text-tertiary)">${inspector.name}</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--space-3)">
+                <span class="badge ${getStatusBadgeClass(insp.status)}">${getStatusLabel(insp.status)}</span>
+                <strong style="color:${getGradeColor(insp.grade)}">${insp.grade || '—'}</strong>
+                <i class="fas fa-chevron-right" style="color:var(--color-gray-400);font-size:var(--text-xs)"></i>
+              </div>
+            </a>
+          `;
+        }).join('') : '<p style="color:var(--text-tertiary);font-size:var(--text-sm)">No inspections recorded yet.</p>'}
+      `;
+
+      document.getElementById('modal-history-link').href = `vehicle-history.html?id=${id}`;
+      openModal('vehicle-detail-modal');
+    }
+
+    // Initialize
+    renderVehicles(MOCK_DATA.vehicles);
+  </script>
+</body>
+</html>

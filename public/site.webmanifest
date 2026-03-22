@@ -1,6 +1,6 @@
 {
-  "name": "Mohamad AlKayal",
-  "short_name": "MoeKayal",
+  "name": "Mohamad Al Kayal — Front-End Developer",
+  "short_name": "MK",
   "icons": [
     {
       "src": "/favicons/android-chrome-192X192.png",
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
   "display": "standalone"
 }

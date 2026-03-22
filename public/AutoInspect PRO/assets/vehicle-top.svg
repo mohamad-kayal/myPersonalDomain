@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 480" fill="none" id="vehicle-top-svg">
+  <!-- Vehicle Top-Down View -->
+  <style>
+    .body-outline { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 2; }
+    .window { fill: #dbeafe; stroke: #94a3b8; stroke-width: 1.5; }
+    .wheel { fill: #334155; stroke: #1e293b; stroke-width: 1.5; rx: 4; }
+    .detail { stroke: #94a3b8; stroke-width: 1; fill: none; }
+    .mirror { fill: #cbd5e1; stroke: #94a3b8; stroke-width: 1; }
+    .light { fill: #fef3c7; stroke: #94a3b8; stroke-width: 1; }
+    .panel-line { stroke: #cbd5e1; stroke-width: 0.75; stroke-dasharray: none; }
+    .clickable-zone { fill: transparent; cursor: crosshair; }
+    .clickable-zone:hover { fill: rgba(26, 86, 219, 0.08); }
+  </style>
+
+  <!-- Car Body Outline -->
+  <path class="body-outline" d="
+    M70,60
+    Q70,30 110,25
+    Q150,30 150,60
+    L155,80
+    Q160,100 160,120
+    L165,160
+    L168,200
+    L168,280
+    L168,340
+    L165,380
+    L160,400
+    Q158,420 155,430
+    L150,445
+    Q140,460 110,465
+    Q80,460 70,445
+    L65,430
+    Q62,420 60,400
+    L55,380
+    L52,340
+    L52,280
+    L52,200
+    L55,160
+    L60,120
+    Q60,100 65,80
+    Z
+  "/>
+
+  <!-- Windshield -->
+  <path class="window" d="M75,95 Q80,70 110,65 Q140,70 145,95 L142,120 Q110,115 78,120 Z"/>
+
+  <!-- Rear Window -->
+  <path class="window" d="M78,400 Q80,380 110,375 Q140,380 142,400 L140,420 Q110,425 80,420 Z"/>
+
+  <!-- Side Windows Left -->
+  <path class="window" d="M58,135 L73,120 L73,195 L58,195 Z"/>
+  <path class="window" d="M56,200 L73,200 L73,280 L54,280 Z"/>
+
+  <!-- Side Windows Right -->
+  <path class="window" d="M162,135 L147,120 L147,195 L162,195 Z"/>
+  <path class="window" d="M164,200 L147,200 L147,280 L166,280 Z"/>
+
+  <!-- Roof Line -->
+  <rect x="78" y="130" width="64" height="240" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- Panel Lines -->
+  <line class="panel-line" x1="52" y1="195" x2="168" y2="195"/>
+  <line class="panel-line" x1="52" y1="285" x2="168" y2="285"/>
+  <line class="panel-line" x1="110" y1="25" x2="110" y2="65" opacity="0.5"/>
+  <line class="panel-line" x1="110" y1="420" x2="110" y2="465" opacity="0.5"/>
+
+  <!-- Front Headlights -->
+  <ellipse class="light" cx="75" cy="45" rx="12" ry="8"/>
+  <ellipse class="light" cx="145" cy="45" rx="12" ry="8"/>
+
+  <!-- Rear Lights -->
+  <ellipse cx="75" cy="450" rx="10" ry="6" fill="#fee2e2" stroke="#94a3b8" stroke-width="1"/>
+  <ellipse cx="145" cy="450" rx="10" ry="6" fill="#fee2e2" stroke="#94a3b8" stroke-width="1"/>
+
+  <!-- Side Mirrors -->
+  <ellipse class="mirror" cx="46" cy="130" rx="8" ry="5"/>
+  <ellipse class="mirror" cx="174" cy="130" rx="8" ry="5"/>
+
+  <!-- Wheels -->
+  <rect class="wheel" x="38" y="148" width="16" height="38" rx="4"/>
+  <rect class="wheel" x="166" y="148" width="16" height="38" rx="4"/>
+  <rect class="wheel" x="38" y="320" width="16" height="38" rx="4"/>
+  <rect class="wheel" x="166" y="320" width="16" height="38" rx="4"/>
+
+  <!-- Door handles -->
+  <rect x="55" y="210" width="8" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="157" y="210" width="8" height="3" rx="1.5" fill="#94a3b8"/>
+
+  <!-- Clickable zones for damage placement -->
+  <!-- Hood -->
+  <path class="clickable-zone" data-zone="hood" d="M70,30 Q110,25 150,30 L155,80 Q160,100 160,120 L145,95 Q140,70 110,65 Q80,70 75,95 L60,120 Q60,100 65,80 Z"/>
+  <!-- Front Bumper -->
+  <path class="clickable-zone" data-zone="front-bumper" d="M70,25 Q110,20 150,25 L70,25 Z"/>
+  <!-- Roof -->
+  <rect class="clickable-zone" data-zone="roof" x="78" y="130" width="64" height="240"/>
+  <!-- Left Front Fender -->
+  <path class="clickable-zone" data-zone="left-front-fender" d="M52,120 L73,120 L73,195 L52,195 Z"/>
+  <!-- Right Front Fender -->
+  <path class="clickable-zone" data-zone="right-front-fender" d="M147,120 L168,120 L168,195 L147,195 Z"/>
+  <!-- Left Rear Quarter -->
+  <path class="clickable-zone" data-zone="left-rear-quarter" d="M52,285 L73,285 L73,400 L55,380 L52,340 Z"/>
+  <!-- Right Rear Quarter -->
+  <path class="clickable-zone" data-zone="right-rear-quarter" d="M147,285 L168,285 L168,340 L165,380 L147,400 Z"/>
+  <!-- Trunk -->
+  <path class="clickable-zone" data-zone="trunk" d="M65,400 L78,400 Q80,380 110,375 Q140,380 142,400 L155,400 L150,445 Q140,460 110,465 Q80,460 70,445 Z"/>
+  <!-- Left Door Front -->
+  <rect class="clickable-zone" data-zone="left-front-door" x="52" y="195" width="21" height="90"/>
+  <!-- Right Door Front -->
+  <rect class="clickable-zone" data-zone="right-front-door" x="147" y="195" width="21" height="90"/>
+</svg>
