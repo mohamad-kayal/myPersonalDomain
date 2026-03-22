@@ -72,7 +72,6 @@ th {
 
 /* Payment Details Section */
 .payment-details {
-  page-break-before: always; /* This forces it to start on a new page */
   margin-top: 30px;
   padding: 20px;
   border: 1px solid #dee2e6;
@@ -204,64 +203,85 @@ button:hover {
 @media print {
   @page {
     size: A4;
-    margin: 0.4cm;
+    margin: 10mm;
   }
 
   body {
-    background-color: #ffffff;
-    padding: 0;
-    margin: 0;
-    max-width: 100%;
-    box-shadow: none;
-    font-size: 9pt;
-    line-height: 1.2;
+    background-color: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    font-size: 10pt !important;
+    line-height: 1.3 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
   }
 
   .doc-content {
-    box-shadow: none;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    max-width: 100%;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
   }
 
   .invoice-content {
     display: block !important;
-    page-break-inside: avoid;
+    visibility: visible !important;
+    width: 100% !important;
+  }
+
+  .printable-area {
+    width: 100% !important;
   }
 
   header {
-    width: 100%;
-    margin-bottom: 0.5rem;
-    page-break-after: avoid;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 5px !important;
+    border-bottom: 2px solid #dee2e6 !important;
+    page-break-after: avoid !important;
   }
 
   header img {
-    max-height: 100px;
-    width: auto;
+    max-height: 100px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
   }
 
   table {
-    margin-bottom: 8px;
-    page-break-inside: avoid;
-    font-size: 9pt;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+    page-break-inside: avoid !important;
+    font-size: 10pt !important;
+    table-layout: fixed !important;
   }
 
   th, td {
-    padding: 4px 6px;
-    font-size: 9pt;
-    line-height: 1.1;
-    border: 1px solid #ccc;
+    padding: 5px 8px !important;
+    font-size: 10pt !important;
+    line-height: 1.2 !important;
+    border: 1px solid #ccc !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
   }
 
   th {
-    font-size: 9pt;
-    font-weight: bold;
+    font-weight: bold !important;
+    background-color: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .total-row td {
-    font-weight: bold;
-    font-size: 10pt;
+    font-weight: bold !important;
+    font-size: 11pt !important;
+    background-color: #e9ecef !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   #invoiceForm,
@@ -269,311 +289,50 @@ button:hover {
     display: none !important;
   }
 
-  th, .total-row td {
-    background-color: #f2f2f2 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
   .payment-details {
     display: block !important;
     visibility: visible !important;
     background-color: #f9f9f9 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-    padding: 8px;
-    margin-top: 8px;
-    page-break-inside: avoid;
-    border: 1px solid #dee2e6;
-  }
-
-  .payment-details h2 {
-    display: block !important;
-    font-size: 10pt;
-    margin: 0 0 6px 0;
-    padding-bottom: 4px;
-  }
-
-  .payment-details p {
-    display: block !important;
-    margin: 4px 0;
-    font-size: 9pt;
-    line-height: 1.2;
-  }
-
-  /* Ensure all payment details elements are visible */
-  .payment-details,
-  .payment-details * {
-    visibility: visible !important;
-  }
-}
-
-/* Safari-specific print styles */
-@media print and (-webkit-min-device-pixel-ratio: 0) {
-  @page {
-    size: A4;
-    margin: 0;
-  }
-  
-  body {
-    font-size: 6pt;
-    line-height: 0.9;
-    padding: 0.2cm;
-    margin: 0;
-  }
-  
-  .invoice-content {
-    display: block !important;
-    page-break-inside: avoid;
-    page-break-after: avoid;
-  }
-  
-  header {
-    margin-top: 0.5rem;
-    margin-bottom: 0.2rem;
-    padding-top: 0.3rem;
-    page-break-after: avoid;
-  }
-  
-  header img {
-    max-height: 200px !important;
-    width: auto;
-  }
-  
-  table {
-    margin-bottom: 2px;
-    font-size: 6pt;
-    page-break-inside: avoid;
-    page-break-after: avoid;
-  }
-  
-  th, td {
-    padding: 1px 3px;
-    font-size: 6pt;
-    line-height: 0.9;
-  }
-  
-  .total-row td {
-    font-size: 6pt;
-  }
-  
-  .payment-details {
-    display: block !important;
-    visibility: visible !important;
-    padding: 3px;
-    margin-top: 2px;
-    page-break-inside: avoid;
-    page-break-before: avoid;
-  }
-  
-  .payment-details h2 {
-    display: block !important;
-    font-size: 6pt;
-    margin: 0 0 2px 0;
-    padding-bottom: 1px;
-  }
-  
-  .payment-details p {
-    display: block !important;
-    margin: 1px 0;
-    font-size: 6pt;
-    line-height: 0.9;
-  }
-  
-  /* Force everything to stay together */
-  .invoice-details,
-  .item-description,
-  .payment-details {
-    page-break-inside: avoid;
-  }
-  
-  /* Ensure all payment details elements are visible */
-  .payment-details,
-  .payment-details * {
-    visibility: visible !important;
-  }
-}
-
-/* Mobile Safari-specific styles */
-@media print and (-webkit-min-device-pixel-ratio: 0) and (max-width: 768px) {
-  @page {
-    size: A4;
-    margin: 0 !important;
-  }
-  
-  body {
-    font-size: 5pt !important;
-    line-height: 0.8 !important;
-    padding: 0.1cm !important;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  header img {
-    max-height: 60px !important;
-  }
-  
-  table {
-    margin-bottom: 1px !important;
-    font-size: 5pt !important;
-  }
-  
-  th, td {
-    padding: 1px 2px !important;
-    font-size: 5pt !important;
-  }
-  
-  .payment-details {
-    padding: 2px !important;
-    margin-top: 1px !important;
-  }
-  
-  .payment-details h2 {
-    font-size: 5pt !important;
-    margin: 0 !important;
-  }
-  
-  .payment-details p {
-    font-size: 5pt !important;
-    margin: 0 !important;
-  }
-}
-
-/* Chrome-specific print styles - restore original sizing */
-@media print and (-webkit-min-device-pixel-ratio: 0) {
-  @supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
-    @page {
-      size: A4;
-      margin: 0.5cm;
-    }
-    
-    body {
-      font-size: 10pt;
-      line-height: 1.3;
-    }
-    
-    header img {
-      max-height: 120px;
-    }
-    
-    table {
-      margin-bottom: 12px;
-      font-size: 10pt;
-    }
-    
-    th, td {
-      padding: 6px 8px;
-      font-size: 10pt;
-      line-height: 1.2;
-    }
-    
-    .total-row td {
-      font-size: 11pt;
-    }
-    
-    .payment-details {
-      display: block !important;
-      visibility: visible !important;
-      padding: 12px;
-      margin-top: 12px;
-    }
-    
-    .payment-details h2 {
-      display: block !important;
-      font-size: 12pt;
-      margin: 0 0 10px 0;
-      padding-bottom: 6px;
-    }
-    
-    .payment-details p {
-      display: block !important;
-      margin: 6px 0;
-      font-size: 10pt;
-      line-height: 1.3;
-    }
-    
-    /* Ensure payment details are visible in Chrome */
-    .payment-details,
-    .payment-details * {
-      visibility: visible !important;
-    }
-  }
-}
-
-/* Mobile Chrome-specific styles - more specific targeting */
-@media print and (-webkit-min-device-pixel-ratio: 0) and (max-width: 768px) {
-  @supports ((-webkit-appearance: none) and (not (-moz-appearance: none)) and (not (-webkit-touch-callout: none))) {
-    @page {
-      size: A4;
-      margin: 0.3cm;
-    }
-    
-    body {
-      font-size: 8pt !important;
-      line-height: 1.1 !important;
-    }
-    
-    header img {
-      max-height: 100px !important;
-    }
-    
-    table {
-      margin-bottom: 6px !important;
-      font-size: 8pt !important;
-    }
-    
-    th, td {
-      padding: 3px 4px !important;
-      font-size: 8pt !important;
-      line-height: 1.1 !important;
-    }
-    
-    .total-row td {
-      font-size: 8pt !important;
-    }
-    
-    .payment-details {
-      display: block !important;
-      visibility: visible !important;
-      padding: 6px !important;
-      margin-top: 6px !important;
-      page-break-inside: avoid !important;
-    }
-    
-    .payment-details h2 {
-      display: block !important;
-      font-size: 9pt !important;
-      margin: 0 0 4px 0 !important;
-    }
-    
-    .payment-details p {
-      display: block !important;
-      font-size: 8pt !important;
-      margin: 3px 0 !important;
-      line-height: 1.1 !important;
-    }
-    
-    /* Force visibility on mobile Chrome */
-    .payment-details,
-    .payment-details * {
-      visibility: visible !important;
-      display: block !important;
-    }
-  }
-}
-
-/* Fallback for mobile browsers that don't match above */
-@media print and (max-width: 768px) and (orientation: portrait) {
-  .payment-details {
-    display: block !important;
-    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 10px !important;
+    margin-top: 10px !important;
     page-break-inside: avoid !important;
+    page-break-before: auto !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 0 !important;
   }
-  
-  .payment-details h2,
+
+  .payment-details h2 {
+    display: block !important;
+    visibility: visible !important;
+    font-size: 11pt !important;
+    margin: 0 0 8px 0 !important;
+    padding-bottom: 5px !important;
+    border-bottom: 1px solid #dee2e6 !important;
+  }
+
   .payment-details p {
     display: block !important;
     visibility: visible !important;
+    margin: 5px 0 !important;
+    font-size: 10pt !important;
+    line-height: 1.3 !important;
+  }
+
+  .payment-details strong {
+    font-weight: 600 !important;
+  }
+
+  /* Ensure all payment details children are visible */
+  .payment-details * {
+    visibility: visible !important;
+  }
+
+  /* Prevent orphaned sections */
+  .invoice-details,
+  .item-description {
+    page-break-inside: avoid !important;
   }
 }
 

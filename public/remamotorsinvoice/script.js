@@ -43,6 +43,23 @@ function fillInvoice() {
         return;
     }
 
-    // Print the invoice
-    window.print();
+    // Show the invoice content before printing
+    document.querySelector('.invoice-content').style.display = 'block';
+
+    // On mobile, temporarily adjust viewport for proper print rendering
+    var viewportMeta = document.querySelector('meta[name="viewport"]');
+    var originalViewport = viewportMeta ? viewportMeta.getAttribute('content') : '';
+    if (viewportMeta) {
+        viewportMeta.setAttribute('content', 'width=1024');
+    }
+
+    // Small delay to let the browser reflow with the new viewport before printing
+    setTimeout(function() {
+        window.print();
+
+        // Restore viewport after print dialog closes
+        if (viewportMeta && originalViewport) {
+            viewportMeta.setAttribute('content', originalViewport);
+        }
+    }, 300);
 }
