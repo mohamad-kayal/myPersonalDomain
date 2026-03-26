@@ -15,6 +15,103 @@ function loadImageAsDataURL(url) {
     });
 }
 
+// ===== Mobile Detection =====
+function isMobile() {
+    return window.matchMedia("(max-width: 768px)").matches;
+}
+
+// ===== Step Navigation =====
+var _currentStep = 0;
+
+function goToStep(step) {
+    if (!isMobile()) return;
+    _currentStep = step;
+
+    var track = document.getElementById("stepsTrack");
+    if (track) {
+        track.style.transform = "translateX(-" + (step * 100) + "%)";
+    }
+
+    // Update tab active states
+    var tabs = document.querySelectorAll(".step-tab");
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.toggle("active", i === step);
+    }
+
+    // Scroll to top of form area
+    var viewport = document.getElementById("stepsViewport");
+    if (viewport) viewport.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function initStepNav() {
+    var tabs = document.querySelectorAll(".step-tab");
+    for (var i = 0; i < tabs.length; i++) {
+        (function(index) {
+            tabs[index].addEventListener("click", function(e) {
+                e.preventDefault();
+                goToStep(index);
+            });
+        })(i);
+    }
+
+    // Swipe gesture support
+    initSwipeGestures();
+}
+
+function initSwipeGestures() {
+    var viewport = document.getElementById("stepsViewport");
+    if (!viewport) return;
+
+    var startX = 0;
+    var startY = 0;
+    var isDragging = false;
+
+    viewport.addEventListener("touchstart", function(e) {
+        if (!isMobile()) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isDragging = true;
+    }, { passive: true });
+
+    viewport.addEventListener("touchend", function(e) {
+        if (!isDragging || !isMobile()) return;
+        isDragging = false;
+        var endX = e.changedTouches[0].clientX;
+        var endY = e.changedTouches[0].clientY;
+        var diffX = startX - endX;
+        var diffY = startY - endY;
+
+        // Only trigger if horizontal swipe is dominant and exceeds threshold
+        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+            if (diffX > 0 && _currentStep < 2) {
+                goToStep(_currentStep + 1);
+            } else if (diffX < 0 && _currentStep > 0) {
+                goToStep(_currentStep - 1);
+            }
+        }
+    }, { passive: true });
+}
+
+function updateStepTabs() {
+    if (!isMobile()) return;
+    var panels = document.querySelectorAll(".step-panel");
+    var tabs = document.querySelectorAll(".step-tab");
+
+    for (var i = 0; i < panels.length; i++) {
+        var fields = panels[i].querySelectorAll("[required]");
+        var filled = 0;
+        for (var j = 0; j < fields.length; j++) {
+            var f = fields[j];
+            if (f.tagName === "SELECT" ? f.value !== "" : f.value.trim() !== "") filled++;
+        }
+        if (tabs[i] && fields.length > 0 && filled === fields.length) {
+            tabs[i].classList.add("complete");
+        } else if (tabs[i]) {
+            tabs[i].classList.remove("complete");
+        }
+    }
+}
+
 // ===== Form Initialization =====
 document.addEventListener("DOMContentLoaded", initForm);
 
@@ -41,11 +138,13 @@ function initForm() {
             field.addEventListener("input", function() {
                 updateFieldState(field);
                 updateProgress();
+                updateStepTabs();
                 debounceSave();
             });
             field.addEventListener("change", function() {
                 updateFieldState(field);
                 updateProgress();
+                updateStepTabs();
                 debounceSave();
             });
             field.addEventListener("blur", function() {
@@ -69,8 +168,55 @@ function initForm() {
         });
     }
 
+    // Initialize step navigation for mobile
+    initStepNav();
+
     // Initial progress calculation
     updateProgress();
+    updateStepTabs();
+
+    // Modal backdrop click to close
+    var backdrop = document.getElementById("modalBackdrop");
+    if (backdrop) {
+        backdrop.addEventListener("click", function() {
+            var modal = document.getElementById("passwordModal");
+            if (modal) modal.classList.remove("active");
+        });
+    }
+
+    // Bind section toggle headers
+    var sectionHeaders = document.querySelectorAll("[data-toggle]");
+    for (var sh = 0; sh < sectionHeaders.length; sh++) {
+        (function(header) {
+            header.addEventListener("click", function() {
+                toggleSection(header.getAttribute("data-toggle"));
+            });
+        })(sectionHeaders[sh]);
+    }
+
+    // Bind step navigation buttons (prev/next)
+    var stepBtns = document.querySelectorAll("[data-goto]");
+    for (var sb = 0; sb < stepBtns.length; sb++) {
+        (function(btn) {
+            btn.addEventListener("click", function() {
+                goToStep(parseInt(btn.getAttribute("data-goto"), 10));
+            });
+        })(stepBtns[sb]);
+    }
+
+    // Bind generate and clear buttons
+    var generateBtn = document.getElementById("generateBtn");
+    if (generateBtn) generateBtn.addEventListener("click", fillInvoice);
+
+    var clearBtn = document.getElementById("clearBtn");
+    if (clearBtn) clearBtn.addEventListener("click", clearDraft);
+
+    // Bind success overlay buttons
+    var newInvoiceBtn = document.getElementById("newInvoiceBtn");
+    if (newInvoiceBtn) newInvoiceBtn.addEventListener("click", startNewInvoice);
+
+    var closeSuccessBtn = document.getElementById("closeSuccessBtn");
+    if (closeSuccessBtn) closeSuccessBtn.addEventListener("click", closeSuccessOverlay);
 }
 
 // ===== Field Validation State =====
@@ -180,6 +326,8 @@ function updateSectionStatus(sectionId) {
 
 // ===== Section Toggle =====
 function toggleSection(sectionId) {
+    // Don't toggle on mobile (step nav handles visibility)
+    if (isMobile()) return;
     var section = document.getElementById(sectionId);
     if (section) section.classList.toggle("collapsed");
 }
@@ -229,7 +377,10 @@ function loadDraft() {
 
 function clearDraft() {
     if (!confirm("Clear all form fields and saved draft?")) return;
+    resetForm();
+}
 
+function resetForm() {
     try {
         localStorage.removeItem(DRAFT_KEY);
     } catch (e) {}
@@ -250,10 +401,16 @@ function clearDraft() {
     // Refresh all visual states
     var fields = form.querySelectorAll("[required]");
     for (var j = 0; j < fields.length; j++) {
+        var group = fields[j].closest(".form-group");
+        if (group) group.classList.remove("touched");
         updateFieldState(fields[j]);
     }
     updateProgress();
+    updateStepTabs();
     updateDraftStatus();
+
+    // Go back to first step on mobile
+    if (isMobile()) goToStep(0);
 }
 
 function updateDraftStatus() {
@@ -285,6 +442,43 @@ function showToast(message) {
     }, 3000);
 }
 
+// ===== Success Overlay =====
+function showSuccessOverlay(filename) {
+    var overlay = document.getElementById("successOverlay");
+    var filenameEl = document.getElementById("successFilename");
+    if (!overlay) return;
+    if (filenameEl) filenameEl.textContent = filename;
+    overlay.classList.add("active");
+}
+
+function closeSuccessOverlay() {
+    var overlay = document.getElementById("successOverlay");
+    if (overlay) overlay.classList.remove("active");
+}
+
+function startNewInvoice() {
+    closeSuccessOverlay();
+    resetForm();
+}
+
+// ===== Loading State =====
+function setGenerateLoading(loading) {
+    var btn = document.getElementById("generateBtn");
+    if (!btn) return;
+    if (loading) {
+        btn.classList.add("loading");
+    } else {
+        btn.classList.remove("loading");
+    }
+}
+
+// ===== Filename Builder =====
+function buildFilename(date, clientName) {
+    var cleanClient = clientName.replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s+/g, "_");
+    var cleanDate = date.replace(/-/g, "");
+    return "RemaInvoice_" + cleanDate + "_" + cleanClient + ".pdf";
+}
+
 // ===== Invoice Generation =====
 function fillInvoice() {
     var form = document.getElementById("invoiceForm");
@@ -298,15 +492,27 @@ function fillInvoice() {
     }
 
     if (!form.checkValidity()) {
-        // Expand collapsed section containing the first error and scroll to it
+        // On mobile, navigate to the step with the first error
         var firstInvalid = form.querySelector("[required]:invalid");
         if (firstInvalid) {
-            var section = firstInvalid.closest(".form-section");
-            if (section && section.classList.contains("collapsed")) {
-                section.classList.remove("collapsed");
+            if (isMobile()) {
+                var panel = firstInvalid.closest(".step-panel");
+                if (panel) {
+                    var stepIndex = parseInt(panel.getAttribute("data-step"), 10);
+                    goToStep(stepIndex);
+                }
+                setTimeout(function() {
+                    firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                    firstInvalid.focus();
+                }, 350);
+            } else {
+                var section = firstInvalid.closest(".step-panel, .form-section");
+                if (section && section.classList.contains("collapsed")) {
+                    section.classList.remove("collapsed");
+                }
+                firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                firstInvalid.focus();
             }
-            firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
-            firstInvalid.focus();
         }
         return;
     }
@@ -331,6 +537,8 @@ function fillInvoice() {
 
     var odometerFormatted = new Intl.NumberFormat("en-AU").format(odometer) + " KM";
     var totalFormatted = new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" }).format(total);
+
+    var filename = buildFilename(date, to);
 
     // Show password modal
     var modal = document.getElementById("passwordModal");
@@ -360,6 +568,10 @@ function fillInvoice() {
             return;
         }
         cleanup();
+
+        // Show loading spinner
+        setGenerateLoading(true);
+
         loadImageAsDataURL("/remamotorsinvoice-jspdf/images/header.png").then(function(headerImg) {
             generatePDF(headerImg, {
                 date: date, to: to, abn: abn, address: address, deliveredTo: deliveredTo,
@@ -367,8 +579,11 @@ function fillInvoice() {
                 engine: engine, odometer: odometerFormatted, colour: colour,
                 bodyType: bodyType, transmission: transmission, fuelType: fuelType,
                 total: totalFormatted
-            });
-            showToast("Invoice saved as PDF!");
+            }, filename);
+
+            // Hide loading, show success
+            setGenerateLoading(false);
+            showSuccessOverlay(filename);
         });
     }
 
@@ -380,7 +595,7 @@ function fillInvoice() {
     };
 }
 
-function generatePDF(headerImg, data) {
+function generatePDF(headerImg, data, filename) {
     var jsPDF = window.jspdf.jsPDF;
     var doc = new jsPDF({ unit: "mm", format: "a4" });
 
@@ -410,7 +625,7 @@ function generatePDF(headerImg, data) {
     y += 4;
 
     // --- Helper: draw a table row ---
-    function drawRow(x, rowY, cols, rowHeight, options) {
+    function drawRow(_x, rowY, cols, rowHeight, options) {
         options = options || {};
         var bg = options.bg;
         var bold = options.bold;
@@ -557,6 +772,5 @@ function generatePDF(headerImg, data) {
         paymentY += 6;
     }
 
-    var filename = "Invoice_" + data.to.replace(/\s+/g, "_") + "_" + data.date + ".pdf";
     doc.save(filename);
 }

@@ -2,7 +2,8 @@
 <html>
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="/remamotorsinvoice-jspdf/style.css">
     <script src="/remamotorsinvoice-jspdf/lib/jspdf.umd.min.js"></script>
     <script src="/remamotorsinvoice-jspdf/script.js" defer></script>
@@ -19,150 +20,185 @@
         <span class="progress-text" id="progressText">0 of 16 fields complete</span>
       </div>
 
-      <!-- Section 1: Customer Details -->
-      <div class="form-section" id="section1">
-        <div class="section-header" onclick="toggleSection('section1')">
-          <div class="section-title-row">
-            <span class="section-number">1</span>
-            <h2 class="section-title">Customer Details</h2>
-          </div>
-          <div class="section-right">
-            <span class="section-status" id="section1Status">0/5</span>
-            <span class="section-chevron"></span>
-          </div>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="date">Date</label>
-              <input type="date" id="date" name="date" autocomplete="off" required />
-            </div>
-            <div class="form-group">
-              <label for="to">To</label>
-              <input type="text" id="to" name="to" placeholder="Customer or business name" autocomplete="organization" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="abn">ABN</label>
-              <input type="text" id="abn" name="abn" inputmode="numeric" pattern="[0-9]{11}" minlength="11" maxlength="11" placeholder="11-digit ABN" autocomplete="off" title="ABN must be 11 digits" required />
-            </div>
-            <div class="form-group">
-              <label for="address">Address</label>
-              <textarea id="address" name="address" rows="3" placeholder="Street address" autocomplete="street-address" required></textarea>
-            </div>
-          </div>
-          <div class="form-group full-width">
-            <label for="deliveredTo">Delivered To</label>
-            <textarea id="deliveredTo" name="deliveredTo" rows="3" placeholder="Delivery address" autocomplete="off" required></textarea>
-          </div>
-        </div>
+      <!-- Step Navigation (mobile) -->
+      <div class="step-nav" id="stepNav">
+        <button type="button" class="step-tab active" data-step="0">
+          <span class="step-tab-num">1</span>
+          <span class="step-tab-label">Customer</span>
+        </button>
+        <button type="button" class="step-tab" data-step="1">
+          <span class="step-tab-num">2</span>
+          <span class="step-tab-label">Vehicle</span>
+        </button>
+        <button type="button" class="step-tab" data-step="2">
+          <span class="step-tab-num">3</span>
+          <span class="step-tab-label">Review</span>
+        </button>
       </div>
 
-      <!-- Section 2: Vehicle Details -->
-      <div class="form-section" id="section2">
-        <div class="section-header" onclick="toggleSection('section2')">
-          <div class="section-title-row">
-            <span class="section-number">2</span>
-            <h2 class="section-title">Vehicle Details</h2>
-          </div>
-          <div class="section-right">
-            <span class="section-status" id="section2Status">0/10</span>
-            <span class="section-chevron"></span>
-          </div>
-        </div>
-        <div class="section-body">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="make">Make</label>
-              <input type="text" id="make" name="make" placeholder="e.g. Toyota" autocomplete="off" required />
-            </div>
-            <div class="form-group">
-              <label for="model">Model</label>
-              <input type="text" id="model" name="model" placeholder="e.g. Camry" autocomplete="off" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="year">Year</label>
-              <input type="number" id="year" name="year" min="1900" max="2035" placeholder="e.g. 2024" autocomplete="off" required />
-            </div>
-            <div class="form-group">
-              <label for="rego">Rego Number</label>
-              <input type="text" id="rego" name="rego" class="uppercase-input" placeholder="e.g. ABC123" maxlength="7" autocomplete="off" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="vin">VIN</label>
-              <input type="text" id="vin" name="vin" class="uppercase-input" placeholder="17-character VIN" minlength="17" maxlength="17" pattern="[A-Za-z0-9]{17}" autocomplete="off" title="VIN must be 17 alphanumeric characters" required />
-            </div>
-            <div class="form-group">
-              <label for="engine">Engine Number</label>
-              <input type="text" id="engine" name="engine" placeholder="Engine number" autocomplete="off" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="odometer">Odometer Reading</label>
-              <input type="number" id="odometer" name="odometer" min="0" placeholder="e.g. 85000" autocomplete="off" required />
-            </div>
-            <div class="form-group">
-              <label for="colour">Colour</label>
-              <input type="text" id="colour" name="colour" placeholder="e.g. White" autocomplete="off" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="bodyType">Body Type</label>
-              <input type="text" id="bodyType" name="bodyType" placeholder="e.g. Sedan" autocomplete="off" required />
-            </div>
-            <div class="form-group">
-              <label for="transmission">Transmission</label>
-              <select id="transmission" name="transmission" autocomplete="off" required>
-                <option value="" disabled selected>Select</option>
-                <option value="AMT">AMT</option>
-                <option value="Automatic">Automatic</option>
-                <option value="Manual">Manual</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group full-width">
-            <label for="fuelType">Fuel Type</label>
-            <select id="fuelType" name="fuelType" autocomplete="off" required>
-              <option value="" disabled selected>Select</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Dual Fuel">Dual Fuel</option>
-              <option value="Electric">Electric</option>
-              <option value="Gas Only">Gas Only</option>
-              <option value="Hybrid">Hybrid</option>
-              <option value="Petrol">Petrol</option>
-              <option value="Plug in Hybrid">Plug in Hybrid</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <!-- Swipeable Steps Container -->
+      <div class="steps-viewport" id="stepsViewport">
+        <div class="steps-track" id="stepsTrack">
 
-      <!-- Section 3: Pricing -->
-      <div class="form-section" id="section3">
-        <div class="section-header" onclick="toggleSection('section3')">
-          <div class="section-title-row">
-            <span class="section-number">3</span>
-            <h2 class="section-title">Pricing</h2>
-          </div>
-          <div class="section-right">
-            <span class="section-status" id="section3Status">0/1</span>
-            <span class="section-chevron"></span>
-          </div>
-        </div>
-        <div class="section-body">
-          <div class="form-group full-width">
-            <label for="total">Total Price (including GST)</label>
-            <div class="price-input-wrapper">
-              <span class="price-prefix">$</span>
-              <input type="number" id="total" name="total" min="0" step="0.01" placeholder="0.00" autocomplete="off" required />
+          <!-- Step 1: Customer Details -->
+          <div class="step-panel" id="section1" data-step="0">
+            <div class="section-header" data-toggle="section1">
+              <div class="section-title-row">
+                <span class="section-number">1</span>
+                <h2 class="section-title">Customer Details</h2>
+              </div>
+              <div class="section-right">
+                <span class="section-status" id="section1Status">0/5</span>
+                <span class="section-chevron"></span>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="date">Date</label>
+                  <input type="date" id="date" name="date" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="to">To</label>
+                  <input type="text" id="to" name="to" placeholder="Customer or business name" autocomplete="organization" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="abn">ABN</label>
+                  <input type="text" id="abn" name="abn" inputmode="numeric" pattern="[0-9]{11}" minlength="11" maxlength="11" placeholder="11-digit ABN" autocomplete="off" title="ABN must be 11 digits" required />
+                </div>
+                <div class="form-group">
+                  <label for="address">Address</label>
+                  <textarea id="address" name="address" rows="3" placeholder="Street address" autocomplete="street-address" required></textarea>
+                </div>
+              </div>
+              <div class="form-group full-width">
+                <label for="deliveredTo">Delivered To</label>
+                <textarea id="deliveredTo" name="deliveredTo" rows="3" placeholder="Delivery address" autocomplete="off" required></textarea>
+              </div>
+            </div>
+            <div class="step-actions">
+              <div></div>
+              <button type="button" class="step-btn step-btn-next" data-goto="1">Next: Vehicle</button>
             </div>
           </div>
+
+          <!-- Step 2: Vehicle Details -->
+          <div class="step-panel" id="section2" data-step="1">
+            <div class="section-header" data-toggle="section2">
+              <div class="section-title-row">
+                <span class="section-number">2</span>
+                <h2 class="section-title">Vehicle Details</h2>
+              </div>
+              <div class="section-right">
+                <span class="section-status" id="section2Status">0/10</span>
+                <span class="section-chevron"></span>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="make">Make</label>
+                  <input type="text" id="make" name="make" placeholder="e.g. Toyota" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="model">Model</label>
+                  <input type="text" id="model" name="model" placeholder="e.g. Camry" autocomplete="off" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="year">Year</label>
+                  <input type="number" id="year" name="year" min="1900" max="2035" placeholder="e.g. 2024" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="rego">Rego Number</label>
+                  <input type="text" id="rego" name="rego" class="uppercase-input" placeholder="e.g. ABC123" maxlength="7" autocomplete="off" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="vin">VIN</label>
+                  <input type="text" id="vin" name="vin" class="uppercase-input" placeholder="17-character VIN" minlength="17" maxlength="17" pattern="[A-Za-z0-9]{17}" autocomplete="off" title="VIN must be 17 alphanumeric characters" required />
+                </div>
+                <div class="form-group">
+                  <label for="engine">Engine Number</label>
+                  <input type="text" id="engine" name="engine" placeholder="Engine number" autocomplete="off" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="odometer">Odometer Reading</label>
+                  <input type="number" id="odometer" name="odometer" min="0" placeholder="e.g. 85000" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="colour">Colour</label>
+                  <input type="text" id="colour" name="colour" placeholder="e.g. White" autocomplete="off" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="bodyType">Body Type</label>
+                  <input type="text" id="bodyType" name="bodyType" placeholder="e.g. Sedan" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="transmission">Transmission</label>
+                  <select id="transmission" name="transmission" autocomplete="off" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="AMT">AMT</option>
+                    <option value="Automatic">Automatic</option>
+                    <option value="Manual">Manual</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group full-width">
+                <label for="fuelType">Fuel Type</label>
+                <select id="fuelType" name="fuelType" autocomplete="off" required>
+                  <option value="" disabled selected>Select</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="Dual Fuel">Dual Fuel</option>
+                  <option value="Electric">Electric</option>
+                  <option value="Gas Only">Gas Only</option>
+                  <option value="Hybrid">Hybrid</option>
+                  <option value="Petrol">Petrol</option>
+                  <option value="Plug in Hybrid">Plug in Hybrid</option>
+                </select>
+              </div>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="step-btn step-btn-prev" data-goto="0">Back</button>
+              <button type="button" class="step-btn step-btn-next" data-goto="2">Next: Review</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Pricing / Review & Generate -->
+          <div class="step-panel" id="section3" data-step="2">
+            <div class="section-header" data-toggle="section3">
+              <div class="section-title-row">
+                <span class="section-number">3</span>
+                <h2 class="section-title">Pricing</h2>
+              </div>
+              <div class="section-right">
+                <span class="section-status" id="section3Status">0/1</span>
+                <span class="section-chevron"></span>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="form-group full-width">
+                <label for="total">Total Price (including GST)</label>
+                <div class="price-input-wrapper">
+                  <span class="price-prefix">$</span>
+                  <input type="number" id="total" name="total" inputmode="decimal" min="0" step="0.01" placeholder="0.00" autocomplete="off" required />
+                </div>
+              </div>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="step-btn step-btn-prev" data-goto="1">Back</button>
+              <div></div>
+            </div>
+          </div>
+
         </div>
       </div>
     </form>
@@ -170,19 +206,22 @@
     <!-- Sticky Generate Button -->
     <div class="sticky-button-wrapper" id="stickyButtonWrapper">
       <div class="sticky-button-inner">
-        <button type="button" onclick="fillInvoice();" id="generateBtn">
-          Generate &amp; Download PDF
+        <button type="button" id="generateBtn">
+          <span class="btn-content" id="btnContent">Generate &amp; Download PDF</span>
+          <span class="btn-spinner" id="btnSpinner"></span>
         </button>
-        <button type="button" onclick="clearDraft();" id="clearBtn">
+        <button type="button" id="clearBtn">
           Clear
         </button>
       </div>
       <p class="draft-status" id="draftStatus"></p>
     </div>
 
-    <!-- Password Modal -->
+    <!-- Password Modal (bottom sheet on mobile) -->
     <div id="passwordModal" class="modal-overlay">
+      <div class="modal-backdrop" id="modalBackdrop"></div>
       <div class="modal-box">
+        <div class="modal-handle"></div>
         <h2 class="modal-title">Enter Password</h2>
         <p class="modal-text">Please enter the password to generate the invoice.</p>
         <input type="password" id="modalPassword" class="modal-input" placeholder="Password" autocomplete="off" />
@@ -198,6 +237,17 @@
     <div class="toast" id="successToast">
       <span class="toast-icon">&#10003;</span>
       <span class="toast-message" id="toastMessage">Invoice generated!</span>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-card">
+        <div class="success-check">&#10003;</div>
+        <h2 class="success-title">Invoice Generated!</h2>
+        <p class="success-filename" id="successFilename"></p>
+        <button type="button" class="success-btn" id="newInvoiceBtn">Start New Invoice</button>
+        <button type="button" class="success-btn success-btn-secondary" id="closeSuccessBtn">Close</button>
+      </div>
     </div>
   </body>
 </html>
