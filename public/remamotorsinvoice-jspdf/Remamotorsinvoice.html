@@ -10,7 +10,13 @@
   </head>
   <body class="doc-content">
     <form id="invoiceForm" class="invoice-form-container" novalidate>
-      <h1 class="form-title">Rema Motors Invoice Generator</h1>
+      <div class="form-header-row">
+        <h1 class="form-title">Rema Motors Invoice Generator</h1>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <span class="theme-icon theme-icon-light">&#9789;</span>
+          <span class="theme-icon theme-icon-dark">&#9788;</span>
+        </button>
+      </div>
 
       <!-- Progress Bar -->
       <div class="progress-container">
@@ -245,8 +251,8 @@
         <div class="success-check">&#10003;</div>
         <h2 class="success-title">Invoice Generated!</h2>
         <p class="success-filename" id="successFilename"></p>
-        <button type="button" class="success-btn" id="newInvoiceBtn">Start New Invoice</button>
-        <button type="button" class="success-btn success-btn-secondary" id="closeSuccessBtn">Close</button>
+        <button type="button" class="success-btn" id="closeSuccessBtn">Close</button>
+        <button type="button" class="success-btn success-btn-secondary" id="newInvoiceBtn">Start New Invoice</button>
       </div>
     </div>
   </body>

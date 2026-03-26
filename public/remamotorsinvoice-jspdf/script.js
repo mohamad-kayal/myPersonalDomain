@@ -217,6 +217,11 @@ function initForm() {
 
     var closeSuccessBtn = document.getElementById("closeSuccessBtn");
     if (closeSuccessBtn) closeSuccessBtn.addEventListener("click", closeSuccessOverlay);
+
+    // Theme toggle
+    initTheme();
+    var themeToggle = document.getElementById("themeToggle");
+    if (themeToggle) themeToggle.addEventListener("click", toggleTheme);
 }
 
 // ===== Field Validation State =====
@@ -457,8 +462,42 @@ function closeSuccessOverlay() {
 }
 
 function startNewInvoice() {
+    if (!confirm("Clear all fields and start a new invoice?")) return;
     closeSuccessOverlay();
     resetForm();
+}
+
+// ===== Theme Toggle =====
+var THEME_KEY = "rema_invoice_theme";
+
+function initTheme() {
+    var saved = null;
+    try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+
+    if (saved === "dark" || saved === "light") {
+        applyTheme(saved);
+    }
+    // If no saved preference, leave it to the CSS media query (no data-theme set)
+}
+
+function toggleTheme() {
+    var current = document.documentElement.getAttribute("data-theme");
+    var next;
+    if (current === "dark") {
+        next = "light";
+    } else if (current === "light") {
+        next = "dark";
+    } else {
+        // No manual override yet — check what the system prefers
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        next = prefersDark ? "light" : "dark";
+    }
+    applyTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
 }
 
 // ===== Loading State =====
