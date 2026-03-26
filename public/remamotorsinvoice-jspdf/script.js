@@ -211,12 +211,6 @@ function initForm() {
     var clearBtn = document.getElementById("clearBtn");
     if (clearBtn) clearBtn.addEventListener("click", clearDraft);
 
-    // Bind success overlay buttons
-    var newInvoiceBtn = document.getElementById("newInvoiceBtn");
-    if (newInvoiceBtn) newInvoiceBtn.addEventListener("click", startNewInvoice);
-
-    var closeSuccessBtn = document.getElementById("closeSuccessBtn");
-    if (closeSuccessBtn) closeSuccessBtn.addEventListener("click", closeSuccessOverlay);
 
 }
 
@@ -440,28 +434,9 @@ function showToast(message) {
     toast.classList.add("show");
     setTimeout(function() {
         toast.classList.remove("show");
-    }, 3000);
+    }, 5000);
 }
 
-// ===== Success Overlay =====
-function showSuccessOverlay(filename) {
-    var overlay = document.getElementById("successOverlay");
-    var filenameEl = document.getElementById("successFilename");
-    if (!overlay) return;
-    if (filenameEl) filenameEl.textContent = filename;
-    overlay.classList.add("active");
-}
-
-function closeSuccessOverlay() {
-    var overlay = document.getElementById("successOverlay");
-    if (overlay) overlay.classList.remove("active");
-}
-
-function startNewInvoice() {
-    if (!confirm("Clear all fields and start a new invoice?")) return;
-    closeSuccessOverlay();
-    resetForm();
-}
 
 // ===== Loading State =====
 function setGenerateLoading(loading) {
@@ -583,9 +558,9 @@ function fillInvoice() {
                 total: totalFormatted
             }, filename);
 
-            // Hide loading, show success
+            // Hide loading, show toast with filename
             setGenerateLoading(false);
-            showSuccessOverlay(filename);
+            showToast("Saved: " + filename);
         });
     }
 

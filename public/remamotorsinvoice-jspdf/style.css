@@ -719,97 +719,6 @@ button:active {
   background-color: var(--accent-hover);
 }
 
-/* ===== Success Overlay ===== */
-.success-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--overlay-bg);
-  z-index: 1500;
-  justify-content: center;
-  align-items: center;
-}
-
-.success-overlay.active {
-  display: flex;
-}
-
-.success-card {
-  background: var(--bg-card);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  width: 90%;
-  max-width: 380px;
-  box-shadow: var(--shadow-modal);
-  animation: modalSlideIn 0.3s ease-out;
-}
-
-.success-check {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--success);
-  color: white;
-  font-size: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  animation: successPop 0.4s ease-out 0.1s both;
-}
-
-@keyframes successPop {
-  0% { transform: scale(0); }
-  60% { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
-
-.success-title {
-  margin: 0 0 0.5rem;
-  font-size: 1.35rem;
-  color: var(--text-primary);
-}
-
-.success-filename {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin: 0 0 1.5rem;
-  word-break: break-all;
-  font-family: "SF Mono", "Fira Code", monospace;
-  background: var(--bg-section-header);
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-}
-
-.success-btn {
-  width: 100%;
-  padding: 0.85rem;
-  margin-bottom: 0.5rem;
-  background: var(--accent);
-  color: white;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.success-btn:hover {
-  background: var(--accent-hover);
-}
-
-.success-btn-secondary {
-  background: var(--clear-btn-bg);
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
-}
-
-.success-btn-secondary:hover {
-  background: var(--clear-btn-hover-bg);
-  color: var(--text-secondary);
-}
 
 /* ===== Print Styles ===== */
 @media print {
@@ -899,7 +808,6 @@ button:active {
   #invoiceForm,
   .sticky-button-wrapper,
   .toast,
-  .success-overlay,
   .step-nav,
   button {
     display: none !important;
@@ -1217,15 +1125,4 @@ button:active {
     border-radius: 10px;
   }
 
-  /* Success overlay mobile tweaks */
-  .success-card {
-    border-radius: 16px 16px 0 0;
-    max-width: 100%;
-    width: 100%;
-    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-  }
-
-  .success-overlay.active {
-    align-items: flex-end;
-  }
 }
