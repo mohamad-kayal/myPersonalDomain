@@ -7,6 +7,10 @@
         "destination": "/remamotorsinvoice/Remamotorsinvoice.html"
       },
       {
+        "source": "/remamotorsinvoice-jspdf",
+        "destination": "/remamotorsinvoice-jspdf/Remamotorsinvoice.html"
+      },
+      {
         "source": "/muslimkidsvp",
         "destination": "/muslimkidsvp/index.html"
       },
