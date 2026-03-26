@@ -53,23 +53,30 @@
     let lenis;
 
     function initSmoothScroll() {
-        lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            orientation: 'vertical',
-            smoothWheel: true
-        });
+        // Disable Lenis on touch devices — it conflicts with native iOS/Android momentum scrolling
+        if (!isTouchDevice()) {
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                orientation: 'vertical',
+                smoothWheel: true
+            });
 
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-        gsap.ticker.lagSmoothing(0);
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0);
+        }
 
         $$('a[href^="#"]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const target = document.querySelector(link.getAttribute('href'));
                 if (target) {
-                    lenis.scrollTo(target, { offset: 0, duration: 1.2 });
+                    if (lenis) {
+                        lenis.scrollTo(target, { offset: 0, duration: 1.2 });
+                    } else {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
                     closeMobileMenu();
                 }
             });
@@ -286,47 +293,65 @@
     // # Experience Horizontal Scroll
     // -------------------------------------------------------------------
     function initExperienceScroll() {
-        if (window.innerWidth <= 768) return;
-
         const track = $('#experience-track');
         const wrapper = $('.experience__wrapper');
         const progressBar = $('#experience-progress');
         if (!track || !wrapper) return;
 
-        const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 100);
+        // Use matchMedia so ScrollTrigger properly cleans up when crossing the breakpoint
+        ScrollTrigger.matchMedia({
+            '(min-width: 769px)': function () {
+                const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 100);
 
-        const tween = gsap.to(track, {
-            x: getScrollAmount,
-            ease: 'none',
-            scrollTrigger: {
-                trigger: '.experience__wrapper',
-                start: 'top 20%',
-                end: () => '+=' + (track.scrollWidth - window.innerWidth + 200),
-                pin: true,
-                scrub: 1,
-                invalidateOnRefresh: true,
-                onUpdate: (self) => {
-                    if (progressBar) {
-                        progressBar.style.width = (self.progress * 100) + '%';
-                    }
-                }
-            }
-        });
-
-        $$('.experience__card').forEach(card => {
-            gsap.fromTo(card.querySelector('.experience__card-inner'),
-                { opacity: 0.3, scale: 0.96 },
-                {
-                    opacity: 1, scale: 1,
+                const tween = gsap.to(track, {
+                    x: getScrollAmount,
+                    ease: 'none',
                     scrollTrigger: {
-                        trigger: card,
-                        containerAnimation: tween,
-                        start: 'left 80%',
-                        end: 'left 40%',
-                        scrub: true
+                        trigger: '.experience__wrapper',
+                        start: 'top 20%',
+                        end: () => '+=' + (track.scrollWidth - window.innerWidth + 200),
+                        pin: true,
+                        scrub: 1,
+                        invalidateOnRefresh: true,
+                        onUpdate: (self) => {
+                            if (progressBar) {
+                                progressBar.style.width = (self.progress * 100) + '%';
+                            }
+                        }
                     }
-                }
-            );
+                });
+
+                $$('.experience__card').forEach(card => {
+                    gsap.fromTo(card.querySelector('.experience__card-inner'),
+                        { opacity: 0.3, scale: 0.96 },
+                        {
+                            opacity: 1, scale: 1,
+                            scrollTrigger: {
+                                trigger: card,
+                                containerAnimation: tween,
+                                start: 'left 80%',
+                                end: 'left 40%',
+                                scrub: true
+                            }
+                        }
+                    );
+                });
+            },
+            '(max-width: 768px)': function () {
+                // On mobile, reset any inline transform left by GSAP
+                gsap.set(track, { x: 0 });
+
+                // Reveal cards with a simple vertical scroll animation
+                $$('.experience__card').forEach(card => {
+                    gsap.fromTo(card.querySelector('.experience__card-inner'),
+                        { opacity: 0, y: 25 },
+                        {
+                            opacity: 1, y: 0, duration: 0.6, ease: 'power3.out',
+                            scrollTrigger: { trigger: card, start: 'top 85%' }
+                        }
+                    );
+                });
+            }
         });
     }
 
