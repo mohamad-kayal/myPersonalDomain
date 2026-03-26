@@ -558,9 +558,14 @@ function fillInvoice() {
                 total: totalFormatted
             }, filename);
 
-            // Hide loading, show toast with filename
-            setGenerateLoading(false);
-            showToast("Saved: " + filename);
+            // Save draft before reload so nothing is lost
+            saveDraft();
+
+            // Brief delay to let the PDF download start, then reload
+            // so loadDraft() restores all fields cleanly
+            setTimeout(function() {
+                window.location.reload();
+            }, 500);
         });
     }
 
