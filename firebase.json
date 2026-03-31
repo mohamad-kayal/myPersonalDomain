@@ -17,6 +17,10 @@
       {
         "source": "/autoinspectpro",
         "destination": "/autoinspectpro/index.html"
+      },
+      {
+        "source": "/mounirinvoice",
+        "destination": "/mounirinvoice/mounirinvoice.html"
       }
     ]
   }

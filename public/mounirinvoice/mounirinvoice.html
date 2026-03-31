@@ -1,0 +1,330 @@
+
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <link rel="stylesheet" href="/mounirinvoice/style.css">
+    <script src="/mounirinvoice/lib/jspdf.umd.min.js"></script>
+    <script src="/mounirinvoice/script.js" defer></script>
+  </head>
+  <body class="doc-content">
+    <form id="invoiceForm" class="invoice-form-container" novalidate>
+      <h1 class="form-title">M O Waterproofing Invoice</h1>
+
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="progress-text" id="progressText">0 of 9 fields complete</span>
+      </div>
+
+      <!-- Step Navigation (mobile) -->
+      <div class="step-nav" id="stepNav">
+        <button type="button" class="step-tab active" data-step="0">
+          <span class="step-tab-num">1</span>
+          <span class="step-tab-label">Details</span>
+        </button>
+        <button type="button" class="step-tab" data-step="1">
+          <span class="step-tab-num">2</span>
+          <span class="step-tab-label">Work</span>
+        </button>
+        <button type="button" class="step-tab" data-step="2">
+          <span class="step-tab-num">3</span>
+          <span class="step-tab-label">Extras</span>
+        </button>
+      </div>
+
+      <!-- Swipeable Steps Container -->
+      <div class="steps-viewport" id="stepsViewport">
+        <div class="steps-track" id="stepsTrack">
+
+          <!-- Step 1: Invoice & Client Details -->
+          <div class="step-panel" id="section1" data-step="0">
+            <div class="section-header" data-toggle="section1">
+              <div class="section-title-row">
+                <span class="section-number">1</span>
+                <h2 class="section-title">Invoice &amp; Client Details</h2>
+              </div>
+              <div class="section-right">
+                <span class="section-status" id="section1Status">0/7</span>
+                <span class="section-chevron"></span>
+              </div>
+            </div>
+            <div class="section-body">
+
+              <!-- Business Details (pre-filled, collapsible) -->
+              <div class="subsection collapsed" id="bizSubsection">
+                <div class="subsection-header" id="bizToggle">
+                  <span class="subsection-title">Business Details (pre-filled)</span>
+                  <span class="subsection-chevron"></span>
+                </div>
+                <div class="subsection-body">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="bizName">Business Name</label>
+                      <input type="text" id="bizName" name="bizName" value="M O waterproofing" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                      <label for="bizPhone">Phone</label>
+                      <input type="text" id="bizPhone" name="bizPhone" value="0478061622" autocomplete="off" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="bizAddress">Address</label>
+                      <input type="text" id="bizAddress" name="bizAddress" value="5 Bess St, Windsor QLD, Australia" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                      <label for="bizEmail">Email</label>
+                      <input type="email" id="bizEmail" name="bizEmail" value="srayalbab2020@gmail.com" autocomplete="off" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Invoice Details -->
+              <h3 class="form-subtitle">Invoice Details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="invoiceNum">Invoice #</label>
+                  <input type="text" id="invoiceNum" name="invoiceNum" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="date">Date</label>
+                  <input type="date" id="date" name="date" autocomplete="off" required />
+                </div>
+              </div>
+              <div class="form-group full-width">
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" name="dueDate" autocomplete="off" required />
+              </div>
+
+              <!-- Client Details -->
+              <h3 class="form-subtitle">Bill To</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="clientName">Name</label>
+                  <input type="text" id="clientName" name="clientName" placeholder="Client name" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="clientPhone">Phone</label>
+                  <input type="tel" id="clientPhone" name="clientPhone" placeholder="Phone number" autocomplete="off" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="clientAddress">Address</label>
+                  <textarea id="clientAddress" name="clientAddress" rows="2" placeholder="Client address" autocomplete="off" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="clientEmail">Email</label>
+                  <input type="email" id="clientEmail" name="clientEmail" placeholder="Email address" autocomplete="off" required />
+                </div>
+              </div>
+            </div>
+            <div class="step-actions">
+              <div></div>
+              <button type="button" class="step-btn step-btn-next" data-goto="1">Next: Work</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Work Schedule & Items -->
+          <div class="step-panel" id="section2" data-step="1">
+            <div class="section-header" data-toggle="section2">
+              <div class="section-title-row">
+                <span class="section-number">2</span>
+                <h2 class="section-title">Work Schedule &amp; Items</h2>
+              </div>
+              <div class="section-right">
+                <span class="section-status" id="section2Status">0/2</span>
+                <span class="section-chevron"></span>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="serviceTitle">Service Title</label>
+                  <input type="text" id="serviceTitle" name="serviceTitle" value="Waterproofing" autocomplete="off" required />
+                </div>
+                <div class="form-group">
+                  <label for="hourlyRate">Hourly Rate</label>
+                  <div class="price-input-wrapper">
+                    <span class="price-prefix">$</span>
+                    <input type="number" id="hourlyRate" name="hourlyRate" inputmode="decimal" min="0" step="0.01" value="40" autocomplete="off" required />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Work Schedule -->
+              <h3 class="form-subtitle">Work Schedule</h3>
+              <div class="schedule-container">
+                <div class="schedule-header-row">
+                  <span class="schedule-col-day">Day</span>
+                  <span class="schedule-col-time">Start</span>
+                  <span class="schedule-col-sep"></span>
+                  <span class="schedule-col-time">End</span>
+                  <span class="schedule-col-hrs">Hrs</span>
+                </div>
+                <div class="schedule-row" data-day="Monday">
+                  <span class="schedule-day">Mon</span>
+                  <input type="time" class="schedule-start" value="06:30" />
+                  <span class="schedule-to">to</span>
+                  <input type="time" class="schedule-end" />
+                  <span class="schedule-hours">0h</span>
+                </div>
+                <div class="schedule-row" data-day="Tuesday">
+                  <span class="schedule-day">Tue</span>
+                  <input type="time" class="schedule-start" value="06:30" />
+                  <span class="schedule-to">to</span>
+                  <input type="time" class="schedule-end" />
+                  <span class="schedule-hours">0h</span>
+                </div>
+                <div class="schedule-row" data-day="Wednesday">
+                  <span class="schedule-day">Wed</span>
+                  <input type="time" class="schedule-start" value="06:30" />
+                  <span class="schedule-to">to</span>
+                  <input type="time" class="schedule-end" />
+                  <span class="schedule-hours">0h</span>
+                </div>
+                <div class="schedule-row" data-day="Thursday">
+                  <span class="schedule-day">Thu</span>
+                  <input type="time" class="schedule-start" value="06:30" />
+                  <span class="schedule-to">to</span>
+                  <input type="time" class="schedule-end" />
+                  <span class="schedule-hours">0h</span>
+                </div>
+                <div class="schedule-row" data-day="Friday">
+                  <span class="schedule-day">Fri</span>
+                  <input type="time" class="schedule-start" value="06:30" />
+                  <span class="schedule-to">to</span>
+                  <input type="time" class="schedule-end" />
+                  <span class="schedule-hours">0h</span>
+                </div>
+                <div class="schedule-row" data-day="Saturday">
+                  <span class="schedule-day">Sat</span>
+                  <input type="time" class="schedule-start" />
+                  <span class="schedule-to">to</span>
+                  <input type="time" class="schedule-end" />
+                  <span class="schedule-hours">0h</span>
+                </div>
+                <div class="schedule-row" data-day="Sunday">
+                  <span class="schedule-day">Sun</span>
+                  <input type="time" class="schedule-start" />
+                  <span class="schedule-to">to</span>
+                  <input type="time" class="schedule-end" />
+                  <span class="schedule-hours">0h</span>
+                </div>
+                <div class="schedule-summary">
+                  <span>Total: <strong id="totalHours">0</strong> hours</span>
+                  <span>Amount: <strong id="scheduleAmount">$0.00</strong></span>
+                </div>
+              </div>
+
+              <!-- Additional Line Items -->
+              <h3 class="form-subtitle">Additional Items</h3>
+              <div id="lineItemsContainer"></div>
+              <button type="button" class="add-item-btn" id="addItemBtn">+ Add Item</button>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="step-btn step-btn-prev" data-goto="0">Back</button>
+              <button type="button" class="step-btn step-btn-next" data-goto="2">Next: Extras</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Receipts & Summary -->
+          <div class="step-panel" id="section3" data-step="2">
+            <div class="section-header" data-toggle="section3">
+              <div class="section-title-row">
+                <span class="section-number">3</span>
+                <h2 class="section-title">Receipts &amp; Summary</h2>
+              </div>
+              <div class="section-right">
+                <span class="section-status" id="section3Status">Optional</span>
+                <span class="section-chevron"></span>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="form-group full-width">
+                <label for="receiptCaption">Receipt Description</label>
+                <input type="text" id="receiptCaption" name="receiptCaption" placeholder="e.g. Vacuum bags for work" autocomplete="off" />
+              </div>
+              <div class="upload-area" id="uploadArea">
+                <input type="file" id="receiptFiles" multiple accept="image/*" />
+                <div class="upload-placeholder">
+                  <span class="upload-icon">&#128247;</span>
+                  <p class="upload-text">Tap to upload receipt images</p>
+                  <p class="upload-hint">or drag &amp; drop</p>
+                </div>
+              </div>
+              <div class="upload-previews" id="uploadPreviews"></div>
+              <p class="upload-note">Receipts are not saved in draft &mdash; re-upload if page refreshes.</p>
+
+              <!-- Invoice Total Summary -->
+              <div class="total-summary">
+                <h3 class="form-subtitle">Invoice Summary</h3>
+                <div class="summary-line" id="summaryScheduleLine">
+                  <span>Schedule Service</span>
+                  <span id="summarySchedule">$0.00</span>
+                </div>
+                <div class="summary-line" id="summaryItemsLine" style="display:none">
+                  <span>Additional Items</span>
+                  <span id="summaryItems">$0.00</span>
+                </div>
+                <div class="summary-line summary-total">
+                  <span>TOTAL</span>
+                  <span id="summaryTotal">$0.00</span>
+                </div>
+                <div class="summary-balance">
+                  <span>BALANCE DUE</span>
+                  <span id="summaryBalance">AUD $0.00</span>
+                </div>
+              </div>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="step-btn step-btn-prev" data-goto="1">Back</button>
+              <div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+
+    <!-- Sticky Generate Button -->
+    <div class="sticky-button-wrapper" id="stickyButtonWrapper">
+      <div class="sticky-button-inner">
+        <button type="button" id="generateBtn">
+          <span class="btn-content" id="btnContent">Generate &amp; Download PDF</span>
+          <span class="btn-spinner" id="btnSpinner"></span>
+        </button>
+        <button type="button" id="clearBtn">Clear</button>
+      </div>
+      <p class="draft-status" id="draftStatus"></p>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal-overlay">
+      <div class="modal-backdrop" id="modalBackdrop"></div>
+      <div class="modal-box">
+        <div class="modal-handle"></div>
+        <h2 class="modal-title">Enter Password</h2>
+        <p class="modal-text">Please enter the password to generate the invoice.</p>
+        <input type="password" id="modalPassword" class="modal-input" placeholder="Password" autocomplete="off" />
+        <p id="modalError" class="modal-error"></p>
+        <div class="modal-buttons">
+          <button type="button" id="modalCancel" class="modal-btn modal-btn-cancel">Cancel</button>
+          <button type="button" id="modalConfirm" class="modal-btn modal-btn-confirm">Generate PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="successToast">
+      <span class="toast-icon">&#10003;</span>
+      <span class="toast-message" id="toastMessage">Invoice generated!</span>
+    </div>
+
+  </body>
+</html>
