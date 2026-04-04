@@ -2,7 +2,7 @@
 
 ## Full-Stack SaaS Vehicle Inspection Platform
 
-**Version:** 3.0 | **Date:** April 2026 | **Status:** Ready for Development  
+**Version:** 1.0 | **Date:** April 2026 | **Status:** Ready for Development  
 **Classification:** Technical Specification for Production Build (Updated Stack & Complete Feature Spec)
 
 ---
@@ -94,7 +94,81 @@ The prototype (static HTML/CSS/JS — 20 pages, ~2000 lines of JS) has been vali
 | **Inspector** | Inspection only | Conduct inspections, view own work |
 | **Customer** (no auth) | Public report only | View shared report via link |
 
-### 2.3 Pages (Complete List)
+### 2.3 Super Admin Panel (Internal Platform Management)
+
+The Super Admin role is an internal Anthropic/AutoInspect team user with platform-wide access. This is a separate Angular route tree (`/super-admin`) protected by a `superAdminGuard`. Super Admins do **not** belong to any tenant.
+
+**Super Admin Pages:**
+
+| Page | Purpose | Key Actions |
+|------|---------|-------------|
+| **Tenant Dashboard** | Overview of all tenants | Tenant count by plan/status, MRR, active users, total inspections |
+| **Tenant List** | Browse/search all tenants | Search, filter by plan/status, sort by created/revenue/inspections |
+| **Tenant Detail** | Deep-dive into a single tenant | View usage, users, subscription status, audit log, impersonate admin |
+| **Tenant Actions** | Manage tenant lifecycle | Suspend, reactivate, cancel, extend trial, change plan, pause deletion |
+| **User Lookup** | Find any user across tenants | Search by email, view tenant context, reset password, force verify |
+| **System Health** | Operational dashboard | BullMQ queue depths, failed jobs, API error rates, RDS/Valkey metrics |
+| **Feature Flags** | Global and per-tenant flags | Toggle features globally or for specific tenants (beta features, kill switches) |
+| **System Audit Log** | Platform-level events | Tenant creation, deletion, plan changes, Super Admin actions |
+| **Announcements** | Broadcast to tenants | Create in-app banners for maintenance windows, new features, etc. |
+
+**Super Admin Auth:**
+- Separate `super_admins` table (not in tenant `users` table)
+- Login at `admin.autoinspect.com` (separate subdomain)
+- MFA required (TOTP — no exceptions)
+- Session: 1-hour JWT, no refresh token — must re-authenticate
+
+**Super Admin API Endpoints:**
+```
+SUPER ADMIN (requires superAdminGuard)
+  GET    /api/super/tenants                    # List all tenants (paginated, filterable)
+  GET    /api/super/tenants/:id                # Tenant detail with usage stats
+  PATCH  /api/super/tenants/:id                # Update tenant (plan, status, trial extension)
+  POST   /api/super/tenants/:id/suspend        # Suspend tenant
+  POST   /api/super/tenants/:id/reactivate     # Reactivate suspended tenant
+  DELETE /api/super/tenants/:id                # Schedule tenant deletion
+  POST   /api/super/tenants/:id/impersonate    # Get temporary admin JWT for tenant
+  GET    /api/super/users                      # Lookup users across tenants
+  POST   /api/super/users/:id/reset-password   # Force password reset
+  GET    /api/super/system/health              # System health dashboard data
+  GET    /api/super/system/queues              # BullMQ queue stats
+  POST   /api/super/system/queues/:name/retry  # Retry failed jobs
+  GET    /api/super/feature-flags              # List all feature flags
+  POST   /api/super/feature-flags              # Create feature flag
+  PATCH  /api/super/feature-flags/:id          # Update flag (toggle, scope)
+  GET    /api/super/audit-log                  # Platform-level audit log
+  POST   /api/super/announcements              # Create in-app announcement
+```
+
+**Prisma model for Super Admin:**
+```prisma
+model SuperAdmin {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  totpSecret   String   @map("totp_secret") @db.VarChar(255)
+  lastLoginAt  DateTime? @map("last_login_at") @db.Timestamptz
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("super_admins")
+}
+
+model Announcement {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String    @db.VarChar(255)
+  message   String
+  type      String    @db.VarChar(20)  // info, warning, maintenance
+  startsAt  DateTime  @map("starts_at") @db.Timestamptz
+  endsAt    DateTime? @map("ends_at") @db.Timestamptz
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("announcements")
+}
+```
+
+### 2.4 Pages (Complete List)
 
 **Public (no auth required):**
 - Landing/marketing page
@@ -130,6 +204,17 @@ The prototype (static HTML/CSS/JS — 20 pages, ~2000 lines of JS) has been vali
 - Billing & Subscription (current plan, usage meters, upgrade/downgrade, invoices via Stripe portal)
 - Help & Support (KB articles, contact form, live chat widget)
 - Offline fallback page (with sync status and pending queue count)
+
+**Super Admin (separate app shell, `admin.autoinspect.com`):**
+- Super Admin login (with TOTP MFA)
+- Tenant dashboard (KPI overview)
+- Tenant list (search, filter, sort)
+- Tenant detail (usage, users, subscription, audit, impersonate)
+- User lookup (cross-tenant)
+- System health (queues, errors, metrics)
+- Feature flags management
+- Platform audit log
+- Announcements management
 
 **Shared UI States (applicable across all pages):**
 - Empty states (per entity: no inspections yet, no vehicles, etc.)
@@ -230,7 +315,7 @@ The prototype (static HTML/CSS/JS — 20 pages, ~2000 lines of JS) has been vali
                           ┌─────────────┘      │     └──────────────┐
                           │                    │                    │
                    ┌──────┴──────┐    ┌───────┴───────┐   ┌───────┴───────┐
-                   │  PostgreSQL │    │    Redis      │   │    AWS S3     │
+                   │  PostgreSQL │    │   Valkey      │   │    AWS S3     │
                    │  (RDS)     │    │  (ElastiCache)│   │  (Media)     │
                    │            │    │               │   │              │
                    │  - RLS     │    │  - Sessions   │   │  - Photos    │
@@ -701,9 +786,13 @@ CREATE TABLE users (
   role user_role NOT NULL DEFAULT 'inspector',
   avatar_url VARCHAR(512),
   status user_status NOT NULL DEFAULT 'active',
+  email_verified BOOLEAN NOT NULL DEFAULT false,
+  two_factor_enabled BOOLEAN NOT NULL DEFAULT false,
+  two_factor_secret VARCHAR(255),
   notification_prefs JSONB NOT NULL DEFAULT '{}',
   timezone VARCHAR(50) DEFAULT 'Australia/Sydney',
   last_login_at TIMESTAMPTZ,
+  locked_until TIMESTAMPTZ,
   invited_by UUID REFERENCES users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -964,7 +1053,522 @@ CREATE POLICY tenant_isolation_vehicles ON vehicles
   WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
 ```
 
-### 7.2 Audit Log Granularity
+### 7.2 Prisma Schema
+
+The Prisma schema is the source of truth for database structure and auto-generates the Prisma Client, migrations, and TypeScript types. This must be created during scaffolding (Phase 1, Sprint 1).
+
+```prisma
+// apps/api/prisma/schema.prisma
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto]
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
+enum PlanType {
+  trial
+  starter
+  professional
+  enterprise
+}
+
+enum TenantStatus {
+  active
+  trial
+  suspended
+  cancelled
+}
+
+enum UserRole {
+  admin
+  manager
+  inspector
+}
+
+enum UserStatus {
+  active
+  inactive
+  invited
+}
+
+enum InspectionStatus {
+  draft
+  in_progress
+  pending_review
+  approved
+  archived
+}
+
+enum ChecklistItemStatus {
+  pass
+  fail
+  advisory
+  na
+}
+
+enum DamageView {
+  top
+  side_driver
+  side_passenger
+  front
+  rear
+}
+
+enum DamageSeverity {
+  minor
+  moderate
+  major
+}
+
+enum MediaType {
+  photo
+  video
+}
+
+enum ReportType {
+  internal
+  customer
+}
+
+// ==========================================
+// TENANTS & USERS
+// ==========================================
+
+model Tenant {
+  id                    String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                  String       @db.VarChar(255)
+  subdomain             String       @unique @db.VarChar(63)
+  plan                  PlanType     @default(trial)
+  status                TenantStatus @default(active)
+  trialEndsAt           DateTime?    @map("trial_ends_at") @db.Timestamptz
+  stripeCustomerId      String?      @map("stripe_customer_id") @db.VarChar(255)
+  stripeSubscriptionId  String?      @map("stripe_subscription_id") @db.VarChar(255)
+  cancelledAt           DateTime?    @map("cancelled_at") @db.Timestamptz
+  settings              Json         @default("{}")
+  branding              Json         @default("{}")
+  createdAt             DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  users                User[]
+  vehicles             Vehicle[]
+  inspections          Inspection[]
+  checklistTemplates   ChecklistTemplate[]
+  checklistResponses   ChecklistResponse[]
+  damageMarkers        DamageMarker[]
+  obdSnapshots         OBDSnapshot[]
+  mediaItems           MediaItem[]
+  reports              Report[]
+  notifications        Notification[]
+  auditLogs            AuditLog[]
+  webhookEndpoints     WebhookEndpoint[]
+  featureFlags         FeatureFlag[]
+
+  @@map("tenants")
+}
+
+model User {
+  id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String     @map("tenant_id") @db.Uuid
+  email             String     @db.VarChar(255)
+  passwordHash      String     @map("password_hash") @db.VarChar(255)
+  name              String     @db.VarChar(255)
+  phone             String?    @db.VarChar(50)
+  role              UserRole   @default(inspector)
+  avatarUrl         String?    @map("avatar_url") @db.VarChar(512)
+  status            UserStatus @default(active)
+  emailVerified     Boolean    @default(false) @map("email_verified")
+  twoFactorEnabled  Boolean    @default(false) @map("two_factor_enabled")
+  twoFactorSecret   String?    @map("two_factor_secret") @db.VarChar(255)
+  notificationPrefs Json       @default("{}") @map("notification_prefs")
+  timezone          String     @default("Australia/Sydney") @db.VarChar(50)
+  lastLoginAt       DateTime?  @map("last_login_at") @db.Timestamptz
+  lockedUntil       DateTime?  @map("locked_until") @db.Timestamptz
+  invitedBy         String?    @map("invited_by") @db.Uuid
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant            Tenant     @relation(fields: [tenantId], references: [id])
+  inviter           User?      @relation("UserInvites", fields: [invitedBy], references: [id])
+  invitees          User[]     @relation("UserInvites")
+  refreshTokens     RefreshToken[]
+  inspections       Inspection[]  @relation("Inspector")
+  reviewedInspections Inspection[] @relation("Reviewer")
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+
+  @@unique([tenantId, email])
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  tokenHash  String   @unique @map("token_hash") @db.VarChar(255)
+  deviceInfo Json?    @map("device_info")
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// ==========================================
+// VEHICLES
+// ==========================================
+
+model Vehicle {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String    @map("tenant_id") @db.Uuid
+  vin            String    @db.VarChar(17)
+  make           String    @db.VarChar(100)
+  model          String    @db.VarChar(100)
+  year           Int
+  trim           String?   @db.VarChar(100)
+  engine         String?   @db.VarChar(100)
+  transmission   String?   @db.VarChar(50)
+  bodyType       String?   @map("body_type") @db.VarChar(50)
+  color          String?   @db.VarChar(50)
+  driveType      String?   @map("drive_type") @db.VarChar(10)
+  plate          String?   @db.VarChar(20)
+  odometer       Int?
+  ppsrStatus     String    @default("unknown") @map("ppsr_status") @db.VarChar(20)
+  ppsrCheckedAt  DateTime? @map("ppsr_checked_at") @db.Timestamptz
+  vinDecodedData Json?     @map("vin_decoded_data")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant         Tenant       @relation(fields: [tenantId], references: [id])
+  inspections    Inspection[]
+
+  @@unique([tenantId, vin])
+  @@index([tenantId, vin])
+  @@map("vehicles")
+}
+
+// ==========================================
+// INSPECTIONS
+// ==========================================
+
+model ChecklistTemplate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  vehicleType String?  @map("vehicle_type") @db.VarChar(50)
+  isActive    Boolean  @default(true) @map("is_active")
+  isDefault   Boolean  @default(false) @map("is_default")
+  sections    Json     @default("[]")
+  usageCount  Int      @default(0) @map("usage_count")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      Tenant       @relation(fields: [tenantId], references: [id])
+  inspections Inspection[]
+
+  @@map("checklist_templates")
+}
+
+model Inspection {
+  id            String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String           @map("tenant_id") @db.Uuid
+  vehicleId     String           @map("vehicle_id") @db.Uuid
+  inspectorId   String           @map("inspector_id") @db.Uuid
+  reviewerId    String?          @map("reviewer_id") @db.Uuid
+  templateId    String           @map("template_id") @db.Uuid
+  status        InspectionStatus @default(draft)
+  startedAt     DateTime         @default(now()) @map("started_at") @db.Timestamptz
+  completedAt   DateTime?        @map("completed_at") @db.Timestamptz
+  reviewedAt    DateTime?        @map("reviewed_at") @db.Timestamptz
+  overallScore  Decimal?         @map("overall_score") @db.Decimal(5, 2)
+  overallGrade  String?          @map("overall_grade") @db.VarChar(2)
+  passCount     Int              @default(0) @map("pass_count")
+  failCount     Int              @default(0) @map("fail_count")
+  advisoryCount Int              @default(0) @map("advisory_count")
+  naCount       Int              @default(0) @map("na_count")
+  totalItems    Int              @default(0) @map("total_items")
+  notes         String?
+  metadata      Json             @default("{}")
+  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant        Tenant             @relation(fields: [tenantId], references: [id])
+  vehicle       Vehicle            @relation(fields: [vehicleId], references: [id])
+  inspector     User               @relation("Inspector", fields: [inspectorId], references: [id])
+  reviewer      User?              @relation("Reviewer", fields: [reviewerId], references: [id])
+  template      ChecklistTemplate  @relation(fields: [templateId], references: [id])
+  responses     ChecklistResponse[]
+  damageMarkers DamageMarker[]
+  obdSnapshots  OBDSnapshot[]
+  mediaItems    MediaItem[]
+  reports       Report[]
+
+  @@index([tenantId, status])
+  @@index([tenantId, vehicleId])
+  @@index([tenantId, inspectorId])
+  @@map("inspections")
+}
+
+model ChecklistResponse {
+  id           String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  inspectionId String              @map("inspection_id") @db.Uuid
+  tenantId     String              @map("tenant_id") @db.Uuid
+  sectionKey   String              @map("section_key") @db.VarChar(100)
+  itemKey      String              @map("item_key") @db.VarChar(100)
+  status       ChecklistItemStatus
+  notes        String?
+  createdAt    DateTime            @default(now()) @map("created_at") @db.Timestamptz
+
+  inspection   Inspection          @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  tenant       Tenant              @relation(fields: [tenantId], references: [id])
+  mediaItems   MediaItem[]
+
+  @@unique([inspectionId, sectionKey, itemKey])
+  @@map("checklist_responses")
+}
+
+model DamageMarker {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  inspectionId String         @map("inspection_id") @db.Uuid
+  tenantId     String         @map("tenant_id") @db.Uuid
+  xPosition    Decimal        @map("x_position") @db.Decimal(5, 2)
+  yPosition    Decimal        @map("y_position") @db.Decimal(5, 2)
+  diagramView  DamageView     @default(top) @map("diagram_view")
+  damageType   String         @map("damage_type") @db.VarChar(50)
+  severity     DamageSeverity
+  notes        String?
+  photoUrl     String?        @map("photo_url") @db.VarChar(512)
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  inspection   Inspection     @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  tenant       Tenant         @relation(fields: [tenantId], references: [id])
+  mediaItems   MediaItem[]
+
+  @@map("damage_markers")
+}
+
+model OBDSnapshot {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  inspectionId String     @map("inspection_id") @db.Uuid
+  tenantId     String     @map("tenant_id") @db.Uuid
+  parameters   Json       @default("{}")
+  dtcCodes     Json       @default("[]") @map("dtc_codes")
+  capturedAt   DateTime   @default(now()) @map("captured_at") @db.Timestamptz
+
+  inspection   Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  tenant       Tenant     @relation(fields: [tenantId], references: [id])
+
+  @@map("obd_snapshots")
+}
+
+// ==========================================
+// MEDIA
+// ==========================================
+
+model MediaItem {
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String             @map("tenant_id") @db.Uuid
+  inspectionId         String             @map("inspection_id") @db.Uuid
+  checklistResponseId  String?            @map("checklist_response_id") @db.Uuid
+  damageMarkerId       String?            @map("damage_marker_id") @db.Uuid
+  type                 MediaType
+  storageKey           String             @map("storage_key") @db.VarChar(512)
+  originalFilename     String?            @map("original_filename") @db.VarChar(255)
+  mimeType             String?            @map("mime_type") @db.VarChar(100)
+  fileSizeBytes        BigInt?            @map("file_size_bytes")
+  thumbnailKey         String?            @map("thumbnail_key") @db.VarChar(512)
+  annotations          Json?
+  label                String?            @db.VarChar(100)
+  createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant               Tenant             @relation(fields: [tenantId], references: [id])
+  inspection           Inspection         @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  checklistResponse    ChecklistResponse? @relation(fields: [checklistResponseId], references: [id])
+  damageMarker         DamageMarker?      @relation(fields: [damageMarkerId], references: [id])
+
+  @@map("media_items")
+}
+
+// ==========================================
+// REPORTS
+// ==========================================
+
+model Report {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String     @map("tenant_id") @db.Uuid
+  inspectionId    String     @map("inspection_id") @db.Uuid
+  type            ReportType
+  pdfStorageKey   String?    @map("pdf_storage_key") @db.VarChar(512)
+  shareToken      String?    @unique @map("share_token") @db.VarChar(64)
+  shareExpiresAt  DateTime?  @map("share_expires_at") @db.Timestamptz
+  sharedViaEmail  String?    @map("shared_via_email") @db.VarChar(255)
+  viewCount       Int        @default(0) @map("view_count")
+  lastViewedAt    DateTime?  @map("last_viewed_at") @db.Timestamptz
+  generatedAt     DateTime   @default(now()) @map("generated_at") @db.Timestamptz
+
+  tenant          Tenant     @relation(fields: [tenantId], references: [id])
+  inspection      Inspection @relation(fields: [inspectionId], references: [id])
+
+  @@index([shareToken])
+  @@map("reports")
+}
+
+// ==========================================
+// NOTIFICATIONS & AUDIT
+// ==========================================
+
+model Notification {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  type      String    @db.VarChar(50)
+  title     String    @db.VarChar(255)
+  message   String
+  data      Json?
+  readAt    DateTime? @map("read_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @map("tenant_id") @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  action      String   @db.VarChar(50)
+  entityType  String   @map("entity_type") @db.VarChar(50)
+  entityId    String?  @map("entity_id") @db.Uuid
+  description String?
+  metadata    Json?
+  ipAddress   String?  @map("ip_address") @db.VarChar(45)
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@map("audit_logs")
+}
+
+// ==========================================
+// WEBHOOKS (Enterprise)
+// ==========================================
+
+model WebhookEndpoint {
+  id         String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String            @map("tenant_id") @db.Uuid
+  url        String            @db.VarChar(512)
+  secret     String            @db.VarChar(255)
+  events     String[]
+  isActive   Boolean           @default(true) @map("is_active")
+  createdAt  DateTime          @default(now()) @map("created_at") @db.Timestamptz
+
+  tenant     Tenant            @relation(fields: [tenantId], references: [id])
+  deliveries WebhookDelivery[]
+
+  @@map("webhook_endpoints")
+}
+
+model WebhookDelivery {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  endpointId   String          @map("endpoint_id") @db.Uuid
+  event        String          @db.VarChar(100)
+  payload      Json
+  statusCode   Int?            @map("status_code")
+  responseBody String?         @map("response_body")
+  attempts     Int             @default(0)
+  deliveredAt  DateTime?       @map("delivered_at") @db.Timestamptz
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  endpoint     WebhookEndpoint @relation(fields: [endpointId], references: [id])
+
+  @@map("webhook_deliveries")
+}
+
+// ==========================================
+// FEATURE FLAGS
+// ==========================================
+
+model FeatureFlag {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String?  @map("tenant_id") @db.Uuid
+  key         String   @db.VarChar(100)
+  enabled     Boolean  @default(false)
+  description String?  @db.VarChar(255)
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, key])
+  @@map("feature_flags")
+}
+
+// ==========================================
+// ANALYTICS (precomputed)
+// ==========================================
+
+model AnalyticsDaily {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String   @map("tenant_id") @db.Uuid
+  date               DateTime @db.Date
+  inspectionsCount   Int      @default(0) @map("inspections_count")
+  passCount          Int      @default(0) @map("pass_count")
+  failCount          Int      @default(0) @map("fail_count")
+  avgCompletionMins  Decimal? @map("avg_completion_mins") @db.Decimal(6, 1)
+  avgScore           Decimal? @map("avg_score") @db.Decimal(5, 2)
+  topDefects         Json     @default("[]") @map("top_defects")
+  inspectorMetrics   Json     @default("{}") @map("inspector_metrics")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@unique([tenantId, date])
+  @@map("analytics_daily")
+}
+```
+
+**Prisma Client Extension for tenant scoping** (auto-injects `tenant_id` on all queries):
+
+```typescript
+// apps/api/src/common/prisma/tenant-extension.ts
+import { Prisma } from '@prisma/client';
+
+export function withTenantScope(tenantId: string) {
+  return Prisma.defineExtension({
+    query: {
+      $allOperations({ args, query, model }) {
+        // Skip models without tenant_id
+        if (['RefreshToken', 'AnalyticsDaily'].includes(model)) return query(args);
+        
+        // Inject tenant_id into where clauses
+        if ('where' in args) {
+          args.where = { ...args.where, tenantId };
+        }
+        // Inject tenant_id into create data
+        if ('data' in args && !Array.isArray(args.data)) {
+          args.data = { ...args.data, tenantId };
+        }
+        return query(args);
+      },
+    },
+  });
+}
+```
+
+### 7.3 Audit Log Granularity
 
 Every create, update, and delete action on business entities must be logged. Use a decorator-based approach to keep audit logging declarative and consistent.
 
@@ -1023,7 +1627,7 @@ export class AuditInterceptor implements NestInterceptor {
 
 **Admin UI filters:** action type, user, entity type, date range. Searchable by entity ID.
 
-### 7.3 Tenant Data Deletion Pipeline
+### 7.4 Tenant Data Deletion Pipeline
 
 When a tenant cancels their subscription, the following pipeline executes:
 
@@ -1067,11 +1671,200 @@ Day 30+: No data remains. VIN/vehicle data is anonymized (not deleted) in aggreg
 - RESTful with resource-based URLs
 - JSON request/response bodies
 - JWT Bearer token authentication
-- Consistent error format: `{ statusCode, message, error, details }`
+- Consistent error format: `{ statusCode, message, errorCode, details }` (see Error Code Catalog below)
 - Pagination via `?page=1&limit=20`, response includes `{ data, meta: { total, page, limit, totalPages } }`
 - Rate limiting: 100 req/min (Starter), 300 req/min (Professional), 1000 req/min (Enterprise)
 
-### 8.2 API Versioning
+### 8.2 Error Code Catalog
+
+Every API error returns a machine-readable `errorCode` string that the frontend maps to i18n message keys. This decouples error display from backend messages and enables localization.
+
+**Error response format:**
+```json
+{
+  "statusCode": 422,
+  "errorCode": "INSP_003",
+  "message": "Cannot submit inspection with incomplete required items",
+  "details": {
+    "missingItems": ["exterior:paint_condition", "interior:dashboard"]
+  }
+}
+```
+
+**Shared error code type (in `libs/shared/`):**
+```typescript
+// libs/shared/src/constants/error-codes.ts
+export const ERROR_CODES = {
+  // ── Auth (AUTH_xxx) ──
+  AUTH_001: 'Invalid email or password',
+  AUTH_002: 'Email not verified',
+  AUTH_003: 'Account suspended',
+  AUTH_004: 'Refresh token expired or revoked',
+  AUTH_005: 'Password reset token expired',
+  AUTH_006: 'Email already registered',
+  AUTH_007: 'Invite token expired or invalid',
+  AUTH_008: 'MFA code required',
+  AUTH_009: 'MFA code invalid',
+  AUTH_010: 'Too many login attempts',
+
+  // ── Tenant (TENANT_xxx) ──
+  TENANT_001: 'Tenant not found',
+  TENANT_002: 'Subdomain already taken',
+  TENANT_003: 'Tenant suspended',
+  TENANT_004: 'Trial expired',
+
+  // ── User (USER_xxx) ──
+  USER_001: 'User not found',
+  USER_002: 'User limit reached for current plan',
+  USER_003: 'Cannot deactivate last admin',
+  USER_004: 'Email already exists in this tenant',
+
+  // ── Vehicle (VEH_xxx) ──
+  VEH_001: 'Vehicle not found',
+  VEH_002: 'VIN already exists in this tenant',
+  VEH_003: 'Invalid VIN format',
+  VEH_004: 'VIN decode failed',
+  VEH_005: 'Cannot delete vehicle with linked inspections',
+
+  // ── Inspection (INSP_xxx) ──
+  INSP_001: 'Inspection not found',
+  INSP_002: 'Inspection is not in a submittable state',
+  INSP_003: 'Cannot submit with incomplete required items',
+  INSP_004: 'Only draft or in_progress inspections can be edited',
+  INSP_005: 'Only pending_review inspections can be approved/rejected',
+  INSP_006: 'Monthly inspection limit reached for current plan',
+  INSP_007: 'Cannot delete non-draft inspection',
+
+  // ── Template (TMPL_xxx) ──
+  TMPL_001: 'Template not found',
+  TMPL_002: 'Cannot delete template in use by active inspections',
+  TMPL_003: 'Template must have at least one section with one item',
+
+  // ── Media (MEDIA_xxx) ──
+  MEDIA_001: 'File type not allowed',
+  MEDIA_002: 'File size exceeds limit',
+  MEDIA_003: 'Photo limit reached for current plan',
+  MEDIA_004: 'Video not available on current plan',
+  MEDIA_005: 'Storage limit reached for current plan',
+  MEDIA_006: 'Virus detected in uploaded file',
+
+  // ── Report (RPT_xxx) ──
+  RPT_001: 'Report not found',
+  RPT_002: 'Share link expired',
+  RPT_003: 'PDF generation failed',
+  RPT_004: 'Inspection must be approved before generating customer report',
+
+  // ── Billing (BILL_xxx) ──
+  BILL_001: 'No active subscription',
+  BILL_002: 'Payment method required',
+  BILL_003: 'Cannot downgrade — current usage exceeds target plan limits',
+  BILL_004: 'Stripe webhook signature invalid',
+
+  // ── Webhook (HOOK_xxx) ──
+  HOOK_001: 'Webhook endpoint not found',
+  HOOK_002: 'Webhooks not available on current plan',
+  HOOK_003: 'Maximum webhook endpoints reached',
+
+  // ── General (GEN_xxx) ──
+  GEN_001: 'Resource not found',
+  GEN_002: 'Permission denied',
+  GEN_003: 'Rate limit exceeded',
+  GEN_004: 'Validation failed',
+  GEN_005: 'Internal server error',
+  GEN_006: 'Service temporarily unavailable',
+  GEN_007: 'Feature not available on current plan',
+  GEN_008: 'Feature disabled',
+} as const;
+
+export type ErrorCode = keyof typeof ERROR_CODES;
+```
+
+**Frontend i18n mapping:**
+```json
+// src/assets/i18n/en-AU.json (error section)
+{
+  "errors": {
+    "AUTH_001": "Invalid email or password. Please try again.",
+    "AUTH_002": "Please verify your email address before continuing.",
+    "AUTH_006": "This email is already registered. Try logging in instead.",
+    "INSP_003": "Some required items are incomplete: {{missingCount}} remaining.",
+    "INSP_006": "You've reached your monthly inspection limit. Upgrade your plan for unlimited inspections.",
+    "MEDIA_006": "The uploaded file was flagged by our security scanner. Please try a different file.",
+    "GEN_003": "Too many requests. Please wait a moment and try again.",
+    "GEN_005": "Something went wrong. Please try again. If this persists, contact support."
+  }
+}
+```
+
+**NestJS error throwing pattern:**
+```typescript
+// Custom exception class
+export class AppException extends HttpException {
+  constructor(statusCode: number, errorCode: ErrorCode, details?: Record<string, unknown>) {
+    super({
+      statusCode,
+      errorCode,
+      message: ERROR_CODES[errorCode],
+      details,
+    }, statusCode);
+  }
+}
+
+// Usage in service
+throw new AppException(422, 'INSP_003', {
+  missingItems: ['exterior:paint_condition', 'interior:dashboard'],
+});
+
+// Global exception filter maps all errors to consistent format
+@Catch()
+export class GlobalExceptionFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
+
+    if (exception instanceof AppException) {
+      return response.status(exception.getStatus()).json(exception.getResponse());
+    }
+
+    if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      return response.status(status).json({
+        statusCode: status,
+        errorCode: status === 404 ? 'GEN_001' : status === 403 ? 'GEN_002' : 'GEN_005',
+        message: exception.message,
+      });
+    }
+
+    // Unexpected errors — log full error, return generic response
+    this.logger.error('Unhandled exception', exception);
+    return response.status(500).json({
+      statusCode: 500,
+      errorCode: 'GEN_005',
+      message: ERROR_CODES['GEN_005'],
+    });
+  }
+}
+```
+
+**Frontend error interceptor:**
+```typescript
+// Intercepts all API errors and maps errorCode to user-facing message
+export const errorInterceptor: HttpInterceptorFn = (req, next) => {
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      const errorCode = error.error?.errorCode;
+      if (errorCode) {
+        const i18nKey = `errors.${errorCode}`;
+        const message = translate(i18nKey, error.error.details) ?? error.error.message;
+        // Toast or inline error depending on context
+      }
+      return throwError(() => error);
+    })
+  );
+};
+```
+
+### 8.3 API Versioning
 
 **Strategy: URI-prefix versioning** — all endpoints are prefixed with `/api/v1/`.
 
@@ -1101,7 +1894,7 @@ app.enableVersioning({
 export class InspectionsController { ... }
 ```
 
-### 8.3 Rate Limiting
+### 8.4 Rate Limiting
 
 **Implementation:** `@nestjs/throttler` with Valkey as the backing store.
 
@@ -1148,7 +1941,68 @@ X-RateLimit-Reset: 1714857600
 
 When limit is exceeded → `429 Too Many Requests` with `Retry-After` header.
 
-### 8.4 Endpoint Groups
+### 8.5 Auth Endpoint Rate Limiting
+
+Auth endpoints get **separate, stricter** rate limits to prevent brute-force and credential-stuffing attacks. These are per-IP (not per-tenant) and layered on top of the general tenant rate limits.
+
+| Endpoint | Limit | Window | Scope | Lockout |
+|----------|:-----:|:------:|:-----:|---------|
+| `POST /api/auth/login` | 5 attempts | 1 min | Per IP + email combo | After 10 failed attempts in 15 min → lock account for 30 min, email admin |
+| `POST /api/auth/register` | 3 attempts | 1 min | Per IP | Prevents mass account creation |
+| `POST /api/auth/forgot-password` | 3 attempts | 5 min | Per IP | Prevents email bombing |
+| `POST /api/auth/reset-password` | 5 attempts | 15 min | Per token | Token invalidated after 5 failures |
+| `POST /api/auth/verify-email` | 5 attempts | 5 min | Per IP | Prevents token brute-force |
+| `POST /api/auth/resend-verification` | 2 attempts | 5 min | Per IP + email | Prevents email spam |
+| `POST /api/auth/accept-invite` | 5 attempts | 15 min | Per token | Token invalidated after 5 failures |
+
+**Implementation:**
+
+```typescript
+// Separate throttler decorators for auth routes
+@Controller('auth')
+export class AuthController {
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })  // 5/min per IP
+  @Post('login')
+  async login(@Body() dto: LoginDto, @Ip() ip: string) {
+    // Additional per-email tracking via Valkey
+    const failKey = `auth:fail:${ip}:${dto.email}`;
+    const failCount = await this.redis.incr(failKey);
+    await this.redis.expire(failKey, 900); // 15 min window
+    
+    if (failCount > 10) {
+      await this.userService.lockAccount(dto.email, 30); // 30 min lockout
+      await this.notificationService.notifyAdminAccountLocked(dto.email, ip);
+      throw new AppException(429, 'AUTH_010');
+    }
+    // ... normal login flow
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60_000 } })  // 3/min per IP
+  @Post('register')
+  async register(@Body() dto: RegisterDto) { ... }
+
+  @Throttle({ default: { limit: 3, ttl: 300_000 } })  // 3/5min per IP
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) { ... }
+}
+```
+
+**Account lockout flow:**
+1. 10 failed login attempts for same email within 15 min → `users.locked_until = now() + 30min`
+2. Locked accounts return `AUTH_010` error with `Retry-After` header
+3. Admin notified via in-app notification + email
+4. Admin can manually unlock from user management page
+5. Lockout clears automatically after 30 min
+6. Successful login resets the failure counter
+
+**Valkey keys for auth rate limiting:**
+```
+auth:fail:{ip}:{email}    → int (TTL: 15 min) — login failure counter
+auth:lock:{email}          → timestamp (TTL: 30 min) — account lockout
+auth:reset:{token_hash}    → int (TTL: 15 min) — reset token attempt counter
+```
+
+### 8.6 Endpoint Groups
 
 ```
 AUTH
@@ -1160,6 +2014,7 @@ AUTH
   POST   /api/auth/reset-password    # Reset with token + new password
   POST   /api/auth/verify-email      # Verify email address with token
   POST   /api/auth/resend-verification # Resend verification email
+  POST   /api/auth/accept-invite      # Accept invite (set password, activate user)
 
 USERS
   GET    /api/users                  # List tenant users
@@ -1410,6 +2265,26 @@ export const appRoutes: Routes = [
     ]
   },
   
+  // Accept invite (public route with token)
+  { path: 'accept-invite', loadComponent: () => import('./features/auth/accept-invite/accept-invite.component') },
+  
+  // Super Admin routes (admin.autoinspect.com — separate app shell)
+  {
+    path: 'super-admin',
+    loadComponent: () => import('./features/super-admin/super-admin-layout.component'),
+    canActivate: [superAdminGuard],
+    children: [
+      { path: '', redirectTo: 'tenants', pathMatch: 'full' },
+      { path: 'tenants', loadComponent: () => import('./features/super-admin/tenants/tenant-list.component') },
+      { path: 'tenants/:id', loadComponent: () => import('./features/super-admin/tenants/tenant-detail.component') },
+      { path: 'users', loadComponent: () => import('./features/super-admin/users/user-lookup.component') },
+      { path: 'health', loadComponent: () => import('./features/super-admin/health/system-health.component') },
+      { path: 'feature-flags', loadComponent: () => import('./features/super-admin/flags/feature-flags.component') },
+      { path: 'audit-log', loadComponent: () => import('./features/super-admin/audit/platform-audit.component') },
+      { path: 'announcements', loadComponent: () => import('./features/super-admin/announcements/announcements.component') },
+    ]
+  },
+  
   // Error pages
   { path: 'not-found', loadComponent: () => import('./features/errors/not-found.component') },
   { path: 'forbidden', loadComponent: () => import('./features/errors/forbidden.component') },
@@ -1496,7 +2371,195 @@ src/assets/i18n/
 - Manual screen reader testing (VoiceOver on macOS/iOS) for critical flows: login, inspection wizard, report viewer
 - Lighthouse accessibility audit score target: > 90
 
-### 9.5 Browser & Device Support Matrix
+### 9.5 NgRx Store Shape & State Management
+
+NgRx manages complex cross-cutting state. Component-local UI state (dropdowns, filters, form dirty state) uses Angular Signals directly — do not put ephemeral UI state in NgRx.
+
+```typescript
+// Root state shape
+interface AppState {
+  auth: AuthState;
+  inspection: InspectionState;
+  offlineQueue: OfflineQueueState;
+}
+
+// ── Auth State ──
+interface AuthState {
+  user: User | null;
+  tenant: Tenant | null;
+  accessToken: string | null;
+  isLoading: boolean;
+  error: string | null;
+  isEmailVerified: boolean;
+  sessionExpiresAt: number | null; // Unix timestamp for session expiry warning
+}
+
+// Actions: [Auth] Login, Login Success, Login Failure, Logout,
+//          Refresh Token, Set User, Session Expiry Warning
+
+// ── Inspection State ──
+// Used during inspection wizard (multi-step form state persisted across steps)
+interface InspectionState {
+  currentInspection: Inspection | null;
+  vehicle: Vehicle | null;
+  template: ChecklistTemplate | null;
+  responses: Record<string, ChecklistResponse>; // key: `${sectionKey}:${itemKey}`
+  damageMarkers: DamageMarker[];
+  obdSnapshot: OBDSnapshot | null;
+  mediaItems: MediaItem[];
+  currentStep: number;
+  completedSteps: number[];
+  isDirty: boolean;
+  isSaving: boolean;
+  lastSavedAt: number | null;
+  error: string | null;
+}
+
+// Actions: [Inspection] Load Inspection, Load Success, Set Step,
+//          Update Response, Add Damage Marker, Remove Damage Marker,
+//          Save Responses, Save Success, Save Failure, Submit, Reset
+
+// ── Offline Queue State ──
+interface OfflineQueueState {
+  isOnline: boolean;
+  pendingCount: number;
+  isSyncing: boolean;
+  lastSyncAt: number | null;
+  failedItems: OfflineQueueItem[];
+}
+
+interface OfflineQueueItem {
+  id: string;
+  type: 'response_batch' | 'media_upload' | 'damage_marker';
+  inspectionId: string;
+  payload: unknown;
+  retryCount: number;
+  createdAt: number;
+}
+
+// Actions: [Offline] Go Online, Go Offline, Queue Item, Sync Start,
+//          Sync Success, Sync Item Failed, Clear Queue
+```
+
+**Selectors (computed derived state):**
+```typescript
+// Inspection selectors
+export const selectInspectionProgress = createSelector(
+  selectInspectionState,
+  (state) => {
+    const total = state.template?.sections.reduce((sum, s) => sum + s.items.length, 0) ?? 0;
+    const answered = Object.keys(state.responses).length;
+    return total > 0 ? Math.round((answered / total) * 100) : 0;
+  }
+);
+
+export const selectSectionProgress = (sectionKey: string) => createSelector(
+  selectInspectionState,
+  (state) => {
+    const section = state.template?.sections.find(s => s.key === sectionKey);
+    if (!section) return 0;
+    const answered = section.items.filter(item =>
+      state.responses[`${sectionKey}:${item.key}`]
+    ).length;
+    return Math.round((answered / section.items.length) * 100);
+  }
+);
+
+export const selectCanSubmit = createSelector(
+  selectInspectionState,
+  (state) => {
+    if (!state.template || !state.currentInspection) return false;
+    const requiredItems = state.template.sections.flatMap(s =>
+      s.items.filter(i => i.required).map(i => `${s.key}:${i.key}`)
+    );
+    return requiredItems.every(key => state.responses[key]);
+  }
+);
+```
+
+**Effects pattern (side effects):**
+```typescript
+// Auto-save effect — triggers 30s after last response change
+autoSave$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(InspectionActions.updateResponse),
+    debounceTime(30_000),
+    withLatestFrom(this.store.select(selectInspectionState)),
+    filter(([, state]) => state.isDirty && !state.isSaving),
+    switchMap(([, state]) =>
+      this.inspectionApi.batchUpsertResponses(state.currentInspection!.id, Object.values(state.responses)).pipe(
+        map(() => InspectionActions.saveSuccess({ savedAt: Date.now() })),
+        catchError(error => of(InspectionActions.saveFailure({ error: error.message })))
+      )
+    )
+  )
+);
+```
+
+### 9.6 Performance Budgets
+
+Performance targets are enforced in CI via Lighthouse CI and Nx build budgets.
+
+**Core Web Vitals Targets (on 4G, Moto G4 simulation):**
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **LCP** (Largest Contentful Paint) | < 2.5s | Lighthouse CI |
+| **FID** (First Input Delay) / **INP** (Interaction to Next Paint) | < 200ms | Lighthouse CI |
+| **CLS** (Cumulative Layout Shift) | < 0.1 | Lighthouse CI |
+| **TTFB** (Time to First Byte) | < 600ms | CloudWatch |
+| **TTI** (Time to Interactive) | < 3.5s | Lighthouse CI |
+
+**Bundle Size Budgets (gzipped):**
+
+| Bundle | Max Size | Enforced By |
+|--------|----------|-------------|
+| **Initial bundle** (main + vendor + polyfills) | **250 KB** | `angular.json` budgets |
+| **Largest lazy chunk** (e.g., inspection wizard) | **150 KB** | `angular.json` budgets |
+| **Total initial transfer** (all resources) | **500 KB** | Lighthouse CI |
+| **CSS** (initial) | **50 KB** | `angular.json` budgets |
+| **Images** (per page) | **500 KB** | Lighthouse CI |
+
+**Angular budget configuration:**
+```json
+// angular.json or project.json
+{
+  "budgets": [
+    { "type": "initial", "maximumWarning": "200kb", "maximumError": "250kb" },
+    { "type": "bundle", "name": "main", "maximumWarning": "150kb", "maximumError": "200kb" },
+    { "type": "anyComponentStyle", "maximumWarning": "6kb", "maximumError": "10kb" }
+  ]
+}
+```
+
+**Lighthouse CI thresholds (enforced on every PR):**
+```json
+{
+  "ci": {
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.85 }],
+        "categories:accessibility": ["error", { "minScore": 0.90 }],
+        "categories:best-practices": ["error", { "minScore": 0.90 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 2000 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "total-blocking-time": ["error", { "maxNumericValue": 300 }]
+      }
+    }
+  }
+}
+```
+
+**Performance optimization strategies:**
+- Lazy-load all feature routes via `loadComponent` / `loadChildren`
+- `@defer` blocks for below-the-fold content (ECharts charts, audit log table)
+- Preconnect hints for API, CDN, and Stripe domains
+- Image optimization: WebP format, `loading="lazy"`, responsive `srcset`
+- Tree-shaking: import only needed PrimeNG components (not full library)
+- Angular SSR **not used** (SPA-only) — static `index.html` served from CDN
+
+### 9.7 Browser & Device Support Matrix
 
 | Browser/Device | Version | Support Level | Notes |
 |---------------|---------|:------------:|-------|
@@ -1608,7 +2671,38 @@ The inspection wizard is the most complex UI component. It's a multi-step form w
 - Photo capture inline at any checklist item
 - Must work well on iPad (primary device for inspectors)
 
-### 11.2 Inspection Editing (Resume / Edit)
+### 11.2 Onboarding Wizard (First Login)
+
+Triggered on first login after signup (or after invite acceptance). The wizard guides the tenant admin through initial setup. Stored progress in `tenants.settings.onboarding_completed_steps` JSONB so it can be resumed if the user closes the browser.
+
+**Steps:**
+
+| Step | Title | Fields/Actions | Required? |
+|------|-------|---------------|:---------:|
+| 1 | **Welcome** | Welcome message, overview of what's next. "Let's get started" button. | Yes |
+| 2 | **Dealership Profile** | Business name (prefilled from signup), address, phone, ABN/ACN (optional), business hours. | Yes |
+| 3 | **Branding** | Upload logo (S3 presigned upload), pick primary colour (colour picker → sets `--tenant-primary` CSS var), preview with live branding. | No (skip) |
+| 4 | **Invite Team** | Invite up to 3 users by email + role. Sends invite emails. "Skip for now" option. Shows plan limit. | No (skip) |
+| 5 | **Choose Template** | Select default checklist template from presets (Standard Sedan, SUV, Truck, EV, Quick). Preview template sections. Can customize later in template builder. | Yes |
+| 6 | **First Vehicle** | Add one vehicle: VIN entry with auto-decode, or manual entry. "Skip — I'll add vehicles later" option. | No (skip) |
+| 7 | **Complete** | Summary of setup. "Start Your First Inspection" CTA button → routes to `/inspections/new`. "Go to Dashboard" alternative. | Yes |
+
+**Implementation:**
+- Single Angular component with stepper UI (PrimeNG `p-steps`)
+- Each step is a child component with its own reactive form
+- Step completion persisted to backend: `PATCH /api/settings` with `{ onboarding: { completed_steps: [...], completed_at } }`
+- `firstLoginGuard` on the `/onboarding` route: redirects to onboarding if `settings.onboarding_completed_at` is null
+- After completion, dashboard shows a dismissible "getting started" card with remaining setup suggestions
+
+**Invite acceptance flow (for invited users):**
+1. Invited user clicks email link → `/accept-invite?token={jwt}`
+2. Frontend validates token, shows "Set your password" form
+3. On submit → `POST /api/auth/accept-invite` with token + password
+4. Backend activates user, sets password, marks email verified
+5. Redirect to login (or auto-login) → no onboarding wizard for non-admin invitees, just a quick "Welcome to {dealership}" tour tooltip overlay
+
+### 11.3 Inspection Editing (Resume / Edit)
+
 
 The inspection wizard supports two modes:
 
@@ -1626,7 +2720,7 @@ The inspection wizard supports two modes:
 
 **Route:** `/inspections/:id/edit` — wizard component checks `id` param, if present → loads existing inspection data via `GET /api/inspections/:id`
 
-### 11.3 Vehicle Detail & Editing
+### 11.4 Vehicle Detail & Editing
 
 - `GET /api/vehicles/:id` → displays full vehicle info + linked inspections
 - Inline editing for vehicle fields (make, model, year, plate, odometer, etc.)
@@ -1634,7 +2728,7 @@ The inspection wizard supports two modes:
 - Delete vehicle only if no inspections linked (soft-delete: mark inactive)
 - Shows inspection count, last inspection date, current condition grade
 
-### 11.4 Checklist Template Builder
+### 11.5 Checklist Template Builder
 
 Admin UI for creating and editing inspection checklist templates:
 
@@ -1661,7 +2755,7 @@ Admin UI for creating and editing inspection checklist templates:
 ]
 ```
 
-### 11.5 Global Search
+### 11.6 Global Search
 
 Header search bar triggers cross-entity search:
 
@@ -1672,7 +2766,7 @@ Header search bar triggers cross-entity search:
 - Backend: PostgreSQL `tsvector` search across `vehicles`, `inspections`, `users` tables
 - Results scoped to current tenant via RLS
 
-### 11.6 Data Export
+### 11.7 Data Export
 
 Admin page for bulk data export:
 
@@ -1686,7 +2780,7 @@ Admin page for bulk data export:
 
 **Full tenant export** (admin settings): exports all data + media as ZIP archive. Available to all plans for data portability compliance.
 
-### 11.7 Grading Algorithm
+### 11.8 Grading Algorithm
 
 ```typescript
 function calculateGrade(responses: ChecklistResponse[], damages: DamageMarker[], obd: OBDSnapshot | null): InspectionGrade {
@@ -1731,7 +2825,7 @@ function calculateGrade(responses: ChecklistResponse[], damages: DamageMarker[],
 }
 ```
 
-### 11.8 Damage Map
+### 11.9 Damage Map
 
 - Interactive SVG vehicle diagrams (sedan, SUV, truck, van, motorcycle)
 - Different views: top, driver-side, passenger-side, front, rear
@@ -2026,7 +3120,89 @@ export class PDFService {
 - Built with React Email for type-safe, component-based email templates (replaces MJML)
 - Rendered server-side to HTML, sent via Resend API
 - Branded per tenant (logo, colours injected as template variables)
-- Templates: welcome, email-verification, invite, password-reset, inspection-submitted, inspection-approved, report-ready, report-viewed, trial-expiring (3 day + 1 day), payment-failed, weekly-digest, export-ready
+- All templates accept a `locale` parameter (default: `en-AU`) for future i18n
+
+**Template catalog with data payloads:**
+
+| Template | Trigger | Variables |
+|----------|---------|-----------|
+| **welcome** | Signup completed | `userName`, `dealershipName`, `subdomain`, `loginUrl` |
+| **email-verification** | Signup / resend | `userName`, `verifyUrl` (signed JWT link, 24h expiry), `expiresIn` |
+| **invite** | Admin invites user | `inviterName`, `dealershipName`, `inviteeName`, `role`, `acceptUrl` (signed JWT link, 7d expiry) |
+| **password-reset** | Forgot password request | `userName`, `resetUrl` (signed JWT link, 1h expiry), `expiresIn`, `ipAddress` |
+| **inspection-submitted** | Inspection submitted for review | `inspectorName`, `vehicleInfo` (`{year} {make} {model}`), `inspectionId`, `grade`, `score`, `reviewUrl` |
+| **inspection-approved** | Manager approves inspection | `inspectorName`, `vehicleInfo`, `reviewerName`, `grade`, `viewUrl` |
+| **report-ready** | PDF generated | `userName`, `vehicleInfo`, `reportType` (`internal`/`customer`), `downloadUrl` (presigned S3, 24h) |
+| **report-viewed** | Customer opens shared report | `userName`, `vehicleInfo`, `viewerLocation` (city/country from IP), `viewedAt`, `viewCount` |
+| **trial-expiring-3d** | 3 days before trial ends | `adminName`, `dealershipName`, `trialEndsAt`, `inspectionCount`, `upgradeUrl` |
+| **trial-expiring-1d** | 1 day before trial ends | `adminName`, `dealershipName`, `trialEndsAt`, `upgradeUrl` |
+| **payment-failed** | Stripe `invoice.payment_failed` | `adminName`, `dealershipName`, `amount`, `currency`, `nextRetryAt`, `updatePaymentUrl` (Stripe portal) |
+| **weekly-digest** | Cron (Monday 8am tenant TZ) | `userName`, `period` (`{startDate}–{endDate}`), `inspectionCount`, `avgScore`, `topDefects[]`, `dashboardUrl` |
+| **export-ready** | Data export job completed | `userName`, `exportType`, `recordCount`, `fileSize`, `downloadUrl` (presigned S3, 24h), `expiresAt` |
+| **account-cancelled** | Subscription cancelled | `adminName`, `dealershipName`, `dataDeleteDate` (30 days out), `reactivateUrl`, `exportUrl` |
+| **data-deletion-reminder** | 5 days before data deletion | `adminName`, `dealershipName`, `deletionDate`, `exportUrl` (valid 5 days) |
+| **data-deleted** | Data deletion completed | `adminName`, `dealershipName` |
+
+**Common variables injected into all templates (via base layout):**
+- `tenantLogo` (URL or fallback to AutoInspect logo)
+- `tenantPrimaryColor` (hex, for header/button styling)
+- `tenantName`
+- `currentYear` (for footer copyright)
+- `unsubscribeUrl` (for optional notifications only, not transactional)
+- `supportEmail`
+
+**Template file structure:**
+```
+apps/api/src/modules/notifications/emails/
+├── components/           # Shared React Email components
+│   ├── layout.tsx        # Base layout (logo, footer, unsubscribe)
+│   ├── button.tsx        # CTA button (tenant-branded)
+│   ├── header.tsx        # Email header with logo
+│   └── footer.tsx        # Footer with links, copyright
+├── templates/
+│   ├── welcome.tsx
+│   ├── email-verification.tsx
+│   ├── invite.tsx
+│   ├── password-reset.tsx
+│   ├── inspection-submitted.tsx
+│   ├── inspection-approved.tsx
+│   ├── report-ready.tsx
+│   ├── report-viewed.tsx
+│   ├── trial-expiring.tsx    # Handles both 3d and 1d via `daysRemaining` prop
+│   ├── payment-failed.tsx
+│   ├── weekly-digest.tsx
+│   ├── export-ready.tsx
+│   ├── account-cancelled.tsx
+│   ├── data-deletion-reminder.tsx
+│   └── data-deleted.tsx
+└── email.service.ts          # Renders template → sends via Resend (or SMTP for local)
+```
+
+**Email service interface:**
+```typescript
+@Injectable()
+export class EmailService {
+  async send<T extends keyof EmailTemplateMap>(
+    to: string,
+    template: T,
+    variables: EmailTemplateMap[T],
+    options?: { locale?: string; replyTo?: string }
+  ): Promise<void> {
+    const html = await renderTemplate(template, {
+      ...variables,
+      ...this.getCommonVariables(variables.tenantId),
+    }, options?.locale ?? 'en-AU');
+    
+    await this.resend.emails.send({
+      from: `${variables.tenantName ?? 'AutoInspect Pro'} <${this.configService.get('EMAIL_FROM')}>`,
+      to,
+      subject: EMAIL_SUBJECTS[template](variables),
+      html,
+      replyTo: options?.replyTo,
+    });
+  }
+}
+```
 
 ---
 
@@ -2352,9 +3528,216 @@ jobs:
 ```
 
 ### 25.4 Database Migrations
-- Prisma Migrate for schema changes
-- Zero-downtime strategy: additive changes first, backfill, then remove old columns
-- Migration testing in staging before production
+
+**Prisma + RLS strategy:** Prisma Migrate manages table structure, but Prisma has no native RLS support. RLS policies, custom indexes, and PostgreSQL functions are managed via custom SQL migration files that run alongside Prisma migrations.
+
+**Migration file structure:**
+```
+apps/api/prisma/
+├── schema.prisma              # Prisma schema (tables, relations, enums)
+├── migrations/
+│   ├── 20260401000000_init/
+│   │   └── migration.sql      # Auto-generated by `prisma migrate dev`
+│   ├── 20260401000001_rls_policies/
+│   │   └── migration.sql      # MANUAL — RLS policies (see below)
+│   ├── 20260401000002_custom_indexes/
+│   │   └── migration.sql      # MANUAL — FTS indexes, partial indexes
+│   └── ...
+└── seed.ts
+```
+
+**RLS policy migration (manually authored, runs once via `prisma migrate`):**
+
+```sql
+-- migrations/20260401000001_rls_policies/migration.sql
+
+-- Create application role for RLS context
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_user') THEN
+    CREATE ROLE app_user;
+  END IF;
+END
+$$;
+
+-- Grant table access to app_user
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_user;
+
+-- Enable RLS on all tenant-scoped tables
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE vehicles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE inspections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE checklist_templates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE checklist_responses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE damage_markers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE obd_snapshots ENABLE ROW LEVEL SECURITY;
+ALTER TABLE media_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE webhook_endpoints ENABLE ROW LEVEL SECURITY;
+ALTER TABLE webhook_deliveries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE feature_flags ENABLE ROW LEVEL SECURITY;
+
+-- Tenant isolation policies (applied to each tenant-scoped table)
+-- Pattern: all operations require tenant_id to match current session setting
+
+CREATE POLICY tenant_isolation_users ON users
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_vehicles ON vehicles
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_inspections ON inspections
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_templates ON checklist_templates
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_responses ON checklist_responses
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_damage ON damage_markers
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_obd ON obd_snapshots
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_media ON media_items
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_reports ON reports
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_notifications ON notifications
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_audit ON audit_logs
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_webhooks ON webhook_endpoints
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (tenant_id = current_setting('app.current_tenant')::uuid);
+
+CREATE POLICY tenant_isolation_deliveries ON webhook_deliveries
+  FOR ALL USING (
+    endpoint_id IN (
+      SELECT id FROM webhook_endpoints
+      WHERE tenant_id = current_setting('app.current_tenant')::uuid
+    )
+  );
+
+-- Tenants table: each tenant can only see their own record
+CREATE POLICY tenant_isolation_self ON tenants
+  FOR ALL USING (id = current_setting('app.current_tenant')::uuid)
+  WITH CHECK (id = current_setting('app.current_tenant')::uuid);
+
+-- Special policy: public report access (no tenant context required)
+CREATE POLICY public_report_access ON reports
+  FOR SELECT USING (
+    share_token IS NOT NULL
+    AND (share_expires_at IS NULL OR share_expires_at > now())
+  );
+
+-- Super Admin bypass: when app.current_tenant is set to 'super',
+-- a separate connection pool with the owner role bypasses RLS entirely.
+-- This is handled at the connection level, not via policies.
+```
+
+**How Prisma sets the RLS session variable:**
+
+```typescript
+// apps/api/src/common/prisma/prisma.service.ts
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit {
+  /**
+   * Returns a Prisma Client scoped to a specific tenant.
+   * Sets the PostgreSQL session variable for RLS, then applies
+   * the Prisma Client Extension for application-layer filtering.
+   */
+  async forTenant(tenantId: string): Promise<PrismaClient> {
+    // Set PG session variable (for RLS — database-layer protection)
+    await this.$executeRawUnsafe(
+      `SELECT set_config('app.current_tenant', '${tenantId}', true)`
+    );
+    // Also apply Prisma extension (application-layer protection)
+    return this.$extends(withTenantScope(tenantId)) as unknown as PrismaClient;
+  }
+}
+
+// Usage in TenantMiddleware:
+req['prisma'] = await this.prismaService.forTenant(tenant.id);
+```
+
+**Migration workflow:**
+
+```bash
+# 1. Schema change → update schema.prisma → generate migration
+npx prisma migrate dev --name add_new_field
+
+# 2. If RLS policy needed for new table → create manual migration
+mkdir -p prisma/migrations/$(date +%Y%m%d%H%M%S)_rls_new_table
+# Write custom SQL in migration.sql
+
+# 3. Apply all pending migrations
+npx prisma migrate deploy
+
+# 4. Verify RLS policies are intact (automated test)
+npx nx test api -- --grep "RLS"
+```
+
+**RLS verification tests (critical — run in CI):**
+
+```typescript
+// apps/api/test/rls.integration.spec.ts
+describe('RLS tenant isolation', () => {
+  it('tenant A cannot read tenant B vehicles', async () => {
+    // Create vehicle for tenant A
+    await prismaAsTenantA.vehicle.create({ data: { ... } });
+    
+    // Query as tenant B — should return empty
+    const vehicles = await prismaAsTenantB.vehicle.findMany();
+    expect(vehicles).toHaveLength(0);
+  });
+
+  it('tenant A cannot update tenant B inspections via raw SQL', async () => {
+    // Attempt raw UPDATE as tenant A against tenant B's inspection
+    // RLS should prevent the update regardless of application layer
+    const result = await prismaAsTenantA.$executeRaw`
+      UPDATE inspections SET notes = 'hacked' WHERE id = ${tenantBInspectionId}
+    `;
+    expect(result).toBe(0); // 0 rows affected
+  });
+
+  it('public report accessible without tenant context', async () => {
+    // Report with valid share_token should be readable without tenant scope
+    const report = await prismaNoTenant.$queryRaw`
+      SELECT * FROM reports WHERE share_token = ${validToken}
+    `;
+    expect(report).toHaveLength(1);
+  });
+});
+```
+
+**Zero-downtime migration strategy:**
+- Additive changes first (add new column, new table), backfill data, then remove old columns
+- Never rename columns in a single migration — add new, copy data, update code, drop old
+- RLS policy changes: add new policy first, verify, then drop old policy
+- Migration testing in staging with production-like data before deploying to production
+- Rollback plan documented for each migration (Prisma doesn't auto-rollback — keep manual `down.sql` for critical migrations)
 
 ### 25.5 Backup & Disaster Recovery
 - **RDS:** Automated daily backups (35-day retention), point-in-time recovery
@@ -2423,7 +3806,150 @@ export class HealthController {
 - `GET /health/live` — liveness probe (lightweight)
 - ALB health check targets `/health/live` every 30 seconds
 
-### 26.5 Status Page
+### 26.5 Structured Logging Standards
+
+All backend services use structured JSON logging to CloudWatch. Every log entry must include the standard fields below for correlation and filtering.
+
+**Log format:**
+```json
+{
+  "timestamp": "2026-04-04T10:15:30.123Z",
+  "level": "info",
+  "message": "Inspection submitted for review",
+  "service": "api",
+  "requestId": "req_abc123",
+  "tenantId": "uuid",
+  "userId": "uuid",
+  "action": "inspection.submitted",
+  "entityType": "inspection",
+  "entityId": "uuid",
+  "duration": 145,
+  "metadata": {}
+}
+```
+
+**Standard fields (required on every log entry):**
+
+| Field | Source | Notes |
+|-------|--------|-------|
+| `timestamp` | Auto | ISO 8601, UTC |
+| `level` | Code | `debug`, `info`, `warn`, `error`, `fatal` |
+| `message` | Code | Human-readable, no PII |
+| `service` | Config | `api`, `worker`, `web` |
+| `requestId` | Middleware | UUID generated per request, propagated via `X-Request-Id` header |
+
+**Contextual fields (injected by middleware when available):**
+
+| Field | Source |
+|-------|--------|
+| `tenantId` | TenantMiddleware |
+| `userId` | Auth JWT |
+| `method`, `path`, `statusCode` | Request/Response |
+| `duration` | Response time in ms |
+| `userAgent`, `ip` | Request headers |
+
+**NestJS implementation:**
+```typescript
+// Use NestJS built-in Logger + pino for structured output
+// apps/api/src/common/logger/logger.module.ts
+import { LoggerModule } from 'nestjs-pino';
+
+LoggerModule.forRoot({
+  pinoHttp: {
+    level: process.env.LOG_LEVEL || 'info',
+    transport: process.env.NODE_ENV === 'development'
+      ? { target: 'pino-pretty' }
+      : undefined,
+    redact: ['req.headers.authorization', 'req.headers.cookie', '*.password', '*.passwordHash'],
+    genReqId: (req) => req.headers['x-request-id'] || randomUUID(),
+  },
+});
+```
+
+**Log levels by environment:**
+
+| Environment | Level | Notes |
+|------------|-------|-------|
+| Local | `debug` | Verbose, pretty-printed |
+| Dev/Staging | `debug` | JSON format, shorter retention |
+| Production | `info` | JSON format, 30-day retention in CloudWatch |
+
+**What to log (and not log):**
+- Log: all API requests (method, path, status, duration), auth events (login, logout, failed), business events (inspection created, report generated), errors with stack traces, queue job start/complete/fail
+- Never log: passwords, tokens, credit card numbers, full request bodies on auth endpoints, file contents
+
+### 26.6 Feature Flag System
+
+Feature flags control feature rollout, A/B testing, and kill switches. Flags are stored in the `feature_flags` database table and cached in Valkey (5-minute TTL).
+
+**Flag scopes:**
+
+| Scope | `tenant_id` | Description |
+|-------|:-----------:|-------------|
+| **Global** | `null` | Applies to all tenants (e.g., maintenance mode, new feature rollout) |
+| **Per-tenant** | UUID | Overrides global flag for a specific tenant (e.g., beta features) |
+
+**Resolution order:** Per-tenant flag > Global flag > Default (disabled)
+
+**Built-in flags (created on deploy):**
+
+| Flag Key | Default | Purpose |
+|----------|:-------:|---------|
+| `obd_integration` | `true` | Enable/disable OBD-II Bluetooth feature |
+| `video_capture` | `true` | Enable/disable video recording on inspections |
+| `webhooks` | `true` | Enable/disable webhook management UI |
+| `public_api` | `false` | Enable public API + API key management (Enterprise only) |
+| `sso_saml` | `false` | Enable SSO/SAML login (Enterprise only) |
+| `ai_damage_detection` | `false` | Enable AI photo analysis (Phase 4) |
+| `maintenance_mode` | `false` | Show maintenance page to all tenants |
+| `signup_enabled` | `true` | Allow new tenant signups (kill switch) |
+
+**NestJS implementation:**
+```typescript
+// Guard-based feature check
+@Injectable()
+export class FeatureFlagGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const requiredFlag = this.reflector.get<string>('feature', context.getHandler());
+    if (!requiredFlag) return true;
+    const tenant = context.switchToHttp().getRequest().tenant;
+    return this.featureFlagService.isEnabled(requiredFlag, tenant?.id);
+  }
+}
+
+// Decorator
+export const RequireFeature = (flag: string) => SetMetadata('feature', flag);
+
+// Usage on controller
+@RequireFeature('webhooks')
+@Controller('webhooks')
+export class WebhookController { ... }
+```
+
+**Frontend integration (Angular):**
+```typescript
+// Service checks flags fetched at app init
+@Injectable({ providedIn: 'root' })
+export class FeatureFlagService {
+  private flags = signal<Record<string, boolean>>({});
+
+  isEnabled(key: string): boolean {
+    return this.flags()[key] ?? false;
+  }
+}
+
+// Structural directive for templates
+// <div *appFeatureFlag="'video_capture'">Record Video</div>
+@Directive({ selector: '[appFeatureFlag]', standalone: true })
+export class FeatureFlagDirective { ... }
+
+// Route guard for feature-gated pages
+export const featureFlagGuard = (flag: string): CanActivateFn => {
+  return () => inject(FeatureFlagService).isEnabled(flag);
+};
+```
+
+### 26.7 Status Page
 - Public status page at status.autoinspect.com
 - Automated incident detection → status page update
 - Atlassian Statuspage or Better Stack
@@ -2501,10 +4027,154 @@ export class HealthController {
 - Customer portal (login-based, view own inspection history)
 - AI damage detection from photos (ML model integration)
 - Predictive pricing from inspection data
-- Mobile companion app (Ionic/Capacitor, sharing Angular code + shared lib)
+- Mobile companion app (see Section 28.1 below)
 - White-label option (full branding removal for Enterprise)
 - SOC 2 Type I certification (month 12)
 - OpenSearch migration for search (scale)
+
+### 28.1 Mobile Companion App Architecture (Phase 4)
+
+**Platform:** Ionic 8 + Capacitor 6 wrapping the existing Angular codebase. This maximizes code reuse from the web SPA — shared components, services, NgRx store, and the `@autoinspect/shared` library all carry over.
+
+**Why native wrapper (not just PWA):**
+
+| Capability | PWA (current) | Capacitor Native |
+|-----------|:-------------:|:----------------:|
+| iOS OBD-II Bluetooth | No (Web Bluetooth not supported in Safari) | Yes (via `@capacitor-community/bluetooth-le`) |
+| Push notifications (iOS) | Limited (no background) | Full (APNs via `@capacitor/push-notifications`) |
+| Camera with hardware controls | Basic (`getUserMedia`) | Full (flash, zoom, burst via `@capacitor/camera`) |
+| Offline file storage | IndexedDB (limited) | Full filesystem (`@capacitor/filesystem`) |
+| App Store presence | No | Yes (discoverability, managed deployment) |
+| Background sync | Service Worker (unreliable on iOS) | Yes (`@capacitor/background-runner`) |
+
+**Monorepo integration:**
+
+```
+autoinspect-pro/
+├── apps/
+│   ├── web/                    # Existing Angular SPA (unchanged)
+│   ├── mobile/                 # NEW — Ionic/Capacitor shell
+│   │   ├── src/
+│   │   │   ├── app/
+│   │   │   │   ├── app.routes.ts       # Mobile-specific route overrides
+│   │   │   │   ├── app.component.ts    # Capacitor plugin initialization
+│   │   │   │   └── platform/           # Platform-specific service overrides
+│   │   │   │       ├── camera.service.ts       # Capacitor Camera (replaces getUserMedia)
+│   │   │   │       ├── bluetooth.service.ts    # Capacitor BLE (replaces Web Bluetooth)
+│   │   │   │       ├── push.service.ts         # APNs/FCM push notifications
+│   │   │   │       ├── filesystem.service.ts   # Native file storage for offline media
+│   │   │   │       └── haptics.service.ts      # Haptic feedback on checklist items
+│   │   │   ├── environments/
+│   │   │   └── theme/
+│   │   │       └── variables.scss      # Ionic CSS variables mapped to design tokens
+│   │   ├── capacitor.config.ts
+│   │   ├── ionic.config.json
+│   │   ├── ios/                         # Auto-generated Xcode project
+│   │   ├── android/                     # Auto-generated Android Studio project
+│   │   └── project.json                 # Nx project config
+│   ├── api/
+│   └── worker/
+├── libs/
+│   ├── shared/                          # Shared types (used by web + mobile + api)
+│   └── ui/                              # Shared Angular components (used by web + mobile)
+```
+
+**Code sharing strategy:**
+
+| Layer | Shared with Web? | Notes |
+|-------|:----------------:|-------|
+| `libs/shared/` (types, constants, utils) | 100% | Same NPM package |
+| `libs/ui/` (Angular components) | ~90% | Mobile overrides for touch-optimized variants |
+| `core/` services (API, auth, tenant, NgRx) | ~95% | Identical — HTTP calls, state management |
+| `features/` (pages) | ~80% | Same components, mobile-specific layout tweaks via Ionic grid |
+| Navigation/layout | Different | Ionic tabs + sliding menu vs sidebar |
+| Camera/Bluetooth/Push | Different | Capacitor plugins replace Web APIs |
+
+**Platform service injection (compile-time swap):**
+
+```typescript
+// Shared interface
+export abstract class CameraService {
+  abstract capturePhoto(): Promise<CapturedPhoto>;
+}
+
+// Web implementation (used in apps/web)
+@Injectable()
+export class WebCameraService extends CameraService {
+  async capturePhoto() {
+    // getUserMedia + canvas capture
+  }
+}
+
+// Mobile implementation (used in apps/mobile)
+@Injectable()
+export class NativeCameraService extends CameraService {
+  async capturePhoto() {
+    const photo = await Camera.getPhoto({
+      quality: 85,
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Camera,
+    });
+    return { uri: photo.webPath!, format: 'jpeg' };
+  }
+}
+
+// Provided via environment-specific module
+// apps/mobile/src/app/app.config.ts
+providers: [
+  { provide: CameraService, useClass: NativeCameraService },
+  { provide: BluetoothService, useClass: NativeBluetoothService },
+  { provide: PushService, useClass: NativePushService },
+]
+```
+
+**Mobile-specific features:**
+- **Haptic feedback:** Subtle vibration on checklist pass/fail tap (`@capacitor/haptics`)
+- **Barcode/VIN scanner:** Camera-based VIN barcode scan (`@capacitor-mlkit/barcode-scanning`) — eliminates manual VIN entry
+- **Native share:** Share PDF report via iOS/Android share sheet (`@capacitor/share`)
+- **Biometric auth:** Face ID / fingerprint for app unlock (`capacitor-native-biometric`)
+- **Offline media queue:** Photos stored in native filesystem (not IndexedDB) with background upload when online
+
+**Mobile-specific routes (overrides):**
+```typescript
+// apps/mobile/src/app/app.routes.ts
+// Uses Ionic tabs for primary navigation instead of sidebar
+export const mobileRoutes: Routes = [
+  {
+    path: '',
+    component: TabsLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: 'dashboard', loadComponent: () => import('@features/dashboard/dashboard.component'), data: { icon: 'home', label: 'Home' } },
+      { path: 'inspections', loadChildren: () => import('@features/inspections/inspections.routes'), data: { icon: 'clipboard', label: 'Inspections' } },
+      { path: 'vehicles', loadChildren: () => import('@features/vehicles/vehicles.routes'), data: { icon: 'car', label: 'Vehicles' } },
+      { path: 'more', loadComponent: () => import('./more-menu/more-menu.component'), data: { icon: 'menu', label: 'More' } },
+    ]
+  },
+  // ... auth routes same as web
+];
+```
+
+**Build & deployment:**
+```bash
+# Build mobile app via Nx
+npx nx build mobile --configuration=production
+
+# Sync to native projects
+npx nx run mobile:cap-sync
+
+# Open in Xcode / Android Studio for final build
+npx nx run mobile:cap-open:ios
+npx nx run mobile:cap-open:android
+
+# CI: build .ipa / .apk via Fastlane (GitHub Actions)
+```
+
+**App Store deployment:**
+- iOS: TestFlight for beta, App Store for production (Fastlane `deliver`)
+- Android: Google Play internal track for beta, production track for release (Fastlane `supply`)
+- Version synced with web SPA version (`package.json` version)
+- Minimum OS: iOS 16+, Android 12+ (API 31)
 
 ---
 
