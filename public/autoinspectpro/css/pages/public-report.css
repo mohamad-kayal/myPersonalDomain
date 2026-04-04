@@ -1,0 +1,603 @@
+/* ============================================
+   AutoInspect Pro — Public Report Page
+   ============================================ */
+
+/* Header */
+.pr-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--color-gray-200);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.pr-header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-6);
+}
+
+.pr-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.pr-brand-logo {
+  width: 40px;
+  height: 40px;
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+}
+
+.pr-brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.pr-brand-info strong {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.pr-brand-info span {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.pr-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Page */
+.pr-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+/* Banner */
+.pr-banner {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary-dark));
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  margin-bottom: var(--space-6);
+  color: white;
+}
+
+.pr-vehicle-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.pr-vehicle-icon {
+  width: 72px;
+  height: 72px;
+  background: rgba(255,255,255,0.12);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.pr-vehicle-details h1 {
+  color: white;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-2);
+}
+
+.pr-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-gray-400);
+}
+
+.pr-meta-row i {
+  margin-right: var(--space-1);
+}
+
+/* Score Section */
+.pr-score-section {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+.pr-score-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+.pr-score-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.pr-score-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.pr-score-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pr-score-number {
+  font-size: 2rem;
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.pr-score-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.pr-grade-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.pr-grade-letter {
+  width: 56px;
+  height: 56px;
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  flex-shrink: 0;
+}
+
+.pr-grade-text strong {
+  font-size: var(--text-md);
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.pr-grade-text p {
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* Breakdown */
+.pr-score-breakdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.pr-breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.pr-breakdown-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+}
+
+.pr-breakdown-icon.passed { background: var(--color-success-light); color: var(--color-success); }
+.pr-breakdown-icon.failed { background: var(--color-danger-light); color: var(--color-danger); }
+.pr-breakdown-icon.advisory { background: var(--color-accent-lighter); color: var(--color-accent-dark); }
+.pr-breakdown-icon.na { background: var(--color-gray-100); color: var(--color-gray-500); }
+
+.pr-breakdown-count {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  display: block;
+  line-height: 1;
+}
+
+.pr-breakdown-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* Section Results */
+.pr-sections {
+  margin-bottom: var(--space-6);
+}
+
+.pr-sections h2,
+.pr-damage-section h2,
+.pr-obd-section h2,
+.pr-photos-section h2 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.pr-sections h2 i,
+.pr-damage-section h2 i,
+.pr-obd-section h2 i,
+.pr-photos-section h2 i {
+  color: var(--color-primary);
+}
+
+.pr-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.pr-section-card {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.pr-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.pr-section-title {
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pr-section-title i {
+  color: var(--color-primary);
+}
+
+.pr-section-score {
+  font-weight: var(--font-bold);
+  font-size: var(--text-sm);
+  color: var(--color-success);
+}
+
+.pr-section-bar {
+  height: 4px;
+  background: var(--color-gray-100);
+}
+
+.pr-section-fill {
+  height: 100%;
+  border-radius: 0 2px 2px 0;
+  transition: width 0.5s ease;
+}
+
+.pr-section-items {
+  padding: var(--space-3) var(--space-5);
+}
+
+.pr-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--color-gray-50);
+}
+
+.pr-item:last-child {
+  border-bottom: none;
+}
+
+.pr-item i {
+  margin-top: 2px;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+.pr-item.pass i { color: var(--color-success); }
+.pr-item.fail i { color: var(--color-danger); }
+.pr-item.advisory i { color: var(--color-accent); }
+
+.pr-item.fail { color: var(--color-danger-dark); }
+
+.pr-item-note {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* Damage Map */
+.pr-damage-section {
+  margin-bottom: var(--space-6);
+}
+
+.pr-damage-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.pr-car-outline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pr-car-svg {
+  width: 100%;
+  max-width: 400px;
+}
+
+.pr-damage-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pr-damage-entry {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.pr-damage-marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: white;
+  flex-shrink: 0;
+}
+
+.pr-damage-marker.minor { background: var(--color-accent); }
+.pr-damage-marker.moderate { background: var(--color-warning); }
+.pr-damage-marker.major { background: var(--color-danger); }
+
+.pr-damage-details strong {
+  font-size: var(--text-sm);
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.pr-damage-details p {
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-2);
+}
+
+/* OBD Section */
+.pr-obd-section {
+  margin-bottom: var(--space-6);
+}
+
+.pr-obd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.pr-obd-card {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.pr-obd-icon {
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.pr-obd-value {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-1);
+}
+
+.pr-obd-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.pr-obd-clean {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}
+
+.pr-obd-clean i {
+  font-size: var(--text-xl);
+}
+
+/* Photos */
+.pr-photos-section {
+  margin-bottom: var(--space-6);
+}
+
+.pr-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.pr-photo-placeholder {
+  aspect-ratio: 4/3;
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--text-tertiary);
+}
+
+.pr-photo-placeholder i {
+  font-size: 1.5rem;
+}
+
+.pr-photo-placeholder span {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}
+
+/* Footer */
+.pr-footer {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.pr-footer-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.pr-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.pr-disclaimer {
+  border-top: 1px solid var(--color-gray-200);
+  padding-top: var(--space-4);
+}
+
+.pr-disclaimer p {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  line-height: var(--leading-relaxed);
+}
+
+.pr-report-expiry {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background: var(--color-accent-lighter);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  color: var(--color-accent-dark);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Print */
+@media print {
+  .hide-print { display: none !important; }
+  .pr-header { position: static; }
+  .pr-banner { break-inside: avoid; }
+  .pr-section-card { break-inside: avoid; }
+  body { background: white; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pr-page { padding: var(--space-4); }
+  .pr-score-card { flex-direction: column; text-align: center; }
+  .pr-grade-info { flex-direction: column; }
+  .pr-score-breakdown { grid-template-columns: repeat(2, 1fr); }
+  .pr-section-grid { grid-template-columns: 1fr; }
+  .pr-damage-content { grid-template-columns: 1fr; }
+  .pr-obd-grid { grid-template-columns: repeat(2, 1fr); }
+  .pr-photo-grid { grid-template-columns: repeat(2, 1fr); }
+  .pr-vehicle-hero { flex-direction: column; text-align: center; }
+  .pr-meta-row { justify-content: center; }
+  .pr-header-inner { flex-direction: column; gap: var(--space-3); }
+  .pr-footer-meta { flex-direction: column; gap: var(--space-4); }
+}
+
+@media (max-width: 480px) {
+  .pr-obd-grid { grid-template-columns: 1fr; }
+  .pr-photo-grid { grid-template-columns: 1fr; }
+  .pr-score-breakdown { grid-template-columns: 1fr; }
+}
+
+/* Toast minimal for public page */
+.toast-container {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 999;
+}
+
+.toast {
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile & Account — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/profile.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+
+        <div class="profile-layout">
+          <!-- Left Nav -->
+          <nav class="profile-nav">
+            <button class="profile-nav-item active" data-section="personal" onclick="showProfileSection(this)">
+              <i class="fas fa-user"></i> Personal Info
+            </button>
+            <button class="profile-nav-item" data-section="security" onclick="showProfileSection(this)">
+              <i class="fas fa-shield-halved"></i> Security
+            </button>
+            <button class="profile-nav-item" data-section="notifications" onclick="showProfileSection(this)">
+              <i class="fas fa-bell"></i> Notification Preferences
+            </button>
+            <button class="profile-nav-item" data-section="billing" onclick="showProfileSection(this)">
+              <i class="fas fa-credit-card"></i> Billing & Plan
+            </button>
+          </nav>
+
+          <!-- Content -->
+          <div class="profile-content">
+            <!-- Personal Info -->
+            <div class="profile-section active" id="section-personal">
+              <div class="card">
+                <div class="card-header"><h3>Personal Information</h3></div>
+                <div class="card-body">
+                  <div class="profile-avatar-row">
+                    <div class="profile-avatar-large" id="profileAvatar">SM</div>
+                    <div>
+                      <button class="btn btn-secondary btn-sm">Upload Photo</button>
+                      <p style="font-size:var(--text-xs);color:var(--text-tertiary);margin-top:var(--space-1)">JPG or PNG. Max 1MB.</p>
+                    </div>
+                  </div>
+
+                  <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-6)">
+                    <div class="form-group">
+                      <label class="form-label">Full Name</label>
+                      <input type="text" class="form-input" id="profileName" value="">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Email Address</label>
+                      <input type="email" class="form-input" id="profileEmail" value="">
+                    </div>
+                  </div>
+                  <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+                    <div class="form-group">
+                      <label class="form-label">Phone Number</label>
+                      <input type="tel" class="form-input" id="profilePhone" value="" placeholder="+61 4XX XXX XXX">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Role</label>
+                      <input type="text" class="form-input" id="profileRole" value="" disabled style="background:var(--color-gray-50)">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Timezone</label>
+                    <select class="form-input form-select" style="max-width:320px">
+                      <option selected>Australia/Sydney (AEST)</option>
+                      <option>Australia/Melbourne (AEST)</option>
+                      <option>Australia/Brisbane (AEST)</option>
+                      <option>Australia/Perth (AWST)</option>
+                      <option>Australia/Adelaide (ACST)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="card-footer" style="display:flex;justify-content:flex-end;gap:var(--space-3)">
+                  <button class="btn btn-secondary">Cancel</button>
+                  <button class="btn btn-primary" onclick="showToast('success','Profile','Changes saved successfully')">Save Changes</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Security -->
+            <div class="profile-section" id="section-security">
+              <div class="card" style="margin-bottom:var(--space-6)">
+                <div class="card-header"><h3>Change Password</h3></div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" class="form-input" placeholder="Enter current password" style="max-width:400px">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-input" placeholder="Minimum 8 characters" style="max-width:400px">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-input" placeholder="Repeat new password" style="max-width:400px">
+                  </div>
+                </div>
+                <div class="card-footer" style="display:flex;justify-content:flex-end">
+                  <button class="btn btn-primary" onclick="showToast('success','Password','Password updated successfully')">Update Password</button>
+                </div>
+              </div>
+
+              <div class="card" style="margin-bottom:var(--space-6)">
+                <div class="card-header"><h3>Two-Factor Authentication</h3></div>
+                <div class="card-body">
+                  <div class="tfa-status">
+                    <div class="tfa-info">
+                      <div class="tfa-icon off"><i class="fas fa-shield-halved"></i></div>
+                      <div>
+                        <strong>2FA is not enabled</strong>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);margin-top:var(--space-1)">Add an extra layer of security to your account by enabling two-factor authentication.</p>
+                      </div>
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="showToast('info','2FA','Setup wizard coming soon')">Enable 2FA</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><h3>Active Sessions</h3></div>
+                <div class="card-body">
+                  <div class="session-item current">
+                    <div class="session-icon"><i class="fas fa-laptop"></i></div>
+                    <div class="session-info">
+                      <strong>Current Session</strong>
+                      <p>Chrome on macOS — Sydney, NSW</p>
+                      <span class="badge badge-success">Active now</span>
+                    </div>
+                  </div>
+                  <div class="session-item" style="margin-top:var(--space-4)">
+                    <div class="session-icon"><i class="fas fa-tablet"></i></div>
+                    <div class="session-info">
+                      <strong>iPad</strong>
+                      <p>Safari on iPadOS — Last active 2 hours ago</p>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" onclick="showToast('success','Session','Session revoked')">Revoke</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification Preferences -->
+            <div class="profile-section" id="section-notifications">
+              <div class="card">
+                <div class="card-header"><h3>Notification Preferences</h3></div>
+                <div class="card-body">
+                  <p style="margin-bottom:var(--space-6)">Choose how and when you want to be notified.</p>
+
+                  <div class="notif-grid">
+                    <div class="notif-header">
+                      <span>Event</span>
+                      <span>In-App</span>
+                      <span>Email</span>
+                    </div>
+                    <div class="notif-row">
+                      <span>Inspection assigned to me</span>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="notif-row">
+                      <span>Inspection completed</span>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                      <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="notif-row">
+                      <span>Inspection approved</span>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="notif-row">
+                      <span>Critical defect found</span>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="notif-row">
+                      <span>Report viewed by customer</span>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                      <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="notif-row">
+                      <span>Weekly summary digest</span>
+                      <label class="toggle"><input type="checkbox" disabled><span class="toggle-slider"></span></label>
+                      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer" style="display:flex;justify-content:flex-end">
+                  <button class="btn btn-primary" onclick="showToast('success','Notifications','Preferences saved')">Save Preferences</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Billing & Plan -->
+            <div class="profile-section" id="section-billing">
+              <div class="card" style="margin-bottom:var(--space-6)">
+                <div class="card-header">
+                  <h3>Current Plan</h3>
+                  <span class="badge badge-info">Professional</span>
+                </div>
+                <div class="card-body">
+                  <div class="billing-plan-info">
+                    <div>
+                      <h4 style="font-size:var(--text-xl);font-weight:var(--font-bold)">$99 <span style="font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--text-tertiary)">/month</span></h4>
+                      <p style="font-size:var(--text-sm);color:var(--text-secondary);margin-top:var(--space-1)">Billed monthly. Next billing date: 1 May 2026</p>
+                    </div>
+                    <div class="billing-actions">
+                      <a href="pricing.html" class="btn btn-outline btn-sm">Change Plan</a>
+                      <button class="btn btn-ghost btn-sm" style="color:var(--color-danger)" onclick="showConfirmDialog('Cancel Subscription','Are you sure you want to cancel your subscription? You will lose access to Professional features at the end of your billing cycle.',function(){showToast('info','Subscription','Cancellation scheduled')})">Cancel</button>
+                    </div>
+                  </div>
+
+                  <div class="billing-usage">
+                    <h5 style="margin-bottom:var(--space-4)">Usage This Month</h5>
+                    <div class="usage-bars">
+                      <div class="usage-item">
+                        <div class="usage-label"><span>Users</span><span>4 / 15</span></div>
+                        <div class="usage-bar"><div class="usage-fill" style="width:27%;background:var(--color-primary)"></div></div>
+                      </div>
+                      <div class="usage-item">
+                        <div class="usage-label"><span>Inspections</span><span>67 / Unlimited</span></div>
+                        <div class="usage-bar"><div class="usage-fill" style="width:100%;background:var(--color-success)"></div></div>
+                      </div>
+                      <div class="usage-item">
+                        <div class="usage-label"><span>Storage</span><span>2.4 GB / 50 GB</span></div>
+                        <div class="usage-bar"><div class="usage-fill" style="width:5%;background:var(--color-primary)"></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="margin-bottom:var(--space-6)">
+                <div class="card-header"><h3>Payment Method</h3></div>
+                <div class="card-body">
+                  <div class="payment-card-row">
+                    <div class="payment-card-icon"><i class="fab fa-cc-visa"></i></div>
+                    <div>
+                      <strong>Visa ending in 4242</strong>
+                      <p style="font-size:var(--text-sm);color:var(--text-tertiary)">Expires 12/2027</p>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" style="margin-left:auto">Update</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><h3>Billing History</h3></div>
+                <div class="card-body" style="padding:0">
+                  <table class="data-table">
+                    <thead>
+                      <tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td data-label="Date">1 Apr 2026</td><td data-label="Description">Professional — Monthly</td><td data-label="Amount">$99.00</td><td data-label="Status"><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">Invoice</button></td></tr>
+                      <tr><td data-label="Date">1 Mar 2026</td><td data-label="Description">Professional — Monthly</td><td data-label="Amount">$99.00</td><td data-label="Status"><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">Invoice</button></td></tr>
+                      <tr><td data-label="Date">1 Feb 2026</td><td data-label="Description">Professional — Monthly</td><td data-label="Amount">$99.00</td><td data-label="Status"><span class="badge badge-success">Paid</span></td><td><button class="btn btn-ghost btn-sm">Invoice</button></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    const user = getCurrentUser();
+    renderSidebar('profile');
+    renderHeader('Profile & Account', [
+      { label: 'Dashboard', href: 'dashboard.html' },
+      { label: 'Profile & Account' }
+    ]);
+    renderMobileNav('');
+
+    // Populate fields
+    document.getElementById('profileName').value = user.name;
+    document.getElementById('profileEmail').value = user.email;
+    document.getElementById('profileRole').value = capitalizeRole(user.role);
+    document.getElementById('profileAvatar').textContent = user.avatar;
+
+    function showProfileSection(btn) {
+      document.querySelectorAll('.profile-nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('section-' + btn.dataset.section).classList.add('active');
+    }
+  </script>
+</body>
+</html>

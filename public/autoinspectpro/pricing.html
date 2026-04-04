@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/pricing.css">
+</head>
+<body>
+  <!-- Public Nav -->
+  <nav class="pricing-nav">
+    <div class="pricing-nav-inner">
+      <a href="index.html" class="pricing-nav-logo">
+        <div class="brand-logo"><i class="fas fa-car"></i></div>
+        <span>AutoInspect Pro</span>
+      </a>
+      <div class="pricing-nav-links">
+        <a href="index.html" class="btn btn-ghost btn-sm">Sign In</a>
+        <a href="signup.html" class="btn btn-primary btn-sm">Start Free Trial</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pricing-page">
+    <!-- Hero -->
+    <section class="pricing-hero">
+      <h1>Simple, transparent pricing</h1>
+      <p>Start free for 14 days. No credit card required. Upgrade, downgrade, or cancel anytime.</p>
+
+      <!-- Billing Toggle -->
+      <div class="billing-toggle">
+        <span class="billing-label" id="monthlyLabel">Monthly</span>
+        <button class="billing-switch" id="billingSwitch" onclick="toggleBilling()" aria-label="Toggle annual billing">
+          <span class="billing-switch-knob"></span>
+        </button>
+        <span class="billing-label" id="annualLabel">
+          Annual <span class="billing-save">Save 20%</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- Plans -->
+    <section class="pricing-plans">
+      <div class="plan-col">
+        <div class="plan-box">
+          <h3>Starter</h3>
+          <p class="plan-tagline">For small dealerships getting started with digital inspections</p>
+          <div class="plan-price-block">
+            <span class="plan-amount" data-monthly="49" data-annual="39">$49</span>
+            <span class="plan-period">/month</span>
+          </div>
+          <a href="signup.html" class="btn btn-outline w-full">Start Free Trial</a>
+          <div class="plan-divider"></div>
+          <h5>What's included:</h5>
+          <ul class="plan-feature-list">
+            <li><i class="fas fa-check"></i> Up to <strong>5 users</strong></li>
+            <li><i class="fas fa-check"></i> <strong>100</strong> inspections/month</li>
+            <li><i class="fas fa-check"></i> Digital checklists with auto-save</li>
+            <li><i class="fas fa-check"></i> Photo capture (up to 20 per inspection)</li>
+            <li><i class="fas fa-check"></i> Interactive damage mapping</li>
+            <li><i class="fas fa-check"></i> VIN decoding</li>
+            <li><i class="fas fa-check"></i> Internal PDF reports</li>
+            <li><i class="fas fa-check"></i> Vehicle history database</li>
+            <li><i class="fas fa-check"></i> Dashboard & basic analytics</li>
+            <li><i class="fas fa-check"></i> Email support</li>
+            <li class="not-included"><i class="fas fa-minus"></i> Customer-facing branded reports</li>
+            <li class="not-included"><i class="fas fa-minus"></i> OBD-II integration</li>
+            <li class="not-included"><i class="fas fa-minus"></i> API access</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="plan-col featured">
+        <div class="plan-box">
+          <div class="plan-badge">Most Popular</div>
+          <h3>Professional</h3>
+          <p class="plan-tagline">For growing dealerships that need the full inspection suite</p>
+          <div class="plan-price-block">
+            <span class="plan-amount" data-monthly="99" data-annual="79">$99</span>
+            <span class="plan-period">/month</span>
+          </div>
+          <a href="signup.html" class="btn btn-primary w-full">Start Free Trial</a>
+          <div class="plan-divider"></div>
+          <h5>Everything in Starter, plus:</h5>
+          <ul class="plan-feature-list">
+            <li><i class="fas fa-check"></i> Up to <strong>15 users</strong></li>
+            <li><i class="fas fa-check"></i> <strong>Unlimited</strong> inspections</li>
+            <li><i class="fas fa-check"></i> <strong>Unlimited</strong> photos & video</li>
+            <li><i class="fas fa-check"></i> Customer-facing <strong>branded PDF</strong> reports</li>
+            <li><i class="fas fa-check"></i> Report sharing via link & email</li>
+            <li><i class="fas fa-check"></i> <strong>OBD-II</strong> diagnostic integration</li>
+            <li><i class="fas fa-check"></i> PPSR / encumbrance checks</li>
+            <li><i class="fas fa-check"></i> Photo annotation tools</li>
+            <li><i class="fas fa-check"></i> Full analytics & inspector metrics</li>
+            <li><i class="fas fa-check"></i> Custom checklist templates</li>
+            <li><i class="fas fa-check"></i> Email & in-app notifications</li>
+            <li><i class="fas fa-check"></i> Priority email & chat support</li>
+            <li class="not-included"><i class="fas fa-minus"></i> API access</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="plan-col">
+        <div class="plan-box">
+          <h3>Enterprise</h3>
+          <p class="plan-tagline">For dealer groups & multi-site operations needing full control</p>
+          <div class="plan-price-block">
+            <span class="plan-amount" data-monthly="249" data-annual="199">$249</span>
+            <span class="plan-period">/month</span>
+          </div>
+          <a href="signup.html" class="btn btn-outline w-full">Contact Sales</a>
+          <div class="plan-divider"></div>
+          <h5>Everything in Professional, plus:</h5>
+          <ul class="plan-feature-list">
+            <li><i class="fas fa-check"></i> <strong>Unlimited</strong> users</li>
+            <li><i class="fas fa-check"></i> <strong>Multi-site</strong> management</li>
+            <li><i class="fas fa-check"></i> White-label reports (your domain)</li>
+            <li><i class="fas fa-check"></i> DMS integration</li>
+            <li><i class="fas fa-check"></i> <strong>REST API</strong> access & webhooks</li>
+            <li><i class="fas fa-check"></i> SSO / SAML authentication</li>
+            <li><i class="fas fa-check"></i> Custom data retention policies</li>
+            <li><i class="fas fa-check"></i> Audit log & compliance tools</li>
+            <li><i class="fas fa-check"></i> Dedicated account manager</li>
+            <li><i class="fas fa-check"></i> Phone, email & chat support</li>
+            <li><i class="fas fa-check"></i> SLA guarantee (99.9% uptime)</li>
+            <li><i class="fas fa-check"></i> Onboarding & training sessions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Comparison Table -->
+    <section class="pricing-comparison">
+      <h2>Compare all features</h2>
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Starter</th>
+              <th class="featured-col">Professional</th>
+              <th>Enterprise</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="section-header"><td colspan="4">Inspections</td></tr>
+            <tr><td>Monthly inspections</td><td>100</td><td class="featured-col">Unlimited</td><td>Unlimited</td></tr>
+            <tr><td>Digital checklists</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Custom templates</td><td>1</td><td class="featured-col">Unlimited</td><td>Unlimited</td></tr>
+            <tr><td>Photo capture</td><td>20/inspection</td><td class="featured-col">Unlimited</td><td>Unlimited</td></tr>
+            <tr><td>Video capture</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Photo annotations</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Damage mapping</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>OBD-II integration</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Offline mode (PWA)</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+
+            <tr class="section-header"><td colspan="4">Reports & Sharing</td></tr>
+            <tr><td>Internal PDF reports</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Customer-facing branded reports</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Report sharing (link & email)</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>White-label reports</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+
+            <tr class="section-header"><td colspan="4">Vehicle Management</td></tr>
+            <tr><td>VIN decoding</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Vehicle history database</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>PPSR / encumbrance checks</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+
+            <tr class="section-header"><td colspan="4">Team & Admin</td></tr>
+            <tr><td>Users included</td><td>5</td><td class="featured-col">15</td><td>Unlimited</td></tr>
+            <tr><td>Role-based access control</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Multi-site management</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>SSO / SAML</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Audit log</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+
+            <tr class="section-header"><td colspan="4">Analytics</td></tr>
+            <tr><td>Dashboard overview</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Inspector performance metrics</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Defect trend analysis</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>CSV data export</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+
+            <tr class="section-header"><td colspan="4">Integrations & API</td></tr>
+            <tr><td>REST API access</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Webhooks</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>DMS integration</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+
+            <tr class="section-header"><td colspan="4">Support</td></tr>
+            <tr><td>Email support</td><td><i class="fas fa-check"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Priority support</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Phone support</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>Dedicated account manager</td><td><i class="fas fa-minus muted"></i></td><td class="featured-col"><i class="fas fa-minus muted"></i></td><td><i class="fas fa-check"></i></td></tr>
+            <tr><td>SLA guarantee</td><td>99.5%</td><td class="featured-col">99.5%</td><td>99.9%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="pricing-faq">
+      <h2>Frequently asked questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>What happens after the 14-day trial?</h4>
+          <p>Your trial includes full Professional plan features. After 14 days, choose a plan to continue. If you don't choose, your account pauses — no charges, no data loss.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I change plans later?</h4>
+          <p>Yes. Upgrade or downgrade at any time. When upgrading, you get immediate access to new features. Downgrades take effect at the end of your billing cycle.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is there a contract or lock-in?</h4>
+          <p>No contracts. Monthly plans can be cancelled anytime. Annual plans are paid upfront with a 20% discount and can be cancelled with a prorated refund.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What payment methods do you accept?</h4>
+          <p>We accept Visa, Mastercard, and American Express via Stripe. Enterprise customers can pay by invoice with NET 30 terms.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I export my data if I leave?</h4>
+          <p>Absolutely. You own your data. Export everything — inspections, photos, reports, vehicle history — as CSV and PDF at any time. We retain data for 30 days after cancellation.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do you offer discounts for dealer groups?</h4>
+          <p>Yes. If you manage 3+ locations, contact our sales team for volume pricing. We also offer discounts for annual billing (20% off).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="pricing-cta">
+      <h2>Ready to modernise your inspections?</h2>
+      <p>Join 120+ dealerships using AutoInspect Pro. Start your free trial in under 2 minutes.</p>
+      <a href="signup.html" class="btn btn-primary btn-lg">Start Your Free 14-Day Trial <i class="fas fa-arrow-right"></i></a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pricing-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="brand-logo" style="width:28px;height:28px;font-size:0.875rem"><i class="fas fa-car"></i></div>
+          <span>AutoInspect Pro</span>
+        </div>
+        <div class="footer-links">
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Contact</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 AutoInspect Pro. All rights reserved.</p>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    let isAnnual = false;
+
+    function toggleBilling() {
+      isAnnual = !isAnnual;
+      const sw = document.getElementById('billingSwitch');
+      sw.classList.toggle('active', isAnnual);
+
+      document.querySelectorAll('.plan-amount').forEach(el => {
+        const price = isAnnual ? el.dataset.annual : el.dataset.monthly;
+        el.textContent = '$' + price;
+      });
+
+      document.querySelectorAll('.plan-period').forEach(el => {
+        el.textContent = isAnnual ? '/month, billed annually' : '/month';
+      });
+    }
+  </script>
+</body>
+</html>

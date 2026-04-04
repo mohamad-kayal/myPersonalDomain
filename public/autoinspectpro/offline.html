@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .offline-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-8);
+    }
+    .offline-content {
+      max-width: 420px;
+    }
+    .offline-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--color-accent-lighter);
+      color: var(--color-accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto var(--space-6);
+    }
+    .offline-content h1 {
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-3);
+    }
+    .offline-content p {
+      font-size: var(--text-md);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-6);
+    }
+    .offline-features {
+      text-align: left;
+      background: var(--bg-card);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+    }
+    .offline-features h4 {
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-3);
+    }
+    .offline-features li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      padding: var(--space-2) 0;
+    }
+    .offline-features li i {
+      color: var(--color-success);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-page">
+    <div class="offline-content">
+      <div class="offline-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+          <path d="M10.71 5.05A16 16 0 0 1 22.56 9"></path>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+      </div>
+      <h1>You're offline</h1>
+      <p>It looks like you've lost your internet connection. Don't worry — your work is saved locally.</p>
+
+      <div class="offline-features">
+        <h4>While offline, you can still:</h4>
+        <ul>
+          <li><i class="fas fa-check-circle"></i> Continue in-progress inspections</li>
+          <li><i class="fas fa-check-circle"></i> Take photos and capture data</li>
+          <li><i class="fas fa-check-circle"></i> View previously loaded pages</li>
+          <li><i class="fas fa-check-circle"></i> Save drafts locally</li>
+        </ul>
+      </div>
+
+      <button class="btn btn-primary" onclick="window.location.reload()">
+        <i class="fas fa-rotate"></i> Try Again
+      </button>
+      <p style="font-size:var(--text-xs);color:var(--text-tertiary);margin-top:var(--space-4)">
+        Your data will sync automatically when you reconnect.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

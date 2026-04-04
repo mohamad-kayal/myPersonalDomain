@@ -921,6 +921,7 @@ function generatePDF(data) {
     doc.text(data.bizAddress, margin, y + 8);
     doc.text(data.bizPhone, margin, y + 13);
     doc.text(data.bizEmail, margin, y + 18);
+    doc.text("ABN: 38 403 504 714", margin, y + 23);
 
     // Invoice info (right)
     doc.setFont("helvetica", "normal");
@@ -1113,6 +1114,27 @@ function generatePDF(data) {
     doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
     doc.setLineWidth(0.3);
     doc.line(rateX + 20, y, rightX, y);
+
+    // ===== PAYMENT DETAILS =====
+    y += 20;
+    checkPage(40);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
+    doc.text("PAYMENT DETAILS", margin, y);
+
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(dark[0], dark[1], dark[2]);
+    doc.text("Bank Name:  Commonwealth Bank of Australia", margin, y);
+    y += 6;
+    doc.text("BSB:  066013", margin, y);
+    y += 6;
+    doc.text("Account Number:  10214139", margin, y);
+    y += 6;
+    doc.text("ABN:  38 403 504 714", margin, y);
 
     // ===== RECEIPT PAGES =====
     if (data.receipts && data.receipts.length > 0) {

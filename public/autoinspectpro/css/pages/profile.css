@@ -1,0 +1,349 @@
+/* ============================================
+   AutoInspect Pro — Profile & Account Page
+   ============================================ */
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--space-6);
+}
+
+.profile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  position: sticky;
+  top: calc(var(--header-height) + var(--space-8));
+  align-self: start;
+}
+
+.profile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.profile-nav-item:hover {
+  background: var(--color-gray-100);
+  color: var(--text-primary);
+}
+
+.profile-nav-item.active {
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  font-weight: var(--font-semibold);
+}
+
+.profile-nav-item i {
+  width: 18px;
+  text-align: center;
+}
+
+.profile-section {
+  display: none;
+}
+
+.profile-section.active {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Avatar */
+.profile-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.profile-avatar-large {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  flex-shrink: 0;
+}
+
+/* TFA */
+.tfa-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.tfa-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.tfa-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+}
+
+.tfa-icon.off {
+  background: var(--color-gray-100);
+  color: var(--color-gray-500);
+}
+
+.tfa-icon.on {
+  background: var(--color-success-light);
+  color: var(--color-success);
+}
+
+/* Sessions */
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.session-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.session-info {
+  flex: 1;
+}
+
+.session-info strong {
+  font-size: var(--text-sm);
+  display: block;
+}
+
+.session-info p {
+  font-size: var(--text-xs);
+  margin-top: 2px;
+}
+
+.session-info .badge {
+  margin-top: var(--space-1);
+}
+
+/* Notification Preferences */
+.notif-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-header {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.notif-header span:not(:first-child) {
+  text-align: center;
+}
+
+.notif-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.notif-row label {
+  justify-self: center;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--color-gray-300);
+  border-radius: 11px;
+  transition: background var(--transition-fast);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  left: 3px;
+  top: 3px;
+  transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-xs);
+}
+
+.toggle input:checked + .toggle-slider {
+  background: var(--color-primary);
+}
+
+.toggle input:checked + .toggle-slider::before {
+  transform: translateX(18px);
+}
+
+.toggle input:disabled + .toggle-slider {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Billing */
+.billing-plan-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.billing-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.billing-usage {
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.usage-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.usage-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.usage-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.usage-bar {
+  height: 6px;
+  background: var(--color-gray-200);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.usage-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* Payment */
+.payment-card-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.payment-card-icon {
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    position: static;
+    gap: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+
+  .profile-nav-item {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .profile-nav-item span {
+    display: none;
+  }
+
+  .tfa-status {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .billing-plan-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .notif-header,
+  .notif-row {
+    grid-template-columns: 1fr 60px 60px;
+  }
+}

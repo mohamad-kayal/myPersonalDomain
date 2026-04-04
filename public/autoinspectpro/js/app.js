@@ -361,18 +361,18 @@ function toggleUserMenu() {
       </div>
     </div>
     <div class="user-popover-body">
-      <button class="user-popover-item" onclick="showToast('info','Profile','Edit Profile coming soon')">
+      <a class="user-popover-item" href="profile.html" style="text-decoration:none;color:inherit">
         <i class="fas fa-user-pen"></i>
         <span>Edit Profile</span>
-      </button>
-      <button class="user-popover-item" onclick="showToast('info','Settings','Account Settings coming soon')">
+      </a>
+      <a class="user-popover-item" href="profile.html" style="text-decoration:none;color:inherit">
         <i class="fas fa-gear"></i>
         <span>Account Settings</span>
-      </button>
-      <button class="user-popover-item" onclick="showToast('info','Help','Help & Support coming soon')">
+      </a>
+      <a class="user-popover-item" href="help.html" style="text-decoration:none;color:inherit">
         <i class="fas fa-circle-question"></i>
         <span>Help & Support</span>
-      </button>
+      </a>
     </div>
     <div class="user-popover-footer">
       <button class="user-popover-item danger" onclick="handleSignOut()">
@@ -757,6 +757,108 @@ function renderMobileNav(activeItem) {
   document.body.appendChild(nav);
 }
 
+// --- Empty State Component ---
+function renderEmptyState(container, { icon, title, message, actionLabel, actionHref, actionOnClick }) {
+  const html = `
+    <div class="empty-state-box">
+      <div class="empty-state-icon"><i class="fas ${icon}"></i></div>
+      <h3>${title}</h3>
+      <p>${message}</p>
+      ${actionLabel ? `<a href="${actionHref || '#'}" class="btn btn-primary btn-sm" ${actionOnClick ? `onclick="${actionOnClick};return false;"` : ''}><i class="fas fa-plus"></i> ${actionLabel}</a>` : ''}
+    </div>
+  `;
+  if (typeof container === 'string') {
+    document.getElementById(container).innerHTML = html;
+  } else {
+    container.innerHTML = html;
+  }
+}
+
+// --- Error State Component ---
+function renderErrorState(container, { icon, title, message, retryLabel, retryOnClick }) {
+  const html = `
+    <div class="error-state-box">
+      <div class="error-state-icon"><i class="fas ${icon || 'fa-exclamation-triangle'}"></i></div>
+      <h3>${title || 'Something went wrong'}</h3>
+      <p>${message || 'An unexpected error occurred. Please try again.'}</p>
+      ${retryLabel ? `<button class="btn btn-outline btn-sm" onclick="${retryOnClick || 'window.location.reload()'}"><i class="fas fa-rotate"></i> ${retryLabel}</button>` : ''}
+    </div>
+  `;
+  if (typeof container === 'string') {
+    document.getElementById(container).innerHTML = html;
+  } else {
+    container.innerHTML = html;
+  }
+}
+
+// --- VIN Decode Error Handler ---
+function showVinDecodeError(type) {
+  const errors = {
+    'network': { title: 'VIN Decode Failed', message: 'Could not connect to the VIN lookup service. Check your internet connection and try again.', retryLabel: 'Retry Lookup' },
+    'not_found': { title: 'VIN Not Found', message: 'This VIN was not found in the vehicle database. Please check the VIN is correct or enter vehicle details manually.', retryLabel: 'Try Again' },
+    'invalid': { title: 'Invalid VIN', message: 'The VIN entered is not valid. A VIN must be exactly 17 characters and cannot contain I, O, or Q.', retryLabel: null },
+    'rate_limit': { title: 'Too Many Requests', message: 'VIN lookup rate limit reached. Please wait a moment before trying again.', retryLabel: 'Retry in 30s' }
+  };
+  const err = errors[type] || errors['network'];
+  showToast('error', err.title, err.message);
+  return err;
+}
+
+// --- Photo Upload Error Handler ---
+function showPhotoUploadError(type) {
+  const errors = {
+    'too_large': { title: 'File Too Large', message: 'Photos must be under 10MB. Please compress the image or take a lower resolution photo.' },
+    'invalid_type': { title: 'Invalid File Type', message: 'Only JPG, PNG, and HEIC images are supported.' },
+    'upload_failed': { title: 'Upload Failed', message: 'Could not upload the photo. It has been saved locally and will sync when you reconnect.' },
+    'camera_denied': { title: 'Camera Access Denied', message: 'Please allow camera access in your browser settings to take photos during inspections.' }
+  };
+  const err = errors[type] || errors['upload_failed'];
+  showToast('error', err.title, err.message);
+  return err;
+}
+
+// --- OBD Connection Error Handler ---
+function showOBDError(type) {
+  const errors = {
+    'bluetooth_unavailable': { title: 'Bluetooth Not Available', message: 'Web Bluetooth is only supported in Chrome. Please use Chrome or enter diagnostic data manually.' },
+    'device_not_found': { title: 'Scanner Not Found', message: 'No OBD-II scanner detected. Make sure the adapter is plugged into the vehicle and Bluetooth is enabled on your device.' },
+    'connection_lost': { title: 'Connection Lost', message: 'Lost connection to the OBD-II scanner. Please reconnect and try again.' },
+    'read_error': { title: 'Read Error', message: 'Could not read diagnostic data from the vehicle. The vehicle may not support this protocol.' }
+  };
+  const err = errors[type] || errors['device_not_found'];
+  showToast('error', err.title, err.message);
+  return err;
+}
+
+// --- Service Worker Registration ---
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => {
+        console.log('[AutoInspect] Service Worker registered:', reg.scope);
+      })
+      .catch(err => {
+        console.warn('[AutoInspect] Service Worker registration failed:', err);
+      });
+  }
+}
+
+// --- Format Date/Time Utility ---
+function formatDateTime(isoString) {
+  if (!isoString) return '';
+  const d = new Date(isoString);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return diffMins + ' min ago';
+  const diffHrs = Math.floor(diffMins / 60);
+  if (diffHrs < 24) return diffHrs + ' hour' + (diffHrs > 1 ? 's' : '') + ' ago';
+  const diffDays = Math.floor(diffHrs / 24);
+  if (diffDays < 7) return diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago';
+  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 // --- Init ---
 document.addEventListener('DOMContentLoaded', () => {
   // Create overlay for mobile sidebar
@@ -771,5 +873,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Create toast container
   if (!document.getElementById('toast-container')) {
     createToastContainer();
+  }
+
+  // Register service worker
+  registerServiceWorker();
+
+  // Check for new signup — redirect to onboarding
+  if (localStorage.getItem('autoinspect_new_signup') === 'true') {
+    const currentPage = window.location.pathname.split('/').pop();
+    if (currentPage !== 'onboarding.html' && currentPage !== 'signup.html') {
+      window.location.href = 'onboarding.html';
+    }
   }
 });

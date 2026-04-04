@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Support — AutoInspect Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages/help.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content" role="main">
+      <header class="top-header" id="top-header"></header>
+      <div class="page-content" id="main-content">
+
+        <!-- Search Hero -->
+        <div class="help-hero">
+          <h2>How can we help?</h2>
+          <div class="help-search">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-input" placeholder="Search help articles, guides, and FAQs..." id="helpSearch" oninput="filterHelpArticles()">
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="help-quick-links">
+          <a href="#getting-started" class="help-quick-card">
+            <div class="help-quick-icon" style="background:var(--color-primary-lighter);color:var(--color-primary)"><i class="fas fa-rocket"></i></div>
+            <h4>Getting Started</h4>
+            <p>Set up your account and run your first inspection</p>
+          </a>
+          <a href="#inspections" class="help-quick-card">
+            <div class="help-quick-icon" style="background:var(--color-success-light);color:var(--color-success)"><i class="fas fa-clipboard-check"></i></div>
+            <h4>Inspections</h4>
+            <p>Checklists, photos, damage mapping, and submissions</p>
+          </a>
+          <a href="#reports" class="help-quick-card">
+            <div class="help-quick-icon" style="background:var(--color-accent-lighter);color:var(--color-accent-dark)"><i class="fas fa-file-pdf"></i></div>
+            <h4>Reports</h4>
+            <p>Generating, branding, and sharing PDF reports</p>
+          </a>
+          <a href="#admin" class="help-quick-card">
+            <div class="help-quick-icon" style="background:var(--color-danger-light);color:var(--color-danger)"><i class="fas fa-cog"></i></div>
+            <h4>Administration</h4>
+            <p>Users, templates, settings, and billing</p>
+          </a>
+        </div>
+
+        <!-- Articles -->
+        <div class="help-articles" id="helpArticles">
+          <!-- Getting Started -->
+          <div class="help-category" id="getting-started" data-category="getting-started">
+            <h3><i class="fas fa-rocket"></i> Getting Started</h3>
+            <div class="help-article-list">
+              <div class="help-article" data-search="create account signup register">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I create an account?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Visit the <a href="signup.html">signup page</a> and follow the 3-step process: enter your details, set up your dealership, and choose a plan. Your 14-day free trial starts immediately with full Professional features.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="invite team users add inspector">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I invite my team?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Go to <strong>Administration &gt; Users</strong> and click <strong>Invite User</strong>. Enter their email and select a role (Inspector, Sales Manager, or Administrator). They'll receive an email invitation to join your dealership.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="setup branding logo colour reports">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I set up my dealership branding?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Go to <strong>Administration &gt; Settings &gt; Branding</strong>. Upload your logo, set your brand colours, and add your contact information. These will appear on all customer-facing PDF reports.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="first inspection run start begin">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I run my first inspection?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Click <strong>New Inspection</strong> from the sidebar or dashboard. Enter the vehicle's VIN (scan or type), then work through the checklist sections. The system auto-saves every 30 seconds so you never lose progress.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inspections -->
+          <div class="help-category" id="inspections" data-category="inspections">
+            <h3><i class="fas fa-clipboard-check"></i> Inspections</h3>
+            <div class="help-article-list">
+              <div class="help-article" data-search="vin scan barcode decode vehicle">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How does VIN decoding work?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Enter or scan a 17-character VIN. The system automatically looks up the vehicle's year, make, model, trim, engine, and body type. If the VIN has been seen before, the full inspection history is shown.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="photo camera capture image upload">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I take photos during an inspection?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Each checklist item has a camera icon. Tap it to capture a photo directly from your device camera or upload from your gallery. Photos are automatically linked to the correct checklist item and appear in the report.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="damage map marker scratch dent crack">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I use the damage map?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>In the Damage Map step, click on the vehicle diagram where damage is located. A form will appear to classify the damage type (scratch, dent, crack, etc.) and severity (minor, moderate, major). Add notes and an optional photo.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="obd diagnostic bluetooth scanner">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I connect an OBD-II scanner?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Plug an ELM327-compatible Bluetooth OBD-II adapter into the vehicle's diagnostic port. In the inspection, go to the Diagnostics step and click <strong>Connect Scanner</strong>. The system will scan for fault codes and capture key readings. Note: Web Bluetooth works in Chrome only.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="offline mode no internet connection">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>Can I use AutoInspect Pro offline?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Yes. The app works as a Progressive Web App (PWA). Inspections can be started and completed without an internet connection. Data syncs automatically when you reconnect. Install the app from your browser's "Add to Home Screen" option for the best offline experience.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports -->
+          <div class="help-category" id="reports" data-category="reports">
+            <h3><i class="fas fa-file-pdf"></i> Reports</h3>
+            <div class="help-article-list">
+              <div class="help-article" data-search="generate pdf report create">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I generate a PDF report?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Once an inspection is approved, open the inspection report and click <strong>Download PDF</strong>. You can choose between an internal report (full details) or a customer-facing report (branded and curated).</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="share report customer email link">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I share a report with a customer?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Click the <strong>Share</strong> button on any approved report. You can generate a unique shareable link (with optional expiry date) or email the report directly to the customer. The customer does not need an account to view the report.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Administration -->
+          <div class="help-category" id="admin" data-category="admin">
+            <h3><i class="fas fa-cog"></i> Administration</h3>
+            <div class="help-article-list">
+              <div class="help-article" data-search="template checklist customize create">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I customize inspection checklists?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Go to <strong>Administration &gt; Templates</strong>. You can edit existing templates or create new ones. Each template can have custom sections and items. You can set items as mandatory or optional, and choose between different vehicle types.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="billing plan upgrade downgrade payment">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I change my plan or update billing?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Go to <strong>Profile &gt; Billing & Plan</strong>. From there you can upgrade or downgrade your plan, update your payment method, and view billing history. Changes take effect immediately for upgrades or at the end of your billing cycle for downgrades.</p>
+                </div>
+              </div>
+              <div class="help-article" data-search="data export csv download backup">
+                <button class="help-article-toggle" onclick="toggleArticle(this)">
+                  <span>How do I export my data?</span>
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="help-article-body">
+                  <p>Go to <strong>Analytics</strong> and click the <strong>Export</strong> button to download inspection data as CSV. For a full data export (all inspections, vehicles, photos, reports), contact support and we'll prepare a complete export package within 24 hours.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="help-contact">
+          <div class="help-contact-card">
+            <div class="help-contact-icon"><i class="fas fa-envelope"></i></div>
+            <h4>Email Support</h4>
+            <p>Get a response within 24 hours (4 hours for Professional and Enterprise plans)</p>
+            <button class="btn btn-outline btn-sm" onclick="showToast('info','Support','Email support at support@autoinspect.com')">support@autoinspect.com</button>
+          </div>
+          <div class="help-contact-card">
+            <div class="help-contact-icon"><i class="fas fa-comments"></i></div>
+            <h4>Live Chat</h4>
+            <p>Available Mon–Fri, 9am–5pm AEST for Professional and Enterprise plans</p>
+            <button class="btn btn-primary btn-sm" onclick="showToast('info','Chat','Live chat widget coming soon')"><i class="fas fa-comment-dots"></i> Start Chat</button>
+          </div>
+          <div class="help-contact-card">
+            <div class="help-contact-icon"><i class="fas fa-book"></i></div>
+            <h4>Documentation</h4>
+            <p>Detailed guides, API reference, and integration documentation</p>
+            <button class="btn btn-outline btn-sm" onclick="showToast('info','Docs','Documentation site coming soon')">View Docs</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    checkAuth();
+    renderSidebar('help');
+    renderHeader('Help & Support', [
+      { label: 'Dashboard', href: 'dashboard.html' },
+      { label: 'Help & Support' }
+    ]);
+    renderMobileNav('');
+
+    function toggleArticle(btn) {
+      const article = btn.closest('.help-article');
+      article.classList.toggle('open');
+    }
+
+    function filterHelpArticles() {
+      const query = document.getElementById('helpSearch').value.toLowerCase().trim();
+      document.querySelectorAll('.help-article').forEach(article => {
+        const text = article.textContent.toLowerCase() + ' ' + (article.dataset.search || '');
+        article.style.display = (!query || text.includes(query)) ? '' : 'none';
+      });
+      // Show/hide categories
+      document.querySelectorAll('.help-category').forEach(cat => {
+        const visible = cat.querySelectorAll('.help-article[style=""], .help-article:not([style])').length;
+        cat.style.display = visible > 0 ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
